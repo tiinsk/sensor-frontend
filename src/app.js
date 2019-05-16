@@ -1,39 +1,49 @@
 import React, { Component } from 'react';
-import styled from 'styled-components/macro'
-import logo from '../assets/images/logo.svg';
-import '../App.css';
+import styled, { ThemeProvider } from 'styled-components/macro'
+import AppHeader from "./components/header/header";
+import Home from "./containers/home";
+import Device from "./containers/device";
+import {BrowserRouter as Router, Route} from "react-router-dom";
+import { theme } from './assets/styles/variables';
+import api from "./api/routes";
+import orderBy from "lodash/orderBy";
 
-const AppHeader = styled.header`
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+const StyledApp = styled.div`
+  padding: ${props => props.theme.baseSize};
+  
+  @media (max-width: ${props => props.theme.breakpointMobile}){
+    padding: ${props => props.theme.baseSizePartial(0.25)};
+  }
 `;
 
-
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      devices: []
+    }
+  }
+
+  async componentWillMount() {
+    const devices = await api.getAllDevices();
+
+    this.setState({
+      devices: orderBy(devices.values, ['name'])
+    });
+  }
+
   render() {
     return (
-      <div className="App">
-        <AppHeader>
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </AppHeader>
-      </div>
+      <ThemeProvider theme={theme}>
+        <StyledApp>
+          <Router>
+            <AppHeader devices={this.state.devices}/>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/devices/:id" component={Device}/>
+          </Router>
+        </StyledApp>
+      </ThemeProvider>
     );
   }
 }
