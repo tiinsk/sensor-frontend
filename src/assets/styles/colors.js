@@ -18,6 +18,8 @@ export default {
   blueLoadMoreBackground: "#11152F",
   blueLoadMoreBackground_Hover: "#11142b",
   blueTickLine: "#26273e",
+  blueEvenDate: '#8489ad',
+  blueHoverBackground: '#323655',
 
   greenBright: "#34FFAD",
   temperatureColors: [

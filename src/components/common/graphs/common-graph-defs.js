@@ -62,7 +62,21 @@ export const commonDefs = {
   xAccessor: d => {
     return new Date(d.rounded_time);
   },
-  baseMarkProps: { forceUpdate: true }
+  baseMarkProps: { forceUpdate: true },
+  hoverAnnotation: true,
+  tooltipContent: (d) => {
+    const minutes = new Date(d.rounded_time).getMinutes();
+    if (minutes) {
+      return (
+        <div
+          className="hover-unit-text"
+        >
+          {d.temperature.toFixed(1)}
+          <div className="pointer"/>
+        </div>
+      )
+    }
+  }
 };
 
 export const StyledResponsiveXYFrame = styled.div`
@@ -81,7 +95,7 @@ export const StyledResponsiveXYFrame = styled.div`
       text-transform: capitalize;
     }
     &.even-date {
-      fill: #8489ad;
+      fill: ${props => props.theme.colors.blueEvenDate};
     }
   }
   
@@ -93,5 +107,36 @@ export const StyledResponsiveXYFrame = styled.div`
   } 
   .tick-line {
       fill: ${props => props.theme.colors.blueTickLine};
+  }
+  .hover-unit-text {
+    background: ${props => props.theme.colors.blueHoverBackground};
+    padding: 5px;
+    border-radius: 2px;
+  
+    color: ${props => props.theme.colors.blueEvenDate};
+    font-family: ${props => props.theme.fontTitle};
+    font-size: ${props => props.theme.fontSizeXXXSmall};
+    font-weight: ${props => props.theme.fontWeightLight};
+    
+    position: relative;
+    top: -35px;
+    left: -50%;
+    
+    .pointer {
+      background: ${props => props.theme.colors.blueHoverBackground};
+   
+      width: 10px;
+      height: 10px;
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+    }
+    
+  }
+  
+  circle.frame-hover {
+    stroke: transparent;
+    r: 0;
   }
 `;

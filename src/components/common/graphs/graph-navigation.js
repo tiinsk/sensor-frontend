@@ -59,6 +59,7 @@ const StyledGraphNavigation = styled.div`
   height: ${props => props.height}px;
   
   overflow-x: scroll;
+  overflow-y: hidden;
   position: relative;
 
   
