@@ -9,14 +9,10 @@ export const formatGraphData = (startTimeISO, endTimeISO, temperatures) => {
 
   let time = startTime.toUTC();
 
-  //console.log(startTime.toISO(), roundToNearestHalfHour(startTime.toISO()));
-
   while (time.diff(endTime).milliseconds <= 1) {
     times.push(time.toISO());
     time = time.plus({minutes: 30});
   }
-
-  //console.log("times", times);
 
   const roundedTemperatures = temperatures.map(t => {
     const rounded = roundToNearestHalfHour(t.created_at);
@@ -35,22 +31,26 @@ export const formatGraphData = (startTimeISO, endTimeISO, temperatures) => {
     return acc;
   }, {});
 
-  //console.log("nearest", nearest);
+  return times.reduce((timeArray, time, i) => {
 
-  return times.map((time, i) => {
-    if (!nearest[time]) {
-      return {
+    const diffFromNow = DateTime.fromISO(time).diffNow().milliseconds;
+
+    if (!nearest[time] && diffFromNow <= 0) {
+      timeArray.push({
         index: i,
         temperature: 0,
         humidity: 0,
         pressure: 0,
-        rounded_time: time,
-
-      }
+        rounded_time: time
+      });
     }
-    else return {
-      index: i,
-      ...nearest[time]
-    };
-  });
+    else if(nearest[time]){
+      timeArray.push({
+        index: i,
+        ...nearest[time]
+      });
+    }
+
+    return timeArray
+  }, []);
 };
