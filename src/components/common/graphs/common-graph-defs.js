@@ -71,7 +71,7 @@ export const commonDefs = {
         <div
           className="hover-unit-text"
         >
-          {d.temperature.toFixed(1)}
+          {d.y.toFixed(1)}
           <div className="pointer"/>
         </div>
       )

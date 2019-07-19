@@ -24,7 +24,7 @@ const defFrameProps = (dataPointCount, start, end) => ({
 });
 
 
-const HumidityGraph = (props) => {
+const PressureGraph = (props) => {
 
   const dataPointCount = props.data.length;
   const start = props.data[0] ? props.data[0].rounded_time : null;
@@ -44,15 +44,15 @@ const HumidityGraph = (props) => {
   );
 };
 
-HumidityGraph.propTypes = {
+PressureGraph.propTypes = {
   data: PropTypes.array.isRequired,
   width: PropTypes.number,
   height: PropTypes.number
 };
 
-HumidityGraph.defaultProps = {
+PressureGraph.defaultProps = {
   width: 700,
   height: 320
 };
 
-export default HumidityGraph;
+export default PressureGraph;
