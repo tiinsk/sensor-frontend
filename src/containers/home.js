@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import orderBy from 'lodash/orderBy';
 import api from '../api/routes';
 import DeviceSummaryItem from "../components/deviceSummary/device-summary-item";
 import Loading from "../components/common/loading";
@@ -23,7 +22,7 @@ class Home extends Component {
 
     this.setState({
       loading: false,
-      deviceSummaries: orderBy(summaries, ['name']),
+      deviceSummaries: summaries,
       deviceExtremes: extremes.reduce((acc, curr) => {
         acc[curr.device] = curr;
         return acc;

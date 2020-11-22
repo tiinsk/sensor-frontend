@@ -6,7 +6,6 @@ import Device from "./containers/device";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import { theme } from './assets/styles/variables';
 import api from "./api/routes";
-import orderBy from "lodash/orderBy";
 
 const StyledApp = styled.div`
   padding: ${props => props.theme.baseSize};
@@ -29,7 +28,7 @@ class App extends Component {
     const devices = await api.getAllDevices();
 
     this.setState({
-      devices: orderBy(devices.values, ['name'])
+      devices: devices.values
     });
   }
 
