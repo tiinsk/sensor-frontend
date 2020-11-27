@@ -3,9 +3,10 @@ import styled from 'styled-components/macro';
 import { Link } from "react-router-dom";
 import logo from '../../assets/icons/home-logo.svg';
 
-const StyledHeaderLogo = styled.li`
+export const StyledHeaderLogo = styled.li`
   flex-grow: 1;
   max-width: 400px;
+  list-style: none;
 `;
 
 const StyledLink = styled(Link)`

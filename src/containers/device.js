@@ -59,7 +59,7 @@ class Device extends Component {
       loading: false,
       summary: summaries,
       extremes: extremes,
-      graphData: [...graphData.values, ...this.state.graphData],
+      graphData: graphData && graphData.values ? [...graphData.values, ...this.state.graphData] : this.state.graphData,
       loadedDays: this.state.loadedDays +1,
       startTime
     });

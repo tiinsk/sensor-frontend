@@ -6,6 +6,7 @@ const getTimeZone = () => {
 };
 
 export default {
+  login: (payload) => api.post({route: '/login', payload}),
   getNow: () =>  api.get({route: `/readings/now?localTimeZone=${getTimeZone()}`}),
   getExtremes: () =>  api.get({route: `/readings/extremes?localTimeZone=${getTimeZone()}`}),
   getAllReadings: (deviceId, params) => api.get({

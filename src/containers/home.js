@@ -23,7 +23,7 @@ class Home extends Component {
     this.setState({
       loading: false,
       deviceSummaries: summaries,
-      deviceExtremes: extremes.reduce((acc, curr) => {
+      deviceExtremes: extremes && extremes.reduce((acc, curr) => {
         acc[curr.device] = curr;
         return acc;
       }, {})
@@ -35,7 +35,7 @@ class Home extends Component {
       <div>
         { this.state.loading ?
           <Loading/> :
-          this.state.deviceSummaries.map(device => (
+          this.state.deviceSummaries && this.state.deviceSummaries.map(device => (
             <DeviceSummaryItem
               key={device.device}
               device={{

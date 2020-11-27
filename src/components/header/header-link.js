@@ -28,8 +28,6 @@ const StyledLink = styled(NavLink)`
   &.active {
     color: ${props => props.theme.colors.lightBlueBrighter};
     font-weight: ${props => props.theme.fontWeightBold};
-   
-    
     border-bottom: 2px solid ${props => props.theme.colors.greenBright};
   }
 `;

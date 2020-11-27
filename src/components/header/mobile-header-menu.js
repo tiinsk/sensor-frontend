@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components/macro';
 import PropTypes from "prop-types";
+
 import MobileHeaderLink from "./mobile-header-link";
 import closeIcon from '../../assets/icons/navigation/close.svg';
 import menuIcon from "../../assets/icons/navigation/menu.svg";
@@ -53,6 +54,22 @@ const StyledCloseButton = styled.button`
   right: 0;
 `;
 
+const StyledLogoutButton = styled.button`
+  background: none;
+  border: none;
+  padding: ${({theme}) => theme.baseSizePartial(0.5)};
+  outline: none;
+  
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  
+  color: ${({theme}) => theme.colors.lightBlue};
+  text-transform: uppercase;
+  
+  cursor: pointer;
+`;
+
 class MobileHeaderMenu extends Component {
   constructor(props) {
     super(props);
@@ -98,6 +115,7 @@ class MobileHeaderMenu extends Component {
           <StyledCloseButton onClick={() => this.toggleMenu()}>
             <img src={closeIcon} alt="close"/>
           </StyledCloseButton>
+          <StyledLogoutButton onClick={() => this.props.onLogout()}>Logout</StyledLogoutButton>
         </StyledMobileMenu>
       </StyledHeaderMenu>
     );
@@ -105,7 +123,8 @@ class MobileHeaderMenu extends Component {
 }
 
 MobileHeaderMenu.propTypes = {
-  links: PropTypes.array
+  links: PropTypes.array,
+  onLogout: PropTypes.func
 };
 
 MobileHeaderMenu.defaultProps = {

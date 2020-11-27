@@ -30,7 +30,8 @@ export default {
     '#7A71A6',
     '#687BB4',
     '#71B6BE'
-  ]
+  ],
+  errorRed: '#ff5d8c',
 }
 
 
