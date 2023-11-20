@@ -1,0 +1,18 @@
+image: node:10.15.3
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - node
+        script:
+          - yarn
+          - CI=false REACT_APP_API_KEY=$API_KEY REACT_APP_API_SECRET=$API_SECRET REACT_APP_API_ROUTE=$API_ROUTE REACT_APP_BITBUCKET_USER=$BITBUCKET_USER REACT_APP_SERVER_IP=$SERVER_IP yarn build
+          - pipe: atlassian/sftp-deploy:0.5.6
+            variables:
+              USER: $BITBUCKET_USER
+              SERVER: $SERVER_IP
+              REMOTE_PATH: '/homemonitor'
+              LOCAL_PATH: 'build/*'
+              PASSWORD: $PASSWORD
+              DEBUG: 'true'

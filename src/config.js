@@ -1,7 +1,7 @@
 module.exports = {
   api: {
-    api_key: 'INSERT API KEY HERE',
-    secret: 'INSERT API SECRET HERE',
-    route: 'https://api.apidomain.com/api/'
-  }
+    api_key: process.env.REACT_APP_API_KEY,
+    secret: process.env.REACT_APP_API_SECRET,
+    route: process.env.REACT_APP_API_ROUTE,
+  },
 };
