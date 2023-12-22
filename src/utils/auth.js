@@ -7,7 +7,7 @@ export const removeJWTToken = () => {
 };
 
 export const getJWTToken = () => {
-  return localStorage.getItem('auth');
+  return localStorage.getItem('auth') || '';
 };
 export const isLoggedIn = () => {
   return !!localStorage.getItem('auth');

@@ -15,7 +15,7 @@ class Home extends Component {
 
   async componentWillMount() {
     const [summaries, extremes] = await Promise.all([
-      api.getNow(),
+      api.getAllLatest(),
       api.getExtremes(),
     ]);
 

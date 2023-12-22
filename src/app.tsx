@@ -19,6 +19,7 @@ import { GlobalStyle } from './theme/global-style';
 import { OldTheme } from './theme/old-theme';
 import { TopNav } from './components/nav/top-nav';
 import { ThemeContextProvider, ThemeProvider } from './contexts/theme-context';
+import { DeviceResponse } from './api/types';
 
 WebFont.load({
   google: {
@@ -56,7 +57,7 @@ const App = () => {
 };
 
 const OldLoggedInRoutes = () => {
-  const [devices, setDevices] = useState([]);
+  const [devices, setDevices] = useState<DeviceResponse[]>([]);
   const loggedIn = isLoggedIn();
 
   useEffect(() => {
@@ -87,7 +88,7 @@ const OldLoggedInRoutes = () => {
 };
 
 const LoggedInRoutes = () => {
-  const [devices, setDevices] = useState([]);
+  const [devices, setDevices] = useState<DeviceResponse[]>([]);
   const loggedIn = isLoggedIn();
 
   useEffect(() => {
