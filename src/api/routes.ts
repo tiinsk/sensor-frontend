@@ -22,7 +22,7 @@ const routes = {
   getAllDevices: () =>
     api.get<ArrayResponse<DeviceResponse>>({ route: '/devices' }),
   getAllDeviceReadingsNow: (deviceId: string) =>
-    api.get({
+    api.get<LatestReadingResponse>({
       route: `/devices/${deviceId}/readings/now?localTimeZone=${getTimeZone()}`,
     }),
   getAllDeviceExtremes: (deviceId: string) =>

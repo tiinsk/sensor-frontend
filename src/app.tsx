@@ -11,7 +11,8 @@ import WebFont from 'webfontloader';
 import AppHeader from './components/header/header';
 import { Home } from './containers/home';
 import HomeOLD from './containers/home-OLD';
-import Device from './containers/device';
+import DeviceOLD from './containers/device-OLD';
+import { Device } from './containers/device';
 import Login from './containers/login';
 import api from './api/routes';
 import { isLoggedIn } from './utils/auth';
@@ -80,7 +81,7 @@ const OldLoggedInRoutes = () => {
         <AppHeader devices={devices} />
         <Routes>
           <Route path="/" element={<HomeOLD />} />
-          <Route path="devices/:id" Component={Device} />
+          <Route path="devices/:id" Component={DeviceOLD} />
         </Routes>
       </OldTheme>
     </>
@@ -110,7 +111,7 @@ const LoggedInRoutes = () => {
       <TopNav />
       <Routes>
         <Route path="/" element={<Home />} />
-        {/*<Route path="devices/:id" Component={Device} />*/}
+        <Route path="devices/:id" Component={Device} />
       </Routes>
     </>
   );

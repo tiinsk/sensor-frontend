@@ -6,7 +6,7 @@ import { DateTime } from 'luxon';
 import { formatGraphData } from '../utils/graph-data-formatter';
 import { useParams } from 'react-router-dom';
 
-class Device extends Component {
+class DeviceOLD extends Component {
   constructor(props) {
     super(props);
 
@@ -110,7 +110,7 @@ class Device extends Component {
 
 const DeviceWithRouter = () => {
   let params = useParams();
-  return <Device params={params} />;
+  return <DeviceOLD params={params} />;
 };
 
 export default DeviceWithRouter;
