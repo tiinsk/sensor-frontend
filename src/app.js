@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import AppHeader from './components/header/header';
-import Home from './containers/home';
+import { Home } from './containers/home';
+import HomeOLD from './containers/home-OLD';
 import Device from './containers/device';
 import Login from './containers/login';
 import {
@@ -10,18 +11,13 @@ import {
   Routes,
   Navigate,
 } from 'react-router-dom';
-import { theme } from './assets/styles/variables';
+import { theme } from './theme';
 import api from './api/routes';
 import { isLoggedIn } from './utils/auth';
-import { GlobalStyle } from './assets/styles';
+import { GlobalStyle } from './theme/global-style';
+import { OldTheme } from './theme/old-theme';
 
-const StyledApp = styled.div`
-  padding: ${props => props.theme.baseSize};
-
-  @media (max-width: ${props => props.theme.breakpointMobile}) {
-    padding: ${props => props.theme.baseSizePartial(0.25)};
-  }
-`;
+const StyledApp = styled.div``;
 
 export let FORCE_RERENDER;
 
@@ -36,12 +32,44 @@ const App = () => {
       <StyledApp>
         <Router>
           <Routes>
-            <Route path="/login" element={<Login />} />
+            <Route path="/old/login" element={<Login />} />
+            <Route path="/old/*" element={<OldLoggedInRoutes />} />
             <Route path="/*" element={<LoggedInRoutes />} />
           </Routes>
         </Router>
       </StyledApp>
     </ThemeProvider>
+  );
+};
+
+const OldLoggedInRoutes = () => {
+  const [devices, setDevices] = useState([]);
+  const loggedIn = isLoggedIn();
+
+  useEffect(() => {
+    const fetchDevices = async () => {
+      const devices = await api.getAllDevices();
+      if (devices && devices.values) {
+        setDevices(devices.values);
+      }
+    };
+    fetchDevices();
+  }, []);
+
+  if (!loggedIn) {
+    return <Navigate to="/login" />;
+  }
+
+  return (
+    <>
+      <OldTheme>
+        <AppHeader devices={devices} />
+        <Routes>
+          <Route path="/" element={<HomeOLD />} />
+          <Route path="devices/:id" Component={Device} />
+        </Routes>
+      </OldTheme>
+    </>
   );
 };
 
@@ -56,7 +84,6 @@ const LoggedInRoutes = () => {
         setDevices(devices.values);
       }
     };
-    console.log('FETCH');
     fetchDevices();
   }, []);
 
@@ -66,10 +93,9 @@ const LoggedInRoutes = () => {
 
   return (
     <>
-      <AppHeader devices={devices} />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="devices/:id" Component={Device} />
+        {/*<Route path="devices/:id" Component={Device} />*/}
       </Routes>
     </>
   );

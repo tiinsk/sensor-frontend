@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/routes';
 import HeaderLogo, { StyledHeaderLogo } from '../components/header/header-logo';
 import { setJWTToken } from '../utils/auth';
+import { OldTheme } from '../theme/old-theme';
 
 const StyledLogin = styled.div`
   height: calc(100vh - 2 * ${({ theme }) => theme.baseSize});
@@ -100,28 +101,35 @@ const Login = () => {
   };
 
   return (
-    <StyledLogin>
-      <StyledLoginContent>
-        <HeaderLogo />
-        <StyledLabel>Username</StyledLabel>
-        <StyledInput
-          onChange={({ target }) => onChangeUsername(target.value)}
-          value={username}
-        />
-        <StyledLabel>Password</StyledLabel>
-        <StyledInput
-          type="password"
-          onChange={({ target }) => onChangePassword(target.value)}
-          value={password}
-        />
-        {error && error.statusCode === 401 && (
-          <StyledError>Login failed. Invalid username or password.</StyledError>
-        )}
-        <StyledLoginButton onClick={onLogin} disabled={!username || !password}>
-          Login
-        </StyledLoginButton>
-      </StyledLoginContent>
-    </StyledLogin>
+    <OldTheme>
+      <StyledLogin>
+        <StyledLoginContent>
+          <HeaderLogo />
+          <StyledLabel>Username</StyledLabel>
+          <StyledInput
+            onChange={({ target }) => onChangeUsername(target.value)}
+            value={username}
+          />
+          <StyledLabel>Password</StyledLabel>
+          <StyledInput
+            type="password"
+            onChange={({ target }) => onChangePassword(target.value)}
+            value={password}
+          />
+          {error && error.statusCode === 401 && (
+            <StyledError>
+              Login failed. Invalid username or password.
+            </StyledError>
+          )}
+          <StyledLoginButton
+            onClick={onLogin}
+            disabled={!username || !password}
+          >
+            Login
+          </StyledLoginButton>
+        </StyledLoginContent>
+      </StyledLogin>
+    </OldTheme>
   );
 };
 
