@@ -46,13 +46,13 @@ export const Flex = ({
 }: FlexProps & BoxProps) => {
   return (
     <StyledFlex
-      {...props}
       $flex={flex}
       $flexDirection={flexDirection}
       $flexWrap={flexWrap}
       $alignItems={alignItems}
       $justifyContent={justifyContent}
       $gap={gap}
+      {...props}
     >
       {children}
     </StyledFlex>

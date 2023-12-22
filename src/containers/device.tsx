@@ -21,6 +21,7 @@ import { Box } from '../components/styled/box';
 import styled from 'styled-components';
 import { Graph } from '../components/graphs/graph';
 import { GraphSizeWrapper } from '../components/graphs/graph-size-wrapper';
+import { GraphLoading } from '../assets/loading/graph-loading';
 
 const StyledGraphCard = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
@@ -59,6 +60,7 @@ export const Device = () => {
     month: Statistics | undefined;
   }>({ day: undefined, week: undefined, month: undefined });
 
+  const [isLoadingReadings, setLoadingReadings] = useState<boolean>(false);
   const [readingData, setReadingData] = useState<
     { [type: string]: ReadingType[] | undefined } | undefined
   >(undefined);
@@ -119,14 +121,17 @@ export const Device = () => {
         return acc;
       }, {});
       setReadingData(readingsByType);
+      setLoadingReadings(false);
     }
   };
 
   useEffect(() => {
+    setReadingData(undefined);
     fetchData();
   }, [id]);
 
   useEffect(() => {
+    setReadingData(undefined);
     fetchReadings();
   }, [id, options]);
 
@@ -192,54 +197,69 @@ export const Device = () => {
         <TimeFrameSelector
           options={options}
           selectors={['timePeriod']}
-          onChange={newOptions => setOptions(newOptions)}
+          onChange={newOptions => {
+            setOptions(newOptions);
+            setReadingData(undefined);
+          }}
         />
       </Box>
       <StyledGraphCard>
-        <StyledGraphContainer>
-          {id && readingData?.temperature && (
-            <GraphSizeWrapper>
-              <Graph
-                deviceId={id}
-                data={readingData.temperature}
-                options={options}
-                valueType="temperature"
-                showAxis={false}
-                hoveredDate={hoveredDate}
-                onHover={date => setHoveredDate(date)}
-              />
-            </GraphSizeWrapper>
-          )}
-        </StyledGraphContainer>
-        <StyledGraphContainer>
-          {id && readingData?.humidity && (
-            <GraphSizeWrapper>
-              <Graph
-                deviceId={id}
-                data={readingData.humidity}
-                options={options}
-                valueType="humidity"
-                showAxis={false}
-                hoveredDate={hoveredDate}
-                onHover={date => setHoveredDate(date)}
-              />
-            </GraphSizeWrapper>
-          )}
-        </StyledGraphContainer>
-        <StyledGraphContainer>
-          {id && readingData?.pressure && (
-            <GraphSizeWrapper>
-              <Graph
-                deviceId={id}
-                data={readingData.pressure}
-                options={options}
-                valueType="pressure"
-                hoveredDate={hoveredDate}
-                onHover={date => setHoveredDate(date)}
-              />
-            </GraphSizeWrapper>
-          )}
-        </StyledGraphContainer>
+        {isLoadingReadings || readingData === undefined ? (
+          <Flex
+            style={{ height: '600px' }}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <GraphLoading />
+          </Flex>
+        ) : (
+          <>
+            <StyledGraphContainer>
+              {id && readingData?.temperature && (
+                <GraphSizeWrapper>
+                  <Graph
+                    deviceId={id}
+                    data={readingData.temperature}
+                    options={options}
+                    valueType="temperature"
+                    showAxis={false}
+                    hoveredDate={hoveredDate}
+                    onHover={date => setHoveredDate(date)}
+                  />
+                </GraphSizeWrapper>
+              )}
+            </StyledGraphContainer>
+            <StyledGraphContainer>
+              {id && readingData?.humidity && (
+                <GraphSizeWrapper>
+                  <Graph
+                    deviceId={id}
+                    data={readingData.humidity}
+                    options={options}
+                    valueType="humidity"
+                    showAxis={false}
+                    hoveredDate={hoveredDate}
+                    onHover={date => setHoveredDate(date)}
+                  />
+                </GraphSizeWrapper>
+              )}
+            </StyledGraphContainer>
+            <StyledGraphContainer>
+              {id && readingData?.pressure && (
+                <GraphSizeWrapper>
+                  <Graph
+                    deviceId={id}
+                    data={readingData.pressure}
+                    options={options}
+                    valueType="pressure"
+                    hoveredDate={hoveredDate}
+                    onHover={date => setHoveredDate(date)}
+                  />
+                </GraphSizeWrapper>
+              )}
+            </StyledGraphContainer>
+          </>
+        )}
       </StyledGraphCard>
     </div>
   );

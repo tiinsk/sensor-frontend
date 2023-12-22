@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
 import { Space } from '../../theme';
 
@@ -27,6 +27,7 @@ export interface BoxProps extends Paddings, Margins {
   m?: Space;
   mx?: Space;
   my?: Space;
+  style?: CSSProperties;
 }
 
 const StyledBox = styled.div<{
@@ -84,7 +85,7 @@ export const Box = ({
   };
 
   return (
-    <StyledBox {...paddingsAndMargins} {...props} as={component}>
+    <StyledBox {...props} {...paddingsAndMargins} as={component}>
       {children}
     </StyledBox>
   );
