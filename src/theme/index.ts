@@ -20,6 +20,7 @@ const variables = {
     xsSize: '499px',
   },
   spacings: {
+    s2: '0.2rem',
     s4: '0.4rem',
     s8: '0.8rem',
     s12: '1.2rem',

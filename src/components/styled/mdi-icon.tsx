@@ -1,12 +1,12 @@
 import React from 'react';
-import { DefaultTheme, useTheme } from 'styled-components';
+import styled, { DefaultTheme, useTheme } from 'styled-components';
 
 import * as mdiIcons from '@mdi/js';
 import Icon from '@mdi/react';
 import { Box, BoxProps } from './box';
 import { Space } from '../../theme';
 
-type IconColor = keyof DefaultTheme['colors']['icons'];
+export type IconColor = keyof DefaultTheme['colors']['icons'];
 export type IconType = keyof typeof mdiIcons;
 
 interface MdiIconProps {
@@ -15,18 +15,25 @@ interface MdiIconProps {
   color?: IconColor;
 }
 
+const StyledIcon = styled(Icon)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+`;
+
 export const MdiIcon = ({
   type,
-  color = 'primary',
+  color,
   size = 's24',
   ...props
 }: MdiIconProps & BoxProps) => {
   const { spacings, colors } = useTheme();
   return (
     <Box {...props}>
-      <Icon
+      <StyledIcon
         size={spacings[size]}
-        color={colors.icons[color]}
+        color={color && colors.icons[color]}
         path={mdiIcons[type]}
       />
     </Box>

@@ -11,8 +11,7 @@ const StyledNav = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: ${({ theme }) => theme.spacings.s24}
-    ${({ theme }) => theme.spacings.s48};
+  padding: ${({ theme }) => theme.spacings.s24} 0;
 `;
 
 export const TopNav = () => {
