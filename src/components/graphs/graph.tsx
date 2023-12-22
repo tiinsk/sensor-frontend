@@ -1,7 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { GraphSizeWrapper } from './graph-size-wrapper';
 import { Reading } from '../../api/types';
-import { TimeFrameOptions, TimePeriod } from '../selectors/time-frame-selector';
+import {
+  TimeFrameOptions,
+  TimePeriod,
+  ValueType,
+} from '../selectors/time-frame-selector';
 import { useGraphSizeContext } from './graph-size-context';
 import * as d3 from 'd3';
 import { useTheme } from 'styled-components';
@@ -26,9 +30,17 @@ interface GraphProps {
   deviceId: string;
   data: Reading[];
   options: TimeFrameOptions;
+  valueType: ValueType;
+  showAxis?: boolean;
 }
 
-export const Graph = ({ deviceId, data, options }: GraphProps) => {
+export const Graph = ({
+  deviceId,
+  data,
+  options,
+  valueType,
+  showAxis = true,
+}: GraphProps) => {
   const { colors } = useTheme();
   const gx = useRef<SVGGElement>(null);
   const { width, height } = useGraphSizeContext();
@@ -55,7 +67,7 @@ export const Graph = ({ deviceId, data, options }: GraphProps) => {
 
   const yColor = d3.scaleLinear([MIN_TEMP, MAX_TEMP], [1, 0]);
   const colorInterpolation = d3.interpolateRgbBasis(
-    colors.graphs.lines.temperature
+    colors.graphs.lines[valueType]
   );
 
   const steps = d3.ticks(max, min, 10);
@@ -89,21 +101,23 @@ export const Graph = ({ deviceId, data, options }: GraphProps) => {
   }, [gx, x]);
 
   return (
-    <GraphSizeWrapper>
+    <>
       <svg width={width} height={height}>
-        <g
-          ref={gx}
-          strokeWidth={0}
-          transform={`translate(0,${height - margins.bottom})`}
-        />
+        {showAxis && (
+          <g
+            ref={gx}
+            strokeWidth={0}
+            transform={`translate(0,${height - margins.bottom})`}
+          />
+        )}
         <path
           fill="none"
           strokeWidth="1.5"
           d={line(data) || undefined}
-          stroke={`url(#line-gradient-${deviceId})`}
+          stroke={`url(#line-gradient-${deviceId}-${valueType})`}
         />
         <path
-          fill={`url(#area-gradient-${deviceId})`}
+          fill={`url(#area-gradient-${deviceId}-${valueType})`}
           d={area(data) || undefined}
         />
         <g fill="currentColor">
@@ -120,7 +134,7 @@ export const Graph = ({ deviceId, data, options }: GraphProps) => {
           ))}
         </g>
         <linearGradient
-          id={`line-gradient-${deviceId}`}
+          id={`line-gradient-${deviceId}-${valueType}`}
           gradientUnits="userSpaceOnUse"
           x1={0}
           x2={0}
@@ -129,14 +143,14 @@ export const Graph = ({ deviceId, data, options }: GraphProps) => {
         >
           {colorSteps.map((colorStep, i) => (
             <stop
-              key={colorStep.color}
+              key={i}
               offset={`${colorStep.offset}`}
               stopColor={colorStep.color}
             />
           ))}
         </linearGradient>
         <linearGradient
-          id={`area-gradient-${deviceId}`}
+          id={`area-gradient-${deviceId}-${valueType}`}
           gradientUnits="userSpaceOnUse"
           x1={0}
           x2={0}
@@ -145,7 +159,7 @@ export const Graph = ({ deviceId, data, options }: GraphProps) => {
         >
           {colorSteps.map((colorStep, i) => (
             <stop
-              key={colorStep.color}
+              key={i}
               offset={`${colorStep.offset}`}
               stopColor={colorStep.color}
               stopOpacity={colorStep.opacity}
@@ -153,6 +167,6 @@ export const Graph = ({ deviceId, data, options }: GraphProps) => {
           ))}
         </linearGradient>
       </svg>
-    </GraphSizeWrapper>
+    </>
   );
 };

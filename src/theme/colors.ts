@@ -158,6 +158,8 @@ export const lightColors = {
         '#00AEF9',
         '#2718CB',
       ],
+      humidity: [primitiveColors.water['100'], primitiveColors.water['100']],
+      pressure: [primitiveColors.air['100'], primitiveColors.air['100']],
     },
   },
   shadows: {
@@ -251,6 +253,8 @@ export const darkColors: ColorTheme = {
         '#00AEF9',
         '#2718CB',
       ],
+      humidity: [primitiveColors.water['100'], primitiveColors.water['100']],
+      pressure: [primitiveColors.air['100'], primitiveColors.air['100']],
     },
   },
   shadows: {

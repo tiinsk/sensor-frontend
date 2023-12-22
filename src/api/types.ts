@@ -1,3 +1,5 @@
+import { ValueType } from '../components/selectors/time-frame-selector';
+
 export interface ArrayResponse<DataType> {
   count: number;
   limit: number;
@@ -62,4 +64,12 @@ export interface Reading extends ReadingValue {
 export interface ReadingsResponse {
   id: string;
   values: Reading[];
+}
+
+export interface DeviceReadingResponse {
+  id: string;
+  values: {
+    type: ValueType;
+    values: Reading[];
+  }[];
 }

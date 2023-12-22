@@ -148,6 +148,7 @@ export const DeviceCard = ({
               deviceId={latestData.id}
               options={options}
               data={readingsData}
+              valueType="temperature"
             />
           )}
         </GraphSizeWrapper>

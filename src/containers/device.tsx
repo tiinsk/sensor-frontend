@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/routes';
+import { Reading as ReadingType } from '../api/types';
 import { useParams } from 'react-router-dom';
-import {
-  LatestReadingResponse,
-  Statistics,
-  StatisticsResponse,
-} from '../api/types';
+import { LatestReadingResponse, Statistics } from '../api/types';
 import { Flex } from '../components/styled/flex';
 import { H2 } from '../components/styled/typography';
 import { Reading } from '../components/styled/readings';
@@ -14,20 +11,41 @@ import { DateTime } from 'luxon';
 import { getTimeAgoString, getUTCTime } from '../utils/datetime';
 import { AverageCard } from '../components/cards/average-card';
 import {
+  getDefaultTimeLevel,
   getEndTime,
   getStartTime,
   TimeFrameOptions,
   TimeFrameSelector,
 } from '../components/selectors/time-frame-selector';
 import { Box } from '../components/styled/box';
+import styled from 'styled-components';
+import { Graph } from '../components/graphs/graph';
+import { GraphSizeWrapper } from '../components/graphs/graph-size-wrapper';
+
+const StyledGraphCard = styled.div`
+  border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
+  border-bottom: none;
+  background-color: ${({ theme }) => theme.colors.background.primary};
+  border-radius: ${({ theme }) => theme.spacings.s4};
+  box-shadow: ${({ theme }) => theme.colors.shadows.boxShadow};
+
+  margin-bottom: ${({ theme }) => theme.spacings.s16};
+`;
+
+const StyledGraphContainer = styled.div`
+  height: 200px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.borders.secondary};
+`;
+
+const DEFAULT_PERIOD = 'month';
 
 export const Device = () => {
   const timeNow = new Date().toISOString();
   const [options, setOptions] = useState<TimeFrameOptions>({
-    endTime: getEndTime(timeNow, 'day')!,
-    startTime: getStartTime(timeNow, 'day')!,
-    timePeriod: 'day',
-    level: 'minute',
+    endTime: getEndTime(timeNow, DEFAULT_PERIOD)!,
+    startTime: getStartTime(timeNow, DEFAULT_PERIOD)!,
+    timePeriod: DEFAULT_PERIOD,
+    level: getDefaultTimeLevel(DEFAULT_PERIOD),
     showMinAndMax: true,
   });
   const [latestData, setLatestData] = useState<
@@ -39,6 +57,10 @@ export const Device = () => {
     week: Statistics | undefined;
     month: Statistics | undefined;
   }>({ day: undefined, week: undefined, month: undefined });
+
+  const [readingData, setReadingData] = useState<
+    { [type: string]: ReadingType[] | undefined } | undefined
+  >(undefined);
 
   const { id } = useParams();
   const fetchData = async () => {
@@ -88,6 +110,14 @@ export const Device = () => {
         types: ['temperature', 'humidity', 'pressure'],
         level: options.level,
       });
+
+      const readingsByType = readings?.values.reduce<{
+        [type: string]: ReadingType[] | undefined;
+      }>((acc, cur) => {
+        acc[cur.type] = cur.values;
+        return acc;
+      }, {});
+      setReadingData(readingsByType);
     }
   };
 
@@ -164,6 +194,46 @@ export const Device = () => {
           onChange={newOptions => setOptions(newOptions)}
         />
       </Box>
+      <StyledGraphCard>
+        <StyledGraphContainer>
+          {id && readingData?.temperature && (
+            <GraphSizeWrapper>
+              <Graph
+                deviceId={id}
+                data={readingData.temperature}
+                options={options}
+                valueType="temperature"
+                showAxis={false}
+              />
+            </GraphSizeWrapper>
+          )}
+        </StyledGraphContainer>
+        <StyledGraphContainer>
+          {id && readingData?.humidity && (
+            <GraphSizeWrapper>
+              <Graph
+                deviceId={id}
+                data={readingData.humidity}
+                options={options}
+                valueType="humidity"
+                showAxis={false}
+              />
+            </GraphSizeWrapper>
+          )}
+        </StyledGraphContainer>
+        <StyledGraphContainer>
+          {id && readingData?.pressure && (
+            <GraphSizeWrapper>
+              <Graph
+                deviceId={id}
+                data={readingData.pressure}
+                options={options}
+                valueType="pressure"
+              />
+            </GraphSizeWrapper>
+          )}
+        </StyledGraphContainer>
+      </StyledGraphCard>
     </div>
   );
 };

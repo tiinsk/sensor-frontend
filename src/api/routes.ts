@@ -1,5 +1,6 @@
 import {
   ArrayResponse,
+  DeviceReadingResponse,
   DeviceResponse,
   LatestReadingResponse,
   ReadingsResponse,
@@ -49,7 +50,7 @@ const routes = {
     deviceId,
     ...params
   }: TimeParams & { deviceId: string; types: ValueType[]; level: TimeLevel }) =>
-    api.get({
+    api.get<DeviceReadingResponse>({
       route: `/devices/${deviceId}/readings`,
       params,
     }),
