@@ -1,37 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import styled, { css, DefaultTheme } from 'styled-components';
+import React from 'react';
+import styled from 'styled-components';
 import { Caption2 } from '../styled/typography';
 import { Flex } from '../styled/flex';
 import { Button } from '../styled/buttons';
 import { Toggle } from '../styled/inputs/toggle';
 import { useThemeContext } from '../../contexts/theme-context';
+import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
 
-const WIDTH = '300px';
-
-const OpenStyle = ({ theme }: { theme: DefaultTheme }) => css`
-  right: 0;
-`;
-
-const StyledNav = styled.div<{ $isOpen: boolean }>`
-  position: absolute;
-  top: 0;
-  right: -${WIDTH};
-  bottom: 0;
-  width: ${WIDTH};
-  z-index: ${({ theme }) => theme.zIndex.menus};
-
-  background-color: ${({ theme }) => theme.colors.background.primary};
-  box-shadow: ${({ theme }) => theme.colors.shadows.boxShadow};
-
+const StyledNav = styled.div`
   display: flex;
   flex-direction: column;
 
   padding: ${({ theme }) => theme.spacings.s24}
     ${({ theme }) => theme.spacings.s24};
-
-  transition: right 0.1s ease-in;
-
-  ${({ $isOpen }) => $isOpen && OpenStyle};
 `;
 
 const ThemeSection = styled.div`
@@ -45,59 +26,27 @@ const ThemeSection = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.borders.secondary};
 `;
 
-const MobileOnlyButton = styled(Button)`
-  display: none;
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    display: flex;
-  }
-`;
-
-const MobileHiddenButton = styled(Button)`
-  display: flex;
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    display: none;
-  }
-`;
-
-interface RightNavProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export const RightNav = ({ isOpen, onClose }: RightNavProps) => {
+export const RightNav = ({ isMobile }: { isMobile: boolean }) => {
   const { theme, changeTheme } = useThemeContext();
-  const [isHidden, setHidden] = useState(!isOpen);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setTimeout(() => {
-        setHidden(true);
-      }, 200);
-    } else {
-      setHidden(false);
-    }
-  }, [isOpen]);
+  const { setOpen } = useRightDrawerContext();
 
   return (
-    <StyledNav
-      $isOpen={isOpen}
-      aria-hidden={isHidden}
-      style={{ visibility: isHidden ? 'hidden' : 'visible' }}
-    >
+    <StyledNav>
       <Flex justifyContent="flex-end" mb="s16">
-        <MobileHiddenButton
-          iconLeft="mdiChevronRight"
-          text="Settings"
-          variant="basic"
-          onClick={onClose}
-        />
-        <MobileOnlyButton
-          iconLeft="mdiChevronRight"
-          variant="basic"
-          onClick={onClose}
-        />
+        {isMobile ? (
+          <Button
+            iconLeft="mdiChevronRight"
+            variant="basic"
+            onClick={() => setOpen(false)}
+          />
+        ) : (
+          <Button
+            iconLeft="mdiChevronRight"
+            text="Settings"
+            variant="basic"
+            onClick={() => setOpen(false)}
+          />
+        )}
       </Flex>
       <ThemeSection>
         <Caption2>Theme</Caption2>
@@ -109,12 +58,14 @@ export const RightNav = ({ isOpen, onClose }: RightNavProps) => {
         />
       </ThemeSection>
       <Flex flexDirection="column" alignItems="flex-start" mt="s24">
-        <MobileOnlyButton
-          iconLeft="mdiHomeMapMarker"
-          text="Map"
-          variant="basic"
-          onClick={() => {}}
-        />
+        {isMobile && (
+          <Button
+            iconLeft="mdiHomeMapMarker"
+            text="Map"
+            variant="basic"
+            onClick={() => {}}
+          />
+        )}
         <Button
           iconLeft="mdiShieldAccount"
           text="Admin Settings"

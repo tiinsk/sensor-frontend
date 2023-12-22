@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { PageTitle } from '../styled/typography';
 import { Link } from 'react-router-dom';
 import { Flex } from '../styled/flex';
 import { LinkButton } from '../styled/buttons/link';
-import { Button } from '../styled/buttons';
 import { RightNav } from './right-nav';
+import { RightDrawer } from '../styled/menus/right-drawer';
 
 const StyledNav = styled.nav`
   display: flex;
@@ -22,7 +22,7 @@ const MobileHiddenLinkButton = styled(LinkButton)`
   }
 `;
 
-const MobileHiddenButton = styled(Button)`
+const MobileHiddenRightDrawer = styled(RightDrawer)`
   display: flex;
 
   ${({ theme }) => theme.mediaQueries.sm} {
@@ -30,7 +30,7 @@ const MobileHiddenButton = styled(Button)`
   }
 `;
 
-const MobileOnlyButton = styled(Button)`
+const MobileRightDrawer = styled(RightDrawer)`
   display: none;
 
   ${({ theme }) => theme.mediaQueries.sm} {
@@ -39,8 +39,6 @@ const MobileOnlyButton = styled(Button)`
 `;
 
 export const TopNav = () => {
-  const [isRightNavOpen, setRightNavOpen] = useState(false);
-
   return (
     <>
       <StyledNav>
@@ -54,23 +52,25 @@ export const TopNav = () => {
             variant="basic"
             to="/map"
           />
-          <MobileHiddenButton
-            iconLeft="mdiCogOutline"
-            text="Settings"
-            variant="basic"
-            onClick={() => setRightNavOpen(!isRightNavOpen)}
-          />
-          <MobileOnlyButton
-            iconLeft="mdiMenu"
-            variant="basic"
-            onClick={() => setRightNavOpen(!isRightNavOpen)}
-          />
+          <MobileHiddenRightDrawer
+            buttonProps={{
+              iconLeft: 'mdiCogOutline',
+              text: 'Settings',
+              variant: 'basic',
+            }}
+          >
+            <RightNav isMobile={false} />
+          </MobileHiddenRightDrawer>
+          <MobileRightDrawer
+            buttonProps={{
+              iconLeft: 'mdiMenu',
+              variant: 'basic',
+            }}
+          >
+            <RightNav isMobile={true} />
+          </MobileRightDrawer>
         </Flex>
       </StyledNav>
-      <RightNav
-        isOpen={isRightNavOpen}
-        onClose={() => setRightNavOpen(false)}
-      />
     </>
   );
 };
