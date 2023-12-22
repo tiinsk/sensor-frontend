@@ -28,6 +28,19 @@ const formatAxes = (date: Date, timePeriod: TimePeriod) => {
   }
 };
 
+const axisTicks = (timePeriod: TimePeriod) => {
+  switch (timePeriod) {
+    case 'day':
+      return d3.timeHour.every(1);
+    case 'week':
+      return d3.timeDay.every(1);
+    case 'month':
+      return d3.timeDay.every(1);
+    case 'year':
+      return d3.timeMonth.every(1);
+  }
+};
+
 interface GraphProps {
   deviceId: string;
   data: Reading[];
@@ -113,6 +126,7 @@ export const Graph = ({
       void d3.select(gx.current).call(
         d3
           .axisBottom<Date>(x)
+          .tickArguments([axisTicks(options.timePeriod)])
           .tickFormat((d, i) => formatAxes(d, options.timePeriod))
           .tickSize(0)
       );
