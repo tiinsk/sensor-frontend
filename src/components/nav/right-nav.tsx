@@ -6,6 +6,8 @@ import { Button } from '../styled/buttons';
 import { Toggle } from '../styled/inputs/toggle';
 import { useThemeContext } from '../../contexts/theme-context';
 import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
+import { removeJWTToken } from '../../utils/auth';
+import { useNavigate } from 'react-router-dom';
 
 const StyledNav = styled.div`
   display: flex;
@@ -27,8 +29,14 @@ const ThemeSection = styled.div`
 `;
 
 export const RightNav = ({ isMobile }: { isMobile: boolean }) => {
+  const navigate = useNavigate();
   const { theme, changeTheme } = useThemeContext();
   const { setOpen } = useRightDrawerContext();
+
+  const onLogout = () => {
+    removeJWTToken();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <StyledNav>
@@ -76,7 +84,7 @@ export const RightNav = ({ isMobile }: { isMobile: boolean }) => {
           iconLeft="mdiLogoutVariant"
           text="Logout"
           variant="basic"
-          onClick={() => {}}
+          onClick={onLogout}
         />
       </Flex>
     </StyledNav>
