@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Reading } from '../../api/types';
 import {
-  getEndDateFromNow,
-  getStartTime,
   TimeFrameOptions,
   TimePeriod,
   ValueType,
@@ -12,6 +10,7 @@ import * as d3 from 'd3';
 import styled, { useTheme } from 'styled-components';
 import { DateTime } from 'luxon';
 import { GraphTooltip } from '../styled/tooltips/graph-tooltip';
+import { getEndTime, getStartTime } from '../selectors/time-frames';
 
 const MIN_TEMP = -30;
 const MAX_TEMP = 90;
@@ -96,7 +95,7 @@ export const Graph = ({
   const gx = useRef<SVGGElement>(null);
   const { width, height } = useGraphSizeContext();
 
-  const endTime = getEndDateFromNow(options.offsetFromNow, options.timePeriod)!;
+  const endTime = getEndTime(options.offsetFromNow, options.timePeriod)!;
   const startTime = getStartTime(options.offsetFromNow, options.timePeriod)!;
 
   const max = Math.max(...data?.map(r => r.max || 0));

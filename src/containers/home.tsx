@@ -9,17 +9,15 @@ import {
 import styled from 'styled-components';
 import {
   DEFAULT_PERIOD,
-  getEndDateFromNow,
-  getDefaultTimeLevel,
-  getStartTime,
   TimeFrameOptions,
   TimeFrameSelector,
-  getGraphStartTime,
-  getGraphEndDateFromNow,
 } from '../components/selectors/time-frame-selector';
-import { getUTCTime } from '../utils/datetime';
 import { Flex } from '../components/styled/flex';
 import { GraphLoading } from '../assets/loading/graph-loading';
+import {
+  getDefaultTimeLevel,
+  getTimeFrame,
+} from '../components/selectors/time-frames';
 
 const CARD_MIN_WIDTH = '450px';
 
@@ -90,25 +88,16 @@ export const Home = () => {
   };
 
   const fetchReadings = async () => {
-    const endTime = getGraphEndDateFromNow(
-      options.offsetFromNow,
-      options.timePeriod
-    )!;
-    const startTime = getGraphStartTime(
-      options.offsetFromNow,
-      options.timePeriod
-    )!;
+    const { graphStartTime, graphEndTime } = getTimeFrame(options);
     setLoadingReadings(true);
-    const startUTC = getUTCTime(startTime);
-    const endUTC = getUTCTime(endTime);
     const [statisticsResult, readingsResult] = await Promise.all([
       api.getAllStatistics({
-        startTime: startUTC,
-        endTime: endUTC,
+        startTime: graphStartTime,
+        endTime: graphEndTime,
       }),
       api.getAllReadings({
-        startTime: startUTC,
-        endTime: endUTC,
+        startTime: graphStartTime,
+        endTime: graphEndTime,
         type: options.valueType || 'temperature',
         level: options.level,
       }),

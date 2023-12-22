@@ -91,17 +91,13 @@ const MobileRightDrawer = styled(RightDrawer)`
   }
 `;
 
-const getFormattedDateString = (
-  offsetFromNow: number,
-  timePeriod: TimePeriod
-) => {
-  const endTime = getEndDateFromNow(offsetFromNow, timePeriod)!;
-  switch (timePeriod) {
+const getFormattedDateString = (options: TimeFrameOptions) => {
+  const { endTime, startTime } = getTimeFrame(options);
+  switch (options.timePeriod) {
     case 'day':
       return DateTime.fromISO(endTime).toFormat('ccc dd.LL.yy');
     case 'week':
-      const startDate = getStartTime(offsetFromNow, timePeriod);
-      const start = DateTime.fromISO(startDate!).toFormat('ccc dd.LL.');
+      const start = DateTime.fromISO(startTime).toFormat('ccc dd.LL.');
       const end = DateTime.fromISO(endTime).toFormat('dd.LL.yy');
       return `${start} - ${end}`;
     case 'month':
@@ -201,9 +197,7 @@ export const TimeFrameSelector = ({
           />
         </Flex>
         <TitleWrapper>
-          <H2 mr="s16">
-            {getFormattedDateString(options.offsetFromNow, options.timePeriod)}
-          </H2>
+          <H2 mr="s16">{getFormattedDateString(options)}</H2>
           <MobileRightDrawer
             buttonProps={{
               iconLeft: 'mdiTuneVertical',

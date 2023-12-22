@@ -8,23 +8,24 @@ import { H2 } from '../components/styled/typography';
 import { Reading } from '../components/styled/readings';
 import { Tag } from '../components/styled/tag';
 import { DateTime } from 'luxon';
-import { getTimeAgoString, getUTCTime } from '../utils/datetime';
+import { getTimeAgoString } from '../utils/datetime';
 import { AverageCard } from '../components/cards/average-card';
 import {
   DEFAULT_PERIOD,
-  getDefaultTimeLevel,
-  getStartTime,
   TimeFrameOptions,
   TimeFrameSelector,
-  getEndTime,
-  getGraphStartTime,
-  getGraphEndDateFromNow,
 } from '../components/selectors/time-frame-selector';
 import { Box } from '../components/styled/box';
 import styled from 'styled-components';
 import { Graph } from '../components/graphs/graph';
 import { GraphSizeWrapper } from '../components/graphs/graph-size-wrapper';
 import { GraphLoading } from '../assets/loading/graph-loading';
+import {
+  getDefaultTimeLevel,
+  getEndTime,
+  getStartTime,
+  getTimeFrame,
+} from '../components/selectors/time-frames';
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -106,18 +107,18 @@ export const Device = () => {
         await Promise.all([
           api.getDeviceLatestReadings(id),
           api.getAllDeviceStatistics({
-            startTime: getUTCTime(getStartTime(0, 'day')!),
-            endTime: getUTCTime(getEndTime(0, 'day')!),
+            startTime: getStartTime(0, 'day')!,
+            endTime: getEndTime(0, 'day')!,
             deviceId: id,
           }),
           api.getAllDeviceStatistics({
-            startTime: getUTCTime(getStartTime(0, 'week')!),
-            endTime: getUTCTime(getEndTime(0, 'week')!),
+            startTime: getStartTime(0, 'week')!,
+            endTime: getEndTime(0, 'week')!,
             deviceId: id,
           }),
           api.getAllDeviceStatistics({
-            startTime: getUTCTime(getStartTime(0, 'month')!),
-            endTime: getUTCTime(getEndTime(0, 'month')!),
+            startTime: getStartTime(0, 'month')!,
+            endTime: getEndTime(0, 'month')!,
             deviceId: id,
           }),
         ]);
@@ -136,21 +137,12 @@ export const Device = () => {
 
   const fetchReadings = async () => {
     if (id) {
-      const endTime = getGraphEndDateFromNow(
-        options.offsetFromNow,
-        options.timePeriod
-      )!;
-      const startTime = getGraphStartTime(
-        options.offsetFromNow,
-        options.timePeriod
-      )!;
-      const startUTC = getUTCTime(startTime);
-      const endUTC = getUTCTime(endTime);
+      const { graphStartTime, graphEndTime } = getTimeFrame(options);
 
       const readings = await api.getDeviceReadings({
         deviceId: id,
-        startTime: startUTC,
-        endTime: endUTC,
+        startTime: graphStartTime,
+        endTime: graphEndTime,
         types: ['temperature', 'humidity', 'pressure'],
         level: options.level,
       });
