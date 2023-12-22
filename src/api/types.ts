@@ -18,7 +18,7 @@ export type DeviceLocation = 'inside' | 'outside';
 export type Sensor = 'humidity' | 'temperature' | 'pressure';
 
 export interface LatestReadingResponse {
-  id: number;
+  id: string;
   name: string;
   location_type: DeviceLocation;
   sensor_info: Sensor[];

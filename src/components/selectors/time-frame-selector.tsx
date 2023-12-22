@@ -64,7 +64,7 @@ export const getDefaultTimeLevel = (timePeriod: TimePeriod): TimeLevel => {
     case 'week':
       return 'day';
     case 'month':
-      return 'week';
+      return 'day';
     case 'year':
       return 'month';
   }
@@ -145,7 +145,7 @@ export const TimeFrameSelector = ({
           onSelect={(value: string) =>
             onOptionsChange({ timePeriod: value as TimePeriod })
           }
-          initialValue="day"
+          initialValue={options.timePeriod}
           options={[
             { value: 'day', label: 'Day' },
             { value: 'week', label: 'Week' },
@@ -159,7 +159,7 @@ export const TimeFrameSelector = ({
             onSelect={(value: string) =>
               onOptionsChange({ valueType: value as ValueType })
             }
-            initialValue="temperature"
+            initialValue={options.valueType}
             options={[
               { value: 'temperature', label: 'Temperature' },
               { value: 'humidity', label: 'Humidity' },
@@ -173,7 +173,7 @@ export const TimeFrameSelector = ({
             onSelect={(value: string) =>
               onOptionsChange({ level: value as TimeLevel })
             }
-            initialValue="hour"
+            initialValue={options.level}
             options={[
               { value: 'hour', label: 'Hour' },
               { value: 'day', label: 'Day' },
