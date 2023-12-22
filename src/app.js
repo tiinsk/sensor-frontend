@@ -18,6 +18,7 @@ import api from './api/routes';
 import { isLoggedIn } from './utils/auth';
 import { GlobalStyle } from './theme/global-style';
 import { OldTheme } from './theme/old-theme';
+import { TopNav } from './components/nav/top-nav';
 
 WebFont.load({
   google: {
@@ -103,6 +104,7 @@ const LoggedInRoutes = () => {
 
   return (
     <>
+      <TopNav />
       <Routes>
         <Route path="/" element={<Home />} />
         {/*<Route path="devices/:id" Component={Device} />*/}
