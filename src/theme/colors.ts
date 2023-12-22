@@ -140,7 +140,10 @@ export const lightColors = {
       },
     },
   },
-} as const;
+  shadows: {
+    boxShadow: `0px 4px 30px 0px rgba(0, 0, 0, 0.05)`,
+  },
+};
 
 export type ColorTheme = typeof lightColors;
 
@@ -210,4 +213,7 @@ export const darkColors: ColorTheme = {
       },
     },
   },
-} as const;
+  shadows: {
+    boxShadow: `0px 4px 30px 0px rgba(255, 255, 255, 0.06)`,
+  },
+};

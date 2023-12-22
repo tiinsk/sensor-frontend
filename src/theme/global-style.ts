@@ -23,5 +23,6 @@ export const GlobalStyle = createGlobalStyle`
   }
   a {
     color: ${({ theme }) => theme.colors.typography.primary};
+    text-decoration: none;
   } 
 `;
