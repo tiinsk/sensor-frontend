@@ -8,6 +8,7 @@ import { DateTime, DateTimeUnit } from 'luxon';
 import React, { PropsWithChildren } from 'react';
 import { RightDrawer } from '../styled/menus/right-drawer';
 import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
+import { getDefaultTimeLevel, getTimeFrame } from './time-frames';
 
 export const DEFAULT_PERIOD = 'month';
 
@@ -89,124 +90,6 @@ const MobileRightDrawer = styled(RightDrawer)`
     display: flex;
   }
 `;
-
-const getTimePeriodMaxUnitAmount = (timePeriod: DateTimeUnit) => {
-  switch (timePeriod) {
-    case 'day':
-      return { hours: 24 };
-    case 'week':
-      return { days: 7 };
-    case 'month':
-      return { days: 31 };
-    case 'year':
-      return { months: 12 };
-    default:
-      return { days: 0 };
-  }
-};
-
-const addTimePeriod = (
-  date: string,
-  timePeriod: TimePeriod,
-  addValue: number
-) => {
-  return DateTime.fromISO(date)
-    .plus({
-      year: timePeriod === 'year' ? addValue : 0,
-      month: timePeriod === 'month' ? addValue : 0,
-      week: timePeriod === 'week' ? addValue : 0,
-      day: timePeriod === 'day' ? addValue : 0,
-    })
-    .toUTC()
-    .toISO();
-};
-
-export const getStartTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
-  const endTime = getEndDateFromNow(offsetFromNow, timePeriod)!;
-  const endDateTime = DateTime.fromISO(endTime);
-  const endOfPeriod = endDateTime.endOf(timePeriod);
-
-  const isFullTimePeriod = endDateTime
-    .toUTC()
-    .hasSame(endOfPeriod.toUTC(), 'minute');
-
-  if (offsetFromNow === 0 && !isFullTimePeriod) {
-    return DateTime.now().minus(getTimePeriodMaxUnitAmount(timePeriod)).toISO();
-  }
-  return DateTime.fromISO(endTime).startOf(timePeriod).toISO();
-};
-
-export const getGraphStartTime = (
-  offsetFromNow: number,
-  timePeriod: TimePeriod
-) => {
-  const startTime = getStartTime(offsetFromNow, timePeriod)!;
-
-  return DateTime.fromISO(startTime)
-    .minus({
-      months: timePeriod === 'year' ? 1 : 0,
-      days: ['month', 'week'].includes(timePeriod) ? 1 : 0,
-      hours: timePeriod === 'day' ? 30 : 0,
-    })
-    .toUTC()
-    .toISO();
-};
-
-export const getDefaultTimeLevel = (
-  timePeriod: TimePeriod = DEFAULT_PERIOD
-): TimeLevel => {
-  switch (timePeriod) {
-    case 'day':
-      return '30 minutes';
-    case 'week':
-      return 'day';
-    case 'month':
-      return 'day';
-    case 'year':
-      return 'month';
-  }
-};
-
-export const getEndTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
-  const endTime = addTimePeriod(
-    DateTime.now().toISO()!,
-    timePeriod,
-    offsetFromNow
-  )!;
-  return DateTime.fromISO(endTime).endOf(timePeriod).toISO();
-};
-
-export const getEndDateFromNow = (
-  offsetFromNow: number,
-  timePeriod: TimePeriod
-) => {
-  if (offsetFromNow === 0) {
-    return DateTime.now().toUTC().toISO();
-  }
-
-  const currentPeriodEnd = getEndTime(0, timePeriod)!;
-  return addTimePeriod(currentPeriodEnd, timePeriod, offsetFromNow);
-};
-
-export const getGraphEndDateFromNow = (
-  offsetFromNow: number,
-  timePeriod: TimePeriod
-) => {
-  const endOfPeriod = getEndDateFromNow(offsetFromNow, timePeriod)!;
-
-  if (offsetFromNow === 0) {
-    return endOfPeriod;
-  }
-
-  return DateTime.fromISO(endOfPeriod)
-    .plus({
-      months: timePeriod === 'year' ? 1 : 0,
-      days: ['month', 'week'].includes(timePeriod) ? 1 : 0,
-      hours: timePeriod === 'day' ? 30 : 0,
-    })
-    .toUTC()
-    .toISO();
-};
 
 const getFormattedDateString = (
   offsetFromNow: number,
