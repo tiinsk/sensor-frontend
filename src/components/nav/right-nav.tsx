@@ -66,20 +66,20 @@ export const RightNav = ({ isMobile }: { isMobile: boolean }) => {
         />
       </ThemeSection>
       <Flex flexDirection="column" alignItems="flex-start" mt="s24">
-        {isMobile && (
+        {/*TODO {isMobile && (
           <Button
             iconLeft="mdiHomeMapMarker"
             text="Map"
             variant="basic"
             onClick={() => {}}
           />
-        )}
-        <Button
+        )}*/}
+        {/*TODO <Button
           iconLeft="mdiShieldAccount"
           text="Admin Settings"
           variant="basic"
           onClick={() => {}}
-        />
+        />*/}
         <Button
           iconLeft="mdiLogoutVariant"
           text="Logout"
