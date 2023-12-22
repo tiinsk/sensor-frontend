@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import { Reading } from '../styled/readings';
 import { Flex } from '../styled/flex';
 import { Link } from 'react-router-dom';
+import { TimeFrameOptions } from '../selectors/time-frame-selector';
 
 const StyledDeviceCard = styled(Link)`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
@@ -42,8 +43,10 @@ const BottomCard = styled.div`
 
 export const DeviceCard = ({
   latestData,
+  options,
 }: {
   latestData: LatestReadingResponse;
+  options: TimeFrameOptions;
 }) => {
   const timeDiff = Math.abs(
     DateTime.fromISO(latestData.created_at).diffNow('minutes').minutes
@@ -73,7 +76,9 @@ export const DeviceCard = ({
             <Reading value={latestData.temperature} unit="temperature" />
           </BorderedFlex>
           <Flex pt="s16" pl="s16">
-            <Caption2Light>Day</Caption2Light>
+            <Caption2Light style={{ textTransform: 'capitalize' }}>
+              {options.timePeriod}
+            </Caption2Light>
           </Flex>
           <Flex flexDirection="column" pt="s16"></Flex>
           <Flex flexDirection="column" pt="s16" alignItems="center"></Flex>

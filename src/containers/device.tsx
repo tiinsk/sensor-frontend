@@ -9,10 +9,24 @@ import { Tag } from '../components/styled/tag';
 import { DateTime } from 'luxon';
 import { getTimeAgoString } from '../utils/datetime';
 import { AverageCard } from '../components/cards/average-card';
-import { TimeFrameSelector } from '../components/selectors/time-frame-selector';
+import {
+  getEndTime,
+  getStartTime,
+  TimeFrameOptions,
+  TimeFrameSelector,
+} from '../components/selectors/time-frame-selector';
 import { Box } from '../components/styled/box';
 
 export const Device = () => {
+  const timeNow = new Date().toISOString();
+  const [options, setOptions] = useState<TimeFrameOptions>({
+    endTime: getEndTime(timeNow, 'day')!,
+    startTime: getStartTime(timeNow, 'day')!,
+    timePeriod: 'day',
+    valueType: 'temperature',
+    level: 'hour',
+    showMinAndMax: true,
+  });
   const [latestData, setLatestData] = useState<
     LatestReadingResponse | undefined
   >(undefined);
@@ -114,7 +128,10 @@ export const Device = () => {
         />
       </Flex>
       <Box mt="s16">
-        <TimeFrameSelector onChange={() => {}} />
+        <TimeFrameSelector
+          options={options}
+          onChange={newOptions => setOptions(newOptions)}
+        />
       </Box>
     </div>
   );

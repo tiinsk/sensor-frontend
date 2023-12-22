@@ -3,7 +3,12 @@ import api from '../api/routes';
 import { DeviceCard } from '../components/cards/device-card';
 import { LatestReadingResponse } from '../api/types';
 import styled from 'styled-components';
-import { TimeFrameSelector } from '../components/selectors/time-frame-selector';
+import {
+  getEndTime,
+  getStartTime,
+  TimeFrameOptions,
+  TimeFrameSelector,
+} from '../components/selectors/time-frame-selector';
 
 const CardGrid = styled.div`
   display: grid;
@@ -12,6 +17,16 @@ const CardGrid = styled.div`
 `;
 
 export const Home = () => {
+  const timeNow = new Date().toISOString();
+  const [options, setOptions] = useState<TimeFrameOptions>({
+    endTime: getEndTime(timeNow, 'day')!,
+    startTime: getStartTime(timeNow, 'day')!,
+    timePeriod: 'day',
+    valueType: 'temperature',
+    level: 'hour',
+    showMinAndMax: true,
+  });
+
   const [latestData, setLatestData] = useState<LatestReadingResponse[]>([]);
 
   const fetchData = async () => {
@@ -28,10 +43,17 @@ export const Home = () => {
 
   return (
     <>
-      <TimeFrameSelector onChange={() => {}} />
+      <TimeFrameSelector
+        options={options}
+        onChange={newOptions => setOptions(newOptions)}
+      />
       <CardGrid>
         {latestData?.map(item => (
-          <DeviceCard key={item.temperature} latestData={item} />
+          <DeviceCard
+            key={item.temperature}
+            options={options}
+            latestData={item}
+          />
         ))}
       </CardGrid>
     </>

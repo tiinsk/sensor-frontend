@@ -10,13 +10,6 @@ import { DateTime, DateTimeUnit } from 'luxon';
 export interface TimeFrameOptions {
   startTime: string;
   endTime: string;
-  valueType: string;
-  level: string;
-  showMinAndMax: boolean;
-}
-
-interface TimeFrameInternalOptions {
-  endTime: string;
   timePeriod: DateTimeUnit;
   valueType: string;
   level: string;
@@ -25,6 +18,7 @@ interface TimeFrameInternalOptions {
 
 interface TimeFrameSelectorProps {
   onChange: (newOptions: TimeFrameOptions) => void;
+  options: TimeFrameOptions;
 }
 
 const StyledTimeFrameSelector = styled.div`
@@ -34,23 +28,18 @@ const StyledTimeFrameSelector = styled.div`
   margin-bottom: ${({ theme }) => theme.spacings.s16};
 `;
 
-const getStartTime = (endTime: string, timePeriod: DateTimeUnit) => {
+export const getStartTime = (endTime: string, timePeriod: DateTimeUnit) => {
   return DateTime.fromISO(endTime).startOf(timePeriod).toISO();
 };
 
-const getEndTime = (endTime: string, timePeriod: DateTimeUnit) => {
+export const getEndTime = (endTime: string, timePeriod: DateTimeUnit) => {
   return DateTime.fromISO(endTime).endOf(timePeriod).toISO();
 };
 
-export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
-  const [options, setOptions] = useState<TimeFrameInternalOptions>({
-    endTime: getEndTime(new Date().toISOString(), 'day')!,
-    timePeriod: 'day',
-    valueType: 'temperature',
-    level: 'hour',
-    showMinAndMax: true,
-  });
-
+export const TimeFrameSelector = ({
+  onChange,
+  options,
+}: TimeFrameSelectorProps) => {
   const getFormattedDateString = () => {
     if (options.timePeriod === 'day') {
       return DateTime.fromISO(options.endTime).toFormat('ccc dd.LL.yy');
@@ -66,28 +55,26 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
     }
   };
 
-  const onOptionsChange = (newOptions: Partial<TimeFrameInternalOptions>) => {
-    const changedOptions = { ...options, ...newOptions };
+  const onOptionsChange = (newOptions: Partial<TimeFrameOptions>) => {
+    let changedOptions = { ...options, ...newOptions };
 
     const newEndTime = getEndTime(
       changedOptions.endTime,
       changedOptions.timePeriod
     );
 
-    setOptions({ ...changedOptions, endTime: newEndTime! });
-
     const startTime = getStartTime(
       changedOptions.endTime,
       changedOptions.timePeriod
     );
 
-    onChange({
+    changedOptions = {
+      ...changedOptions,
       startTime: startTime!,
-      endTime: changedOptions.endTime,
-      showMinAndMax: changedOptions.showMinAndMax,
-      valueType: changedOptions.valueType,
-      level: changedOptions.level,
-    });
+      endTime: newEndTime!,
+    };
+
+    onChange(changedOptions);
   };
 
   const onTimeButtonClick = (direction: -1 | 1) => {
