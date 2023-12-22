@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box } from './box';
+import { Box, BoxProps } from './box';
 import {
   BodyLightStyle,
   BodyStyle,
@@ -17,7 +17,10 @@ const StyledH1 = styled(Box)`
   ${H1Style};
 `;
 
-export const H1 = ({ children, ...props }: { children?: React.ReactNode }) => {
+export const H1 = ({
+  children,
+  ...props
+}: { children?: React.ReactNode } & BoxProps) => {
   return (
     <StyledH1 {...props} component="h1">
       {children}
@@ -29,7 +32,10 @@ const StyledH2 = styled(Box)`
   ${H2Style};
 `;
 
-export const H2 = ({ children, ...props }: { children?: React.ReactNode }) => {
+export const H2 = ({
+  children,
+  ...props
+}: { children?: React.ReactNode } & BoxProps) => {
   return (
     <StyledH2 {...props} component="h2">
       {children}
@@ -41,7 +47,10 @@ const StyledH3 = styled(Box)`
   ${H3Style};
 `;
 
-export const H3 = ({ children, ...props }: { children?: React.ReactNode }) => {
+export const H3 = ({
+  children,
+  ...props
+}: { children?: React.ReactNode } & BoxProps) => {
   return (
     <StyledH3 {...props} component="h3">
       {children}
@@ -58,7 +67,7 @@ export const BodyLight = ({
   ...props
 }: {
   children?: React.ReactNode;
-}) => {
+} & BoxProps) => {
   return (
     <StyledBodyLight {...props} component="p">
       {children}
@@ -75,7 +84,7 @@ export const Body = ({
   ...props
 }: {
   children?: React.ReactNode;
-}) => {
+} & BoxProps) => {
   return (
     <StyledBody {...props} component="p">
       {children}
@@ -92,7 +101,7 @@ export const PageTitle = ({
   ...props
 }: {
   children?: React.ReactNode;
-}) => {
+} & BoxProps) => {
   return (
     <StyledPageTitle {...props} component="span">
       {children}
@@ -109,7 +118,7 @@ export const Caption2Light = ({
   ...props
 }: {
   children?: React.ReactNode;
-}) => {
+} & BoxProps) => {
   return (
     <StyledCaption2Light {...props} component="p">
       {children}
@@ -126,7 +135,7 @@ export const Caption2 = ({
   ...props
 }: {
   children?: React.ReactNode;
-}) => {
+} & BoxProps) => {
   return (
     <StyledCaption2 {...props} component="p">
       {children}
@@ -143,7 +152,7 @@ export const Caption3 = ({
   ...props
 }: {
   children?: React.ReactNode;
-}) => {
+} & BoxProps) => {
   return (
     <StyledCaption3 {...props} component="p">
       {children}
