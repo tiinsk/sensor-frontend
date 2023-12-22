@@ -86,7 +86,7 @@ const Login = () => {
       setError(response.error);
     } else {
       setJWTToken(response);
-      navigate('', {replace: true});
+      navigate('/', {replace: true});
     }
   }
 
