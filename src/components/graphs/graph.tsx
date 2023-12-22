@@ -18,7 +18,7 @@ const formatAxes = (date: Date, timePeriod: TimePeriod) => {
   const dateTime = DateTime.fromJSDate(date);
   switch (timePeriod) {
     case 'day':
-      return dateTime.toFormat('hh:mm');
+      return dateTime.toFormat('HH:mm');
     case 'week':
       return dateTime.toFormat('ccc');
     case 'month':
