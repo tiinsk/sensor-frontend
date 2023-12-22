@@ -12,7 +12,13 @@ import { PageTitle } from '../components/styled/typography';
 
 const StyledLogin = styled.div`
   display: flex;
-  height: 100vh;
+  height: 100svh;
+
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: column;
+    justify-content: center;
+    gap: ${({ theme }) => theme.spacings.s48};
+  }
 `;
 const LeftSide = styled.div`
   flex-basis: 50%;
@@ -22,6 +28,9 @@ const LeftSide = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-basis: auto;
+  }
 `;
 
 const RightSide = styled.div`
@@ -32,6 +41,11 @@ const RightSide = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+
+  ${({ theme }) => theme.mediaQueries.md} {
+    background-color: ${({ theme }) => theme.colors.background.secondary};
+    flex-basis: auto;
+  }
 `;
 
 const Form = styled.form`

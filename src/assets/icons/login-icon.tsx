@@ -1,12 +1,19 @@
 import React from 'react';
-import { useTheme } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
+
+const StyledSvg = styled.svg`
+  width: 228px;
+  height: 229px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    width: 150px;
+    height: auto;
+  }
+`;
 
 export const LoginIcon = () => {
   const { colors } = useTheme();
   return (
-    <svg
-      width="228"
-      height="229"
+    <StyledSvg
       viewBox="0 0 228 229"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -68,6 +75,6 @@ export const LoginIcon = () => {
           <stop offset="1" stopColor="#F68500" />
         </linearGradient>
       </defs>
-    </svg>
+    </StyledSvg>
   );
 };
