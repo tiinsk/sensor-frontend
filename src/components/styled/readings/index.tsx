@@ -28,6 +28,10 @@ const StyledUnit = styled.p`
 const DefaultStyle = ({ theme }: { theme: DefaultTheme }) => css`
   ${StyledValue} {
     ${H3Style};
+    ${({ theme }) => theme.mediaQueries.md} {
+      font-size: 2rem;
+      line-height: 2.4rem;
+    }
   }
 
   ${StyledUnit} {
@@ -44,7 +48,7 @@ const StyledReading = styled.div<{
 
   padding: ${({ theme }) => theme.spacings.s2}
     ${({ theme }) => theme.spacings.s4};
-  width: fit-content;
+  width: 100%;
 
   ${({ $sizeVariant }) => $sizeVariant === 'default' && DefaultStyle};
 `;
@@ -108,7 +112,7 @@ export const Reading = ({
       {isLoading ? (
         <Skeleton
           variant={sizeVariant === 'default' ? 'H3' : 'Caption3'}
-          width={sizeVariant === 'default' ? 's64' : 's48'}
+          width={sizeVariant === 'default' ? undefined : 's48'}
         />
       ) : (
         <>

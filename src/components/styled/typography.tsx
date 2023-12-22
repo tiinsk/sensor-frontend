@@ -10,6 +10,7 @@ import {
   H1Style,
   H2Style,
   H3Style,
+  H4Style,
   PageTitleStyle,
 } from '../../theme/typography';
 import { Skeleton } from '../../assets/loading/skeleton';
@@ -82,6 +83,27 @@ export const H3 = ({
     <StyledH3 {...props} component="h3">
       {children}
     </StyledH3>
+  );
+};
+
+const StyledH4 = styled(Box)`
+  ${H4Style};
+`;
+
+export const H4 = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="H4" width={loadingWidth} />;
+  }
+
+  return (
+    <StyledH4 {...props} component="h4">
+      {children}
+    </StyledH4>
   );
 };
 

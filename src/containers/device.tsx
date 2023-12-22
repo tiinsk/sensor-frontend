@@ -191,7 +191,7 @@ export const Device = () => {
             text={getTimeAgoString(latestData?.reading.created_at)}
             isLoading={isLoadingMainContent}
           />
-          <Flex gap="s16">
+          <Flex gap="s16" style={{ minWidth: '250px' }}>
             <Reading
               value={latestData?.reading.temperature}
               unit="temperature"

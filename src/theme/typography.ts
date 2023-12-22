@@ -24,6 +24,15 @@ export const H3Style = css`
   line-height: 2.8rem;
 `;
 
+export const H4Style = css`
+  color: inherit;
+  font-family: ${({ theme }) => theme.fonts.fontHeader};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  text-transform: uppercase;
+`;
+
 export const BodyLightStyle = css`
   color: inherit;
   font-family: ${({ theme }) => theme.fonts.fontBody};

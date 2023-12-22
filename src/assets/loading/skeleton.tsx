@@ -6,6 +6,7 @@ type SkeletonVariant =
   | 'H1'
   | 'H2'
   | 'H3'
+  | 'H4'
   | 'Body'
   | 'PageTitle'
   | 'Caption2'
@@ -44,6 +45,8 @@ const getHeight = (variant: SkeletonVariant) => {
       return '3.4rem';
     case 'H3':
       return '2.8rem';
+    case 'H4':
+      return '2.4rem';
     case 'PageTitle':
       return '2rem';
     case 'Body':
