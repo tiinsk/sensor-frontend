@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import PropTypes from "prop-types";
 import triangleDownIcon from '../../assets/icons/value-types/triangle-down.svg';
 import triangleUpIcon from '../../assets/icons/value-types/triangle-up.svg';
 import warningYellow from '../../assets/icons/warnings/warning-yellow.svg';
 import warningRed from '../../assets/icons/warnings/warning-red.svg';
 import warningOrange from '../../assets/icons/warnings/warning-orange.svg';
-import DateTime from "luxon/src/datetime";
+import {DateTime} from "luxon";
 
 
 const StyledDeviceTempDiv = styled.div`

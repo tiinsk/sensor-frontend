@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import PropTypes from "prop-types";
 import logoInside from "../../assets/icons/loaction-types/inside.svg";
 import logoOutside from "../../assets/icons/loaction-types/outside.svg";

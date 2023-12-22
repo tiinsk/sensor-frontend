@@ -1,4 +1,4 @@
-import DateTime from "luxon/src/datetime";
+import {DateTime} from "luxon";
 import {groupBy, minBy, reduce} from "lodash";
 import {roundToNearestHalfHour} from "./datetime";
 

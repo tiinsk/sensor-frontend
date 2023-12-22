@@ -1,7 +1,7 @@
 import React  from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import PropTypes from "prop-types";
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {removeJWTToken} from "../../utils/auth";
 
 import HeaderLogo from "./header-logo";
@@ -33,7 +33,7 @@ const StyledLogoutButton = styled.button`
 `;
 
 const AppHeader = ({devices}) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const links = [
     {
@@ -51,7 +51,7 @@ const AppHeader = ({devices}) => {
 
   const onLogout = () => {
     removeJWTToken();
-    history.replace('/login');
+    navigate('/login', {replace: true});
   }
 
   return (

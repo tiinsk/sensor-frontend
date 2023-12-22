@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from "prop-types";
 import {StyledResponsiveXYFrame} from "./common-graph-defs";
 import {debounce} from "lodash";
-import XYFrame from "semiotic/lib/XYFrame";
+import {XYFrame} from "semiotic";
 
 class GraphSizeWrapper extends React.Component {
   constructor(props) {

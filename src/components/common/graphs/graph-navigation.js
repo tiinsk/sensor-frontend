@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
-import styled from 'styled-components/macro';
-import DateTime from "luxon/src/datetime";
+import styled from 'styled-components';
+import {DateTime} from "luxon";
 import leftArrow from '../../../assets/icons/navigation/left-arrow.svg';
 import { throttle } from 'lodash';
 import Loading, {StyledLoading} from "../loading";

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import api from "../../api/routes";
 import TemperatureGraph from "../common/graphs/temperatureGraph/temperature-graph";
-import DateTime from "luxon/src/datetime";
+import {DateTime} from "luxon";
 
 import {formatGraphData} from "../../utils/graph-data-formatter";
 import GraphNavigation from "../common/graphs/graph-navigation";

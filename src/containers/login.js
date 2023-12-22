@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import styled from 'styled-components/macro';
-import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 import api from '../api/routes';
 import HeaderLogo, {StyledHeaderLogo} from '../components/header/header-logo';
@@ -75,7 +75,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onLogin = async () => {
     const response = await api.login({
@@ -86,7 +86,7 @@ const Login = () => {
       setError(response.error);
     } else {
       setJWTToken(response);
-      history.replace('');
+      navigate('', {replace: true});
     }
   }
 

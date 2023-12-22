@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import GraphNavigation from "../common/graphs/graph-navigation";
 import PressureGraph from "../common/graphs/pressureGraph/pressure-graph";

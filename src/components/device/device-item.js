@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import PropTypes from "prop-types";
 import DeviceSummaryTitle from "../common/device-summary-title";
 import DeviceExtremeValues from "./device-extreme-values";

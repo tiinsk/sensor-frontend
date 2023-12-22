@@ -1,7 +1,7 @@
-import DateTime from "luxon/src/datetime";
+import {DateTime} from "luxon";
 import React from "react";
 import {scaleTime} from "d3-scale";
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 export const axes = (start, end) => [
   {
@@ -62,7 +62,7 @@ export const commonDefs = {
   xAccessor: d => {
     return new Date(d.rounded_time);
   },
-  baseMarkProps: { forceUpdate: true },
+  //baseMarkProps: { forceUpdate: true },
   hoverAnnotation: true,
   tooltipContent: (d) => {
     const minutes = new Date(d.rounded_time).getMinutes();

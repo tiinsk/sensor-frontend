@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { NavLink } from "react-router-dom";
 
 const StyledMobileHeaderLi = styled.li`
@@ -40,8 +40,6 @@ class MobileHeaderLink extends Component {
       <StyledMobileHeaderLi>
         <StyledLink
           to={this.props.to}
-          activeClassName="active"
-          exact
           onClick={() => this.props.onClick()}
         >
           {this.props.title}

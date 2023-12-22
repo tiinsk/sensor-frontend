@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import {StyledReading} from "../common/reading";
 
 const StyledDetailSection= styled.div`

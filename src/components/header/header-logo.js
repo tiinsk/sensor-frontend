@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { Link } from "react-router-dom";
 import logo from '../../assets/icons/home-logo.svg';
 

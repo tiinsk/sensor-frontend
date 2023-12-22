@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import PropTypes from "prop-types";
 import humidity from '../../assets/icons/types/humidity.svg';
 import pressure from '../../assets/icons/types/pressure.svg';

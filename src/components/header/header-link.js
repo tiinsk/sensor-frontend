@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { NavLink } from "react-router-dom";
 
 const StyledHeaderLi = styled.li`
@@ -39,8 +39,6 @@ class HeaderLink extends Component {
       <StyledHeaderLi>
         <StyledLink
           to={this.props.to}
-          activeClassName="active"
-          exact
         >
           {this.props.title}
         </StyledLink>

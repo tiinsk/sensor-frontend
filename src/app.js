@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import styled, { ThemeProvider } from 'styled-components/macro'
+import styled, { ThemeProvider } from 'styled-components'
 import AppHeader from "./components/header/header";
 import Home from "./containers/home";
 import Device from "./containers/device";
 import Login from "./containers/login";
-import {BrowserRouter as Router, Route, Redirect, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Route, Routes, Navigate} from "react-router-dom";
 import { theme } from './assets/styles/variables';
 import api from "./api/routes";
 import {isLoggedIn} from "./utils/auth";
+import {GlobalStyle} from "./assets/styles";
 
 const StyledApp = styled.div`
   padding: ${props => props.theme.baseSize};
@@ -26,12 +27,13 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <GlobalStyle/>
       <StyledApp>
         <Router>
-          <Switch>
-            <Route exact path="/login" component={Login}/>
-            <LoggedInRoutes/>
-          </Switch>
+          <Routes>
+            <Route path="/login" element={<Login/>}/>
+            <Route path="/*" element={<LoggedInRoutes/>}/>
+          </Routes>
         </Router>
       </StyledApp>
     </ThemeProvider>
@@ -54,14 +56,16 @@ const LoggedInRoutes = () => {
   }, []);
 
   if(!loggedIn) {
-    return <Redirect to={'/login'}/>
+    return <Navigate to="/login" />;
   }
 
   return (
     <>
       <AppHeader devices={devices}/>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/devices/:id" component={Device}/>
+      <Routes>
+        <Route path="/" element={<Home/>} />
+        <Route path="devices/:id" Component={Device}/>
+      </Routes>
     </>
   );
 }
