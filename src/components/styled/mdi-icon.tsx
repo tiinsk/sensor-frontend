@@ -1,15 +1,13 @@
 import React from 'react';
-import styled, { useTheme } from 'styled-components';
+import { DefaultTheme, useTheme } from 'styled-components';
 
 import * as mdiIcons from '@mdi/js';
 import Icon from '@mdi/react';
 import { Box, BoxProps } from './box';
-import { Space, theme } from '../../theme';
+import { Space } from '../../theme';
 
-type IconColor = keyof (typeof theme)['colors']['icons'];
+type IconColor = keyof DefaultTheme['colors']['icons'];
 export type IconType = keyof typeof mdiIcons;
-
-const StyledIcon = styled(Box)``;
 
 interface MdiIconProps {
   type: IconType;

@@ -37,9 +37,14 @@ const variables = {
 
 export type Space = keyof (typeof variables)['spacings'];
 
-export const theme = {
+export const lightTheme = {
   ...variables,
   colors: lightColors,
 } as const;
 
-export type CustomTheme = typeof theme;
+export const darkTheme = {
+  ...variables,
+  colors: darkColors,
+} as const;
+
+export type CustomTheme = typeof lightTheme;

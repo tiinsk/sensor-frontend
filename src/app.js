@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled, { ThemeProvider } from 'styled-components';
+import styled from 'styled-components';
 import {
   BrowserRouter as Router,
   Route,
@@ -13,12 +13,12 @@ import { Home } from './containers/home';
 import HomeOLD from './containers/home-OLD';
 import Device from './containers/device';
 import Login from './containers/login';
-import { theme } from './theme';
 import api from './api/routes';
 import { isLoggedIn } from './utils/auth';
 import { GlobalStyle } from './theme/global-style';
 import { OldTheme } from './theme/old-theme';
 import { TopNav } from './components/nav/top-nav';
+import { ThemeContextProvider, ThemeProvider } from './contexts/theme-context';
 
 WebFont.load({
   google: {
@@ -38,18 +38,20 @@ const App = () => {
   FORCE_RERENDER = () => setForceReRender(forceReRender + 1);
 
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <StyledApp>
-        <Router>
-          <Routes>
-            <Route path="/old/login" element={<Login />} />
-            <Route path="/old/*" element={<OldLoggedInRoutes />} />
-            <Route path="/*" element={<LoggedInRoutes />} />
-          </Routes>
-        </Router>
-      </StyledApp>
-    </ThemeProvider>
+    <ThemeContextProvider>
+      <ThemeProvider>
+        <GlobalStyle />
+        <StyledApp>
+          <Router>
+            <Routes>
+              <Route path="/old/login" element={<Login />} />
+              <Route path="/old/*" element={<OldLoggedInRoutes />} />
+              <Route path="/*" element={<LoggedInRoutes />} />
+            </Routes>
+          </Router>
+        </StyledApp>
+      </ThemeProvider>
+    </ThemeContextProvider>
   );
 };
 

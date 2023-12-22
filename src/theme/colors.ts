@@ -182,8 +182,8 @@ export const darkColors: ColorTheme = {
     base: primitiveColors.neutral.filled['100'],
   },
   borders: {
-    primary: primitiveColors.neutral.dark['80'],
-    secondary: primitiveColors.neutral.dark['90'],
+    primary: primitiveColors.neutral.light['80'],
+    secondary: primitiveColors.neutral.light['90'],
   },
   error: {
     background: primitiveColors.error['130'],
