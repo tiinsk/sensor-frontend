@@ -23,9 +23,8 @@ const CARD_MIN_WIDTH = '450px';
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(${CARD_MIN_WIDTH}, 1fr));
-  gap: ${({ theme }) => theme.spacings.s48} ${({ theme }) =>
-    theme.spacings.s24};
-  margin-bottom: ${({ theme }) => theme.spacings.s48}};
+  gap: ${({ theme }) => theme.spacings.s48} ${({ theme }) => theme.spacings.s24};
+  margin-bottom: ${({ theme }) => theme.spacings.s48};
 
   ${({ theme }) => theme.mediaQueries.sm} {
     display: flex;
