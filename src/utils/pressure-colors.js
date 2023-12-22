@@ -1,4 +1,4 @@
-export const colorGradient = (humidity) => {
+export const colorGradient = humidity => {
   if (humidity <= 995) return 1;
   if (humidity <= 1000) return 2;
   if (humidity <= 1005) return 3;

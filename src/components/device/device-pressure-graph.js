@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import GraphNavigation from "../common/graphs/graph-navigation";
-import PressureGraph from "../common/graphs/pressureGraph/pressure-graph";
-
+import GraphNavigation from '../common/graphs/graph-navigation';
+import PressureGraph from '../common/graphs/pressureGraph/pressure-graph';
 
 const StyledPressureGraph = styled.div`
   margin-top: ${props => props.theme.baseSizePartial(0.25)};
@@ -37,7 +36,7 @@ DevicePressureGraph.propTypes = {
 };
 
 DevicePressureGraph.defaultProps = {
-  data: []
+  data: [],
 };
 
 export default DevicePressureGraph;

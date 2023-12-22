@@ -1,9 +1,9 @@
 import React from 'react';
 
-import PropTypes from "prop-types";
-import {additionalDefs, customPointMark} from "./additional-defs";
-import {axes, commonDefs} from "../common-graph-defs";
-import GraphSizeWrapper from "../graph-size-wrapper";
+import PropTypes from 'prop-types';
+import { additionalDefs, customPointMark } from './additional-defs';
+import { axes, commonDefs } from '../common-graph-defs';
+import GraphSizeWrapper from '../graph-size-wrapper';
 
 const defFrameProps = (dataPointCount, start, end) => ({
   ...commonDefs,
@@ -14,45 +14,41 @@ const defFrameProps = (dataPointCount, start, end) => ({
   lineStyle: (d, i) => ({
     stroke: `url(#pressure-line-gradient)`,
     strokeWidth: 5,
-    fill: "none",
-    opacity: 1
+    fill: 'none',
+    opacity: 1,
   }),
   showLinePoints: true,
   customPointMark: customPointMark(dataPointCount),
   axes: axes(start, end),
-  additionalDefs: additionalDefs
+  additionalDefs: additionalDefs,
 });
 
-
-const PressureGraph = (props) => {
-
+const PressureGraph = props => {
   const dataPointCount = props.data.length;
   const start = props.data[0] ? props.data[0].rounded_time : null;
-  const end = props.data.length > 0 ? props.data[props.data.length-1].rounded_time : null;
+  const end =
+    props.data.length > 0
+      ? props.data[props.data.length - 1].rounded_time
+      : null;
 
   const frameProps = {
     ...defFrameProps(dataPointCount, start, end),
     size: [props.width, props.height],
-    lines: [{coordinates: props.data}]
+    lines: [{ coordinates: props.data }],
   };
 
-  return (
-    <GraphSizeWrapper
-      width={props.width}
-      frameProps={frameProps}
-    />
-  );
+  return <GraphSizeWrapper width={props.width} frameProps={frameProps} />;
 };
 
 PressureGraph.propTypes = {
   data: PropTypes.array.isRequired,
   width: PropTypes.number,
-  height: PropTypes.number
+  height: PropTypes.number,
 };
 
 PressureGraph.defaultProps = {
   width: 700,
-  height: 320
+  height: 320,
 };
 
 export default PressureGraph;

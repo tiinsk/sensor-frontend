@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import PropTypes from "prop-types";
-import humLogo from "../../assets/icons/humidity.svg";
-
+import PropTypes from 'prop-types';
+import humLogo from '../../assets/icons/humidity.svg';
 
 const StyledDeviceHumidityDiv = styled.div`
   grid-area: humidity;
@@ -11,12 +10,12 @@ const StyledDeviceHumidityDiv = styled.div`
   color: white;
   font-size: 1.8rem;
   white-space: nowrap;
-  
+
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  
-  @media (max-width: ${props => props.theme.breakpointMobile}){
+
+  @media (max-width: ${props => props.theme.breakpointMobile}) {
     justify-content: flex-start;
   }
 `;
@@ -27,11 +26,13 @@ const StyledHumidityImg = styled.img`
 
 class DeviceSummaryHumidity extends Component {
   render() {
-    const roundedHumidity = `${this.props.humidity ? this.props.humidity.toFixed(0) : ' -- '} %`;
+    const roundedHumidity = `${
+      this.props.humidity ? this.props.humidity.toFixed(0) : ' -- '
+    } %`;
 
     return (
       <StyledDeviceHumidityDiv>
-        <StyledHumidityImg src={humLogo} alt="humidity"/>
+        <StyledHumidityImg src={humLogo} alt="humidity" />
         {roundedHumidity}
       </StyledDeviceHumidityDiv>
     );
@@ -39,11 +40,11 @@ class DeviceSummaryHumidity extends Component {
 }
 
 DeviceSummaryHumidity.propTypes = {
-  humidity: PropTypes.number
+  humidity: PropTypes.number,
 };
 
 DeviceSummaryHumidity.defaultProps = {
-  humidity: 0
+  humidity: 0,
 };
 
 export default DeviceSummaryHumidity;

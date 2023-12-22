@@ -1,23 +1,28 @@
 const api = require('./index');
-const {DateTime} = require('luxon');
+const { DateTime } = require('luxon');
 
 const getTimeZone = () => {
-  return DateTime.fromJSDate(new Date()).get('offset')/60;
+  return DateTime.fromJSDate(new Date()).get('offset') / 60;
 };
 
 export default {
-  login: (payload) => api.post({route: '/login', payload}),
-  getNow: () =>  api.get({route: `/readings/now?localTimeZone=${getTimeZone()}`}),
-  getExtremes: () =>  api.get({route: `/readings/extremes?localTimeZone=${getTimeZone()}`}),
-  getAllReadings: (deviceId, params) => api.get({
-    route: `/devices/${deviceId}/readings`,
-    params
-  }),
-  getAllDevices: () => api.get({route: '/devices'}),
-  getAllDeviceReadingsNow: (deviceId) => api.get({
-    route: `/devices/${deviceId}/readings/now?localTimeZone=${getTimeZone()}`
-  }),
-  getAllDeviceExtremes: (deviceId) => api.get({
-    route: `/devices/${deviceId}/readings/extremes?localTimeZone=${getTimeZone()}`
-  }),
+  login: payload => api.post({ route: '/login', payload }),
+  getNow: () =>
+    api.get({ route: `/readings/now?localTimeZone=${getTimeZone()}` }),
+  getExtremes: () =>
+    api.get({ route: `/readings/extremes?localTimeZone=${getTimeZone()}` }),
+  getAllReadings: (deviceId, params) =>
+    api.get({
+      route: `/devices/${deviceId}/readings`,
+      params,
+    }),
+  getAllDevices: () => api.get({ route: '/devices' }),
+  getAllDeviceReadingsNow: deviceId =>
+    api.get({
+      route: `/devices/${deviceId}/readings/now?localTimeZone=${getTimeZone()}`,
+    }),
+  getAllDeviceExtremes: deviceId =>
+    api.get({
+      route: `/devices/${deviceId}/readings/extremes?localTimeZone=${getTimeZone()}`,
+    }),
 };

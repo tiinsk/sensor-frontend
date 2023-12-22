@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import PropTypes from "prop-types";
-import DeviceSummaryTitle from "../common/device-summary-title";
-import DeviceSummaryDetails from "./device-summary-details";
+import PropTypes from 'prop-types';
+import DeviceSummaryTitle from '../common/device-summary-title';
+import DeviceSummaryDetails from './device-summary-details';
 
 const StyledDeviceSummaryItem = styled.div`
   &:not(:last-of-type) {
@@ -23,13 +23,21 @@ class DeviceSummaryItem extends Component {
           humidity={this.props.device.humidity}
           pressure={this.props.device.pressure}
           isInside={this.props.device.location_type === 'inside'}
-          sensors={this.props.device.sensor_info ? this.props.device.sensor_info.sensors: []}
+          sensors={
+            this.props.device.sensor_info
+              ? this.props.device.sensor_info.sensors
+              : []
+          }
           timestamp={this.props.device.created_at}
         />
         <DeviceSummaryDetails
           device={this.props.device}
           details={this.props.details}
-          sensors={this.props.device.sensor_info ? this.props.device.sensor_info.sensors: []}
+          sensors={
+            this.props.device.sensor_info
+              ? this.props.device.sensor_info.sensors
+              : []
+          }
         />
       </StyledDeviceSummaryItem>
     );
@@ -38,12 +46,12 @@ class DeviceSummaryItem extends Component {
 
 DeviceSummaryItem.propTypes = {
   device: PropTypes.object,
-  details: PropTypes.object
+  details: PropTypes.object,
 };
 
 DeviceSummaryItem.defaultProps = {
   device: {},
-  details: {}
+  details: {},
 };
 
 export default DeviceSummaryItem;

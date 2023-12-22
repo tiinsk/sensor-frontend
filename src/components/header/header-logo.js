@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import logo from '../../assets/icons/home-logo.svg';
 
 export const StyledHeaderLogo = styled.li`
@@ -19,7 +19,6 @@ const StyledLink = styled(Link)`
 const StyledLogoSpan = styled.h1`
   text-decoration: none;
 `;
-
 
 class HeaderLogo extends Component {
   render() {

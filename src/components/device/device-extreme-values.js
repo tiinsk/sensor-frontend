@@ -1,25 +1,24 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import PropTypes from "prop-types";
-import DetailColumn from "./detail-column";
-import Reading from "../common/reading";
-import DetailSection from "./detail-section";
-
+import PropTypes from 'prop-types';
+import DetailColumn from './detail-column';
+import Reading from '../common/reading';
+import DetailSection from './detail-section';
 
 const StyledDeviceExtremeValues = styled.div`
   background: ${props => props.theme.colors.darkBlueDarkest};
-  
+
   margin-top: 3px;
-  
-  box-shadow: #2A324B 0 2px 26px 12px;
+
+  box-shadow: #2a324b 0 2px 26px 12px;
 `;
 
 const StyledValues = styled.div`
   padding: ${props => props.theme.baseSize};
 
-  display: flex;  
+  display: flex;
   justify-content: space-around;
-  @media (max-width: ${props => props.theme.breakpointSmallWindow}){
+  @media (max-width: ${props => props.theme.breakpointSmallWindow}) {
     flex-wrap: wrap;
     flex: 0 0 100%;
   }
@@ -27,7 +26,6 @@ const StyledValues = styled.div`
 
 class DeviceExtremeValues extends Component {
   render() {
-
     return (
       <StyledDeviceExtremeValues>
         <StyledValues>
@@ -61,7 +59,7 @@ class DeviceExtremeValues extends Component {
               />
             </DetailSection>
           </DetailColumn>
-          {this.props.sensors.includes('humidity') ?
+          {this.props.sensors.includes('humidity') ? (
             <DetailColumn title="Humidity">
               <DetailSection>
                 <Reading
@@ -91,9 +89,11 @@ class DeviceExtremeValues extends Component {
                   value={this.props.details.min_humidity_month}
                 />
               </DetailSection>
-            </DetailColumn> : ''
-          }
-          {this.props.sensors.includes('pressure') ?
+            </DetailColumn>
+          ) : (
+            ''
+          )}
+          {this.props.sensors.includes('pressure') ? (
             <DetailColumn title="Pressure">
               <DetailSection>
                 <Reading
@@ -123,8 +123,10 @@ class DeviceExtremeValues extends Component {
                   value={this.props.details.min_pressure_month}
                 />
               </DetailSection>
-            </DetailColumn> : ''
-          }
+            </DetailColumn>
+          ) : (
+            ''
+          )}
         </StyledValues>
       </StyledDeviceExtremeValues>
     );
@@ -133,12 +135,12 @@ class DeviceExtremeValues extends Component {
 
 DeviceExtremeValues.propTypes = {
   details: PropTypes.object,
-  sensors: PropTypes.array
+  sensors: PropTypes.array,
 };
 
 DeviceExtremeValues.defaultProps = {
   details: {},
-  sensors: []
+  sensors: [],
 };
 
 export default DeviceExtremeValues;

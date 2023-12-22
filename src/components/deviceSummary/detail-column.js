@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
-const StyledDetailColumn= styled.div`
+const StyledDetailColumn = styled.div`
   flex: 0 0 100%;
   display: flex;
   flex-wrap: wrap;
@@ -12,29 +12,27 @@ const StyledDetailColumn= styled.div`
     margin: 0;
     padding: ${props => props.theme.baseSizePartial(0.25)};
     flex: 0 0 100%;
-  } 
-  
-  @media (max-width: ${props => props.theme.breakpointHomeGraphSmall}) {
-     max-width: 33.3%;
   }
-  
-   @media (max-width: ${props => props.theme.breakpointSmallWindow}){  
+
+  @media (max-width: ${props => props.theme.breakpointHomeGraphSmall}) {
+    max-width: 33.3%;
+  }
+
+  @media (max-width: ${props => props.theme.breakpointSmallWindow}) {
     width: 100%;
     max-width: initial;
-    
+
     h3 {
       padding: ${props => props.theme.baseSizePartial(0.25)} 0;
     }
   }
-  
-  @media (max-width: ${props => props.theme.breakpointMobile}){
-    
+
+  @media (max-width: ${props => props.theme.breakpointMobile}) {
   }
 `;
 
 class DetailColumn extends Component {
   render() {
-
     return (
       <StyledDetailColumn>
         <h3>{this.props.title}</h3>
@@ -49,7 +47,7 @@ DetailColumn.propTypes = {
 };
 
 DetailColumn.defaultProps = {
-  title: ''
+  title: '',
 };
 
 export default DetailColumn;

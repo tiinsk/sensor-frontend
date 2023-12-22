@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import PropTypes from "prop-types";
-import logoInside from "../../assets/icons/loaction-types/inside.svg";
-import logoOutside from "../../assets/icons/loaction-types/outside.svg";
+import PropTypes from 'prop-types';
+import logoInside from '../../assets/icons/loaction-types/inside.svg';
+import logoOutside from '../../assets/icons/loaction-types/outside.svg';
 
-const StyledDeviceSLogo= styled.div`
+const StyledDeviceSLogo = styled.div`
   grid-area: logo;
   align-self: center;
 
@@ -13,14 +13,13 @@ const StyledDeviceSLogo= styled.div`
   align-items: center;
 
   background: ${props => props.theme.colors.darkBlueDarker};
-  
+
   height: 45px;
   width: 45px;
   border-radius: 50%;
   padding: ${props => props.theme.baseSizePartial(0.5)};
   margin-right: ${props => props.theme.baseSize};
 `;
-
 
 class DeviceLogo extends Component {
   render() {
@@ -33,11 +32,11 @@ class DeviceLogo extends Component {
 }
 
 DeviceLogo.propTypes = {
-  isInside: PropTypes.bool
+  isInside: PropTypes.bool,
 };
 
 DeviceLogo.defaultProps = {
-  isInside: true
+  isInside: true,
 };
 
 export default DeviceLogo;

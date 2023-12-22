@@ -1,24 +1,23 @@
 import React from 'react';
-import PropTypes from "prop-types";
-import {StyledResponsiveXYFrame} from "./common-graph-defs";
-import {debounce} from "lodash";
-import {XYFrame} from "semiotic";
+import PropTypes from 'prop-types';
+import { StyledResponsiveXYFrame } from './common-graph-defs';
+import { debounce } from 'lodash';
+import { XYFrame } from 'semiotic';
 
 class GraphSizeWrapper extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      widthMode: 700
+      widthMode: 700,
     };
     this.ref = React.createRef();
     this.resizeWidth = this.resizeWidth.bind(this);
     this.debouncedWidthListener = debounce(this.resizeWidth, 200);
   }
 
-
   componentDidMount() {
     this.resizeWidth();
-    if(this.ref.current) {
+    if (this.ref.current) {
       window.addEventListener('resize', this.debouncedWidthListener);
     }
   }
@@ -28,7 +27,7 @@ class GraphSizeWrapper extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if(newProps.width !== this.props.width){
+    if (newProps.width !== this.props.width) {
       this.setWidthMode(newProps.width);
     }
   }
@@ -40,20 +39,25 @@ class GraphSizeWrapper extends React.Component {
   setWidthMode(graphContentWidth) {
     const elementWidth = this.ref.current.offsetWidth;
 
-    const newWidthMode = elementWidth < graphContentWidth ? 'small' : elementWidth;
-    if(newWidthMode !== this.state.widthMode) {
+    const newWidthMode =
+      elementWidth < graphContentWidth ? 'small' : elementWidth;
+    if (newWidthMode !== this.state.widthMode) {
       //this.ref.current.scrollRight = 0;
       this.setState({
-        widthMode: newWidthMode
+        widthMode: newWidthMode,
       });
     }
   }
 
-
   render() {
     const frameProps = {
       ...this.props.frameProps,
-      size: [this.state.widthMode === 'small' ? this.props.width : this.state.widthMode, this.props.height]
+      size: [
+        this.state.widthMode === 'small'
+          ? this.props.width
+          : this.state.widthMode,
+        this.props.height,
+      ],
     };
 
     return (
@@ -67,12 +71,12 @@ class GraphSizeWrapper extends React.Component {
 GraphSizeWrapper.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
-  frameProps: PropTypes.object.isRequired
+  frameProps: PropTypes.object.isRequired,
 };
 
 GraphSizeWrapper.defaultProps = {
   width: 700,
-  height: 320
+  height: 320,
 };
 
 export default GraphSizeWrapper;

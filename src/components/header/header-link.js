@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
 const StyledHeaderLi = styled.li`
   display: flex;
   align-items: center;
-  
+
   margin-left: ${props => props.theme.baseSize};
   white-space: nowrap;
-  
-  @media (max-width: ${props => props.theme.breakpointMobile}){
+
+  @media (max-width: ${props => props.theme.breakpointMobile}) {
     display: none;
   }
 `;
@@ -23,8 +23,9 @@ const StyledLink = styled(NavLink)`
   font-family: ${props => props.theme.fontTitle};
   font-weight: ${props => props.theme.fontWeightRegular};
   font-size: ${props => props.theme.fontSizeLarge};
-  padding: ${props => props.theme.baseSizePartial(0.25)} ${props => props.theme.baseSizePartial(0.5)};
-  
+  padding: ${props => props.theme.baseSizePartial(0.25)}
+    ${props => props.theme.baseSizePartial(0.5)};
+
   &.active {
     color: ${props => props.theme.colors.lightBlueBrighter};
     font-weight: ${props => props.theme.fontWeightBold};
@@ -32,16 +33,11 @@ const StyledLink = styled(NavLink)`
   }
 `;
 
-
 class HeaderLink extends Component {
   render() {
     return (
       <StyledHeaderLi>
-        <StyledLink
-          to={this.props.to}
-        >
-          {this.props.title}
-        </StyledLink>
+        <StyledLink to={this.props.to}>{this.props.title}</StyledLink>
       </StyledHeaderLi>
     );
   }
@@ -49,12 +45,12 @@ class HeaderLink extends Component {
 
 HeaderLink.propTypes = {
   title: PropTypes.string,
-  to: PropTypes.string
+  to: PropTypes.string,
 };
 
 HeaderLink.defaultProps = {
   title: '',
-  to: '/'
+  to: '/',
 };
 
 export default HeaderLink;

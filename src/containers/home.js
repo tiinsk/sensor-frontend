@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import api from '../api/routes';
-import DeviceSummaryItem from "../components/deviceSummary/device-summary-item";
-import Loading from "../components/common/loading";
+import DeviceSummaryItem from '../components/deviceSummary/device-summary-item';
+import Loading from '../components/common/loading';
 
 class Home extends Component {
   constructor(props) {
@@ -9,33 +9,36 @@ class Home extends Component {
     this.state = {
       loading: true,
       deviceSummaries: [],
-      deviceExtremes: []
+      deviceExtremes: [],
     };
   }
 
   async componentWillMount() {
-
     const [summaries, extremes] = await Promise.all([
       api.getNow(),
-      api.getExtremes()
+      api.getExtremes(),
     ]);
 
     this.setState({
       loading: false,
       deviceSummaries: summaries,
-      deviceExtremes: extremes && extremes.reduce((acc, curr) => {
-        acc[curr.device] = curr;
-        return acc;
-      }, {})
+      deviceExtremes:
+        extremes &&
+        extremes.reduce((acc, curr) => {
+          acc[curr.device] = curr;
+          return acc;
+        }, {}),
     });
   }
 
   render() {
     return (
       <div>
-        { this.state.loading ?
-          <Loading/> :
-          this.state.deviceSummaries && this.state.deviceSummaries.map(device => (
+        {this.state.loading ? (
+          <Loading />
+        ) : (
+          this.state.deviceSummaries &&
+          this.state.deviceSummaries.map(device => (
             <DeviceSummaryItem
               key={device.device}
               device={{
@@ -44,7 +47,7 @@ class Home extends Component {
               details={this.state.deviceExtremes[device.device]}
             />
           ))
-        }
+        )}
       </div>
     );
   }

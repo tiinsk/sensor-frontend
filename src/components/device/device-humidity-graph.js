@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import GraphNavigation from "../common/graphs/graph-navigation";
-import HumidityGraph from "../common/graphs/humidityGraph/humidity-graph";
-
+import GraphNavigation from '../common/graphs/graph-navigation';
+import HumidityGraph from '../common/graphs/humidityGraph/humidity-graph';
 
 const StyledHumidityGraph = styled.div`
   margin-top: ${props => props.theme.baseSizePartial(0.25)};
@@ -37,7 +36,7 @@ DeviceHumidityGraph.propTypes = {
 };
 
 DeviceHumidityGraph.defaultProps = {
-  data: []
+  data: [],
 };
 
 export default DeviceHumidityGraph;

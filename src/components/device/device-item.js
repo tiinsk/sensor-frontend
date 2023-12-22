@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import PropTypes from "prop-types";
-import DeviceSummaryTitle from "../common/device-summary-title";
-import DeviceExtremeValues from "./device-extreme-values";
-import DeviceTempGraph from "./device-temperature-graph";
-import DeviceHumidityGraph from "./device-humidity-graph";
-import DevicePressureGraph from "./device-pressure-graph";
-
+import PropTypes from 'prop-types';
+import DeviceSummaryTitle from '../common/device-summary-title';
+import DeviceExtremeValues from './device-extreme-values';
+import DeviceTempGraph from './device-temperature-graph';
+import DeviceHumidityGraph from './device-humidity-graph';
+import DevicePressureGraph from './device-pressure-graph';
 
 const StyledDeviceItem = styled.div`
   &:not(:last-of-type) {
@@ -16,7 +15,9 @@ const StyledDeviceItem = styled.div`
 
 class DeviceItem extends Component {
   render() {
-    const sensors = this.props.device.sensor_info ? this.props.device.sensor_info.sensors: [];
+    const sensors = this.props.device.sensor_info
+      ? this.props.device.sensor_info.sensors
+      : [];
     return (
       <StyledDeviceItem>
         <DeviceSummaryTitle
@@ -40,20 +41,24 @@ class DeviceItem extends Component {
           minGraphWidth={this.props.minGraphWidth}
           loadOlderData={() => this.props.loadOlderData()}
         />
-        { sensors.includes('humidity') ?
+        {sensors.includes('humidity') ? (
           <DeviceHumidityGraph
             data={this.props.graphData}
             minGraphWidth={this.props.minGraphWidth}
             loadOlderData={() => this.props.loadOlderData()}
-          /> : ''
-        }
-        { sensors.includes('pressure') ?
+          />
+        ) : (
+          ''
+        )}
+        {sensors.includes('pressure') ? (
           <DevicePressureGraph
             data={this.props.graphData}
             minGraphWidth={this.props.minGraphWidth}
             loadOlderData={() => this.props.loadOlderData()}
-          /> : ''
-        }
+          />
+        ) : (
+          ''
+        )}
       </StyledDeviceItem>
     );
   }
@@ -64,7 +69,7 @@ DeviceItem.propTypes = {
   details: PropTypes.object.isRequired,
   graphData: PropTypes.array.isRequired,
   minGraphWidth: PropTypes.number.isRequired,
-  loadOlderData: PropTypes.func.isRequired
+  loadOlderData: PropTypes.func.isRequired,
 };
 
 export default DeviceItem;

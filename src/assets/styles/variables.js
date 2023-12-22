@@ -34,8 +34,8 @@ export const theme = {
   breakpointMobile: `${breakpointMobile}px`,
 
   baseSize: '25px',
-  baseSizePartial: (part) => `${part*25}px`,
+  baseSizePartial: part => `${part * 25}px`,
 
   zIndexMenus: '1000',
-  colors: colors
+  colors: colors,
 };
