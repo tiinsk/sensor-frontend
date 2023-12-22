@@ -7,23 +7,35 @@ import {
   ButtonProps,
   ButtonStyle,
   ButtonVariant,
+  SizeVariant,
 } from './index';
 
-export const StyledLinkButton = styled.a<{ $variant: ButtonVariant }>`
+export const StyledLinkButton = styled.a<{
+  $variant: ButtonVariant;
+  $sizeVariant: SizeVariant;
+}>`
   ${ButtonStyle};
 `;
 
 export const LinkButton = ({
   variant = 'primary',
+  sizeVariant = 'default',
   text,
   iconLeft,
   iconRight,
   disabled,
+  buttonRef,
   ...props
-}: ButtonProps & LinkProps) => {
+}: ButtonProps & LinkProps & { buttonRef?: React.Ref<HTMLAnchorElement> }) => {
   return (
-    <StyledLinkButton $variant={variant} {...props}>
+    <StyledLinkButton
+      ref={buttonRef}
+      $variant={variant}
+      $sizeVariant={sizeVariant}
+      {...props}
+    >
       <ButtonContent
+        sizeVariant={sizeVariant}
         iconLeft={iconLeft}
         iconRight={iconRight}
         text={text}

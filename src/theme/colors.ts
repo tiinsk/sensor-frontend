@@ -1,5 +1,6 @@
 const primitiveColors = {
   air: {
+    '110': '#6B40E5',
     '100': '#7747FF',
     '50': '#7747FF80',
     '20': '#3478FC80',
@@ -92,10 +93,15 @@ export const lightColors = {
   },
   buttons: {
     background: {
-      primary: primitiveColors.neutral.filled['100'],
+      primary: primitiveColors.neutral.filled['90'],
       secondary: primitiveColors.neutral.filled['08'],
       primaryDisabled: primitiveColors.neutral.filled['50'],
       secondaryDisabled: primitiveColors.neutral.dark['02'],
+    },
+    backgroundHover: {
+      primary: primitiveColors.neutral.filled['90'],
+      secondary: primitiveColors.neutral.filled['10'],
+      basic: primitiveColors.neutral.filled['08'],
     },
     typography: {
       primary: primitiveColors.neutral.filled['00'],
@@ -169,6 +175,11 @@ export const darkColors: ColorTheme = {
       secondary: primitiveColors.neutral.filled['80'],
       primaryDisabled: primitiveColors.air['50'],
       secondaryDisabled: primitiveColors.neutral.filled['90'],
+    },
+    backgroundHover: {
+      primary: primitiveColors.air['110'],
+      secondary: primitiveColors.neutral.filled['70'],
+      basic: primitiveColors.neutral.filled['80'],
     },
     typography: {
       primary: primitiveColors.neutral.filled['00'],
