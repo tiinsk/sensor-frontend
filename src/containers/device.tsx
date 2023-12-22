@@ -23,6 +23,38 @@ import { Graph } from '../components/graphs/graph';
 import { GraphSizeWrapper } from '../components/graphs/graph-size-wrapper';
 import { GraphLoading } from '../assets/loading/graph-loading';
 
+const TitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: ${({ theme }) => theme.spacings.s16};
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${({ theme }) => theme.spacings.s16};
+  }
+`;
+
+const AverageWrapper = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacings.s16};
+
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: column;
+  }
+`;
+
+const LatestReadings = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    align-items: flex-start;
+  }
+`;
+
 const StyledGraphCard = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
   border-bottom: none;
@@ -149,11 +181,11 @@ export const Device = () => {
 
   return (
     <div>
-      <Flex justifyContent="space-between" alignItems="flex-end" mb="s16">
+      <TitleWrapper>
         <H2 mb="s4" isLoading={!latestData?.name} loadingWidth="s192">
           {latestData?.name}
         </H2>
-        <Flex flexDirection="column" alignItems="flex-end">
+        <LatestReadings>
           <Tag
             variant={tagVariant}
             text={getTimeAgoString(latestData?.reading.created_at)}
@@ -176,9 +208,9 @@ export const Device = () => {
               isLoading={isLoadingMainContent}
             />
           </Flex>
-        </Flex>
-      </Flex>
-      <Flex gap="s16">
+        </LatestReadings>
+      </TitleWrapper>
+      <AverageWrapper>
         <AverageCard
           title="Temperature"
           unit="temperature"
@@ -203,7 +235,7 @@ export const Device = () => {
           month={statisticsData.month?.pressure || {}}
           isLoading={isLoadingMainContent}
         />
-      </Flex>
+      </AverageWrapper>
       <Box mt="s16">
         <TimeFrameSelector
           options={options}

@@ -22,11 +22,13 @@ const StyledDeviceCard = styled.div`
 const TimeGroup = styled.div`
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 `;
 
 const Divider = styled.div`
   width: 1px;
   background-color: ${({ theme }) => theme.colors.borders.secondary};
+  margin: 0 ${({ theme }) => theme.spacings.s16};
 `;
 
 interface AverageMinMax {

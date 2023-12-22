@@ -18,6 +18,7 @@ interface ReadingProps {
 
 const StyledValue = styled.p`
   ${Caption3Style};
+  margin-right: ${({ theme }) => theme.spacings.s4};
 `;
 
 const StyledUnit = styled.p`

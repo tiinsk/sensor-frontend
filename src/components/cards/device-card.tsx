@@ -138,20 +138,22 @@ export const DeviceCard = ({
             />
           </Flex>
           <Flex flexDirection="column" pt="s16" alignItems="center">
-            <Reading
-              value={statisticsData?.statistics.pressure.max}
-              unit="pressure"
-              variant="max"
-              sizeVariant="small"
-              isLoading={isLoadingReadings}
-            />
-            <Reading
-              value={statisticsData?.statistics.pressure.min}
-              unit="pressure"
-              variant="min"
-              sizeVariant="small"
-              isLoading={isLoadingReadings}
-            />
+            <Flex flexDirection="column">
+              <Reading
+                value={statisticsData?.statistics.pressure.max}
+                unit="pressure"
+                variant="max"
+                sizeVariant="small"
+                isLoading={isLoadingReadings}
+              />
+              <Reading
+                value={statisticsData?.statistics.pressure.min}
+                unit="pressure"
+                variant="min"
+                sizeVariant="small"
+                isLoading={isLoadingReadings}
+              />
+            </Flex>
           </Flex>
           <Flex flexDirection="column" pt="s16" pr="s16" alignItems="flex-end">
             <Reading
