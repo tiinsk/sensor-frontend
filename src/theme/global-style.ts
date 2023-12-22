@@ -4,6 +4,8 @@ export const GlobalStyle = createGlobalStyle`
   html {
     font-size: 62.5%;
     color: ${({ theme }) => theme.colors.typography.primary};
+    width: 100vw;
+    overflow-x: hidden;
   }
   
   * {

@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css, DefaultTheme } from 'styled-components';
-import { Caption2, PageTitle } from '../styled/typography';
-import { Link } from 'react-router-dom';
+import { Caption2 } from '../styled/typography';
 import { Flex } from '../styled/flex';
-import { LinkButton } from '../styled/buttons/link';
 import { Button } from '../styled/buttons';
 import { Toggle } from '../styled/inputs/toggle';
 import { useThemeContext } from '../../contexts/theme-context';
@@ -20,6 +18,7 @@ const StyledNav = styled.div<{ $isOpen: boolean }>`
   right: -${WIDTH};
   bottom: 0;
   width: ${WIDTH};
+  z-index: ${({ theme }) => theme.zIndex.menus};
 
   background-color: ${({ theme }) => theme.colors.background.primary};
   box-shadow: ${({ theme }) => theme.colors.shadows.boxShadow};
@@ -53,9 +52,24 @@ interface RightNavProps {
 
 export const RightNav = ({ isOpen, onClose }: RightNavProps) => {
   const { theme, changeTheme } = useThemeContext();
+  const [isHidden, setHidden] = useState(!isOpen);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setTimeout(() => {
+        setHidden(true);
+      }, 200);
+    } else {
+      setHidden(false);
+    }
+  }, [isOpen]);
 
   return (
-    <StyledNav $isOpen={isOpen}>
+    <StyledNav
+      $isOpen={isOpen}
+      aria-hidden={isHidden}
+      style={{ visibility: isHidden ? 'hidden' : 'visible' }}
+    >
       <Flex justifyContent="flex-end" mb="s16">
         <Button
           iconLeft="mdiChevronRight"

@@ -34,6 +34,9 @@ const variables = {
     s96: '9.6rem',
     s128: '12.8rem',
   },
+  zIndex: {
+    menus: 1000,
+  },
 };
 
 export type Space = keyof (typeof variables)['spacings'];
