@@ -61,6 +61,7 @@ export const ButtonStyle = ({
   transition: padding 0.1s ease-in;
 
   padding: ${theme.spacings.s12};
+  border-width: 0;
   border-radius: ${theme.spacings.s8};
 
   cursor: pointer;
