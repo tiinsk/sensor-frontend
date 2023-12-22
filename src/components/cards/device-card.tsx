@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import {
   LatestReadingResponse,
@@ -13,6 +13,8 @@ import { Reading } from '../styled/readings';
 import { Flex } from '../styled/flex';
 import { Link } from 'react-router-dom';
 import { TimeFrameOptions } from '../selectors/time-frame-selector';
+import { Graph } from '../graphs/graph';
+import { GraphSizeWrapper } from '../graphs/graph-size-wrapper';
 
 const StyledDeviceCard = styled(Link)`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
@@ -42,7 +44,6 @@ const BorderedFlex = styled(Flex)`
 
 const BottomCard = styled.div`
   height: 200px;
-  padding: ${({ theme }) => theme.spacings.s16};
 `;
 
 export const DeviceCard = ({
@@ -140,7 +141,17 @@ export const DeviceCard = ({
           </Flex>
         </TopGrid>
       </TopCard>
-      <BottomCard />
+      <BottomCard>
+        <GraphSizeWrapper>
+          {readingsData && (
+            <Graph
+              deviceId={latestData.id}
+              options={options}
+              data={readingsData}
+            />
+          )}
+        </GraphSizeWrapper>
+      </BottomCard>
     </StyledDeviceCard>
   );
 };

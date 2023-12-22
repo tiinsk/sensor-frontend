@@ -148,6 +148,17 @@ export const lightColors = {
         secondary: primitiveColors.neutral.filled['08'],
       },
     },
+    lines: {
+      temperature: [
+        '#8B18DA',
+        '#E93D5C',
+        '#EE410A',
+        '#FFB800',
+        '#23D23F',
+        '#00AEF9',
+        '#2718CB',
+      ],
+    },
   },
   shadows: {
     boxShadow: `0px 4px 30px 0px rgba(0, 0, 0, 0.05)`,
@@ -229,6 +240,17 @@ export const darkColors: ColorTheme = {
         primary: primitiveColors.neutral.filled['70'],
         secondary: primitiveColors.neutral.filled['80'],
       },
+    },
+    lines: {
+      temperature: [
+        '#8B18DA',
+        '#E93D5C',
+        '#EE410A',
+        '#FFB800',
+        '#23D23F',
+        '#00AEF9',
+        '#2718CB',
+      ],
     },
   },
   shadows: {
