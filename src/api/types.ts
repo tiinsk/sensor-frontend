@@ -31,22 +31,16 @@ export interface LatestReadingResponse {
   };
 }
 
+export interface ReadingValue {
+  avg: number | null;
+  min: number | null;
+  max: number | null;
+}
+
 export interface Statistics {
-  temperature: {
-    avg: number | null;
-    min: number | null;
-    max: number | null;
-  };
-  humidity: {
-    avg: number | null;
-    min: number | null;
-    max: number | null;
-  };
-  pressure: {
-    avg: number | null;
-    min: number | null;
-    max: number | null;
-  };
+  temperature: ReadingValue;
+  humidity: ReadingValue;
+  pressure: ReadingValue;
 }
 
 export interface StatisticsResponse {
@@ -59,4 +53,13 @@ export interface DeviceResponse {
   location_type: DeviceLocation;
   name: string;
   order: number;
+}
+
+export interface Reading extends ReadingValue {
+  time: string;
+}
+
+export interface ReadingsResponse {
+  id: string;
+  values: Reading[];
 }

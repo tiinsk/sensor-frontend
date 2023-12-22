@@ -2,14 +2,29 @@ import {
   ArrayResponse,
   DeviceResponse,
   LatestReadingResponse,
+  ReadingsResponse,
   StatisticsResponse,
 } from './types';
 import * as api from './index';
+import {
+  TimeLevel,
+  ValueType,
+} from '../components/selectors/time-frame-selector';
 const { DateTime } = require('luxon');
 
 const getTimeZone = () => {
   return DateTime.fromJSDate(new Date()).get('offset') / 60;
 };
+
+interface TimeParams {
+  startTime: string;
+  endTime: string;
+}
+
+interface ReadingParams extends TimeParams {
+  type: ValueType;
+  level: TimeLevel;
+}
 
 const routes = {
   login: (payload: { username: string; password: string }) =>
@@ -20,17 +35,20 @@ const routes = {
     }),
   getExtremes: () =>
     api.get({ route: `/readings/extremes?localTimeZone=${getTimeZone()}` }),
-  getAllStatistics: ({
-    startTime,
-    endTime,
-  }: {
-    startTime: string;
-    endTime: string;
-  }) =>
+  getAllStatistics: (params: TimeParams) =>
     api.get<ArrayResponse<StatisticsResponse>>({
-      route: `/devices/statistics?startTime=${startTime}&endTime=${endTime}`,
+      route: `/devices/statistics`,
+      params,
     }),
-  getAllReadings: (deviceId: string, params: any) =>
+  getAllReadings: (params: ReadingParams) =>
+    api.get<ArrayResponse<ReadingsResponse>>({
+      route: `/devices/readings`,
+      params,
+    }),
+  getDeviceReadings: ({
+    deviceId,
+    ...params
+  }: TimeParams & { deviceId: string; types: ValueType[]; level: TimeLevel }) =>
     api.get({
       route: `/devices/${deviceId}/readings`,
       params,
@@ -42,16 +60,16 @@ const routes = {
       route: `/devices/${deviceId}/latest-readings`,
     }),
   getAllDeviceStatistics: ({
-    startTime,
-    endTime,
     deviceId,
+    ...params
   }: {
     startTime: string;
     endTime: string;
     deviceId: string;
   }) =>
     api.get<StatisticsResponse>({
-      route: `/devices/${deviceId}/statistics?startTime=${startTime}&endTime=${endTime}`,
+      route: `/devices/${deviceId}/statistics`,
+      params,
     }),
 };
 

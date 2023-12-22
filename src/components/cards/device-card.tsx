@@ -1,6 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { LatestReadingResponse, StatisticsResponse } from '../../api/types';
+import {
+  LatestReadingResponse,
+  Reading as ReadingType,
+  StatisticsResponse,
+} from '../../api/types';
 import { Body, Caption2Light } from '../styled/typography';
 import { Tag } from '../styled/tag';
 import { getTimeAgoString } from '../../utils/datetime';
@@ -44,10 +48,12 @@ const BottomCard = styled.div`
 export const DeviceCard = ({
   latestData,
   statisticsData,
+  readingsData,
   options,
 }: {
   latestData: LatestReadingResponse;
   statisticsData?: StatisticsResponse;
+  readingsData?: ReadingType[];
   options: TimeFrameOptions;
 }) => {
   const timeDiff = Math.abs(

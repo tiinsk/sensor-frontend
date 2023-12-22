@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
 import api from '../api/routes';
 import { DeviceCard } from '../components/cards/device-card';
-import { LatestReadingResponse, StatisticsResponse } from '../api/types';
+import {
+  LatestReadingResponse,
+  ReadingsResponse,
+  StatisticsResponse,
+} from '../api/types';
 import styled from 'styled-components';
 import {
+  getDefaultTimeLevel,
   getEndTime,
   getStartTime,
   TimeFrameOptions,
@@ -17,14 +22,16 @@ const CardGrid = styled.div`
   gap: ${({ theme }) => theme.spacings.s48} ${({ theme }) => theme.spacings.s24};
 `;
 
+const DEFAULT_PERIOD = 'day';
+
 export const Home = () => {
   const timeNow = new Date().toISOString();
   const [options, setOptions] = useState<TimeFrameOptions>({
-    endTime: getEndTime(timeNow, 'day')!,
-    startTime: getStartTime(timeNow, 'day')!,
-    timePeriod: 'day',
+    endTime: getEndTime(timeNow, DEFAULT_PERIOD)!,
+    startTime: getStartTime(timeNow, DEFAULT_PERIOD)!,
+    timePeriod: DEFAULT_PERIOD,
     valueType: 'temperature',
-    level: 'hour',
+    level: getDefaultTimeLevel(DEFAULT_PERIOD),
     showMinAndMax: true,
   });
 
@@ -32,13 +39,24 @@ export const Home = () => {
   const [statisticsData, setStatisticsData] = useState<{
     [id: string]: StatisticsResponse | undefined;
   }>({});
+  const [readingsData, setReadingsData] = useState<{
+    [id: string]: ReadingsResponse | undefined;
+  }>({});
 
   const fetchData = async () => {
-    const [latestResult, statisticsResult] = await Promise.all([
+    const startTime = getUTCTime(options.startTime);
+    const endTime = getUTCTime(options.endTime);
+    const [latestResult, statisticsResult, readingsResult] = await Promise.all([
       api.getAllLatest(),
       api.getAllStatistics({
-        startTime: getUTCTime(options.startTime),
-        endTime: getUTCTime(options.endTime),
+        startTime,
+        endTime,
+      }),
+      api.getAllReadings({
+        startTime,
+        endTime,
+        type: options.valueType || 'temperature',
+        level: options.level,
       }),
     ]);
     const statisticsByDevice = statisticsResult?.values.reduce<{
@@ -48,8 +66,16 @@ export const Home = () => {
       return acc;
     }, {});
 
+    const readingsByDevice = readingsResult?.values.reduce<{
+      [id: string]: ReadingsResponse | undefined;
+    }>((acc, cur) => {
+      acc[cur.id] = cur;
+      return acc;
+    }, {});
+
     setLatestData(latestResult?.values || []);
     setStatisticsData(statisticsByDevice || {});
+    setReadingsData(readingsByDevice || {});
   };
 
   useEffect(() => {
@@ -69,6 +95,7 @@ export const Home = () => {
             options={options}
             latestData={device}
             statisticsData={statisticsData[device.id]}
+            readingsData={readingsData[device.id]?.values}
           />
         ))}
       </CardGrid>

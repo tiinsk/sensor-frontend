@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import { H2 } from '../styled/typography';
 import { Button } from '../styled/buttons';
@@ -7,18 +6,33 @@ import { Select } from '../styled/selects';
 import { Toggle } from '../styled/inputs/toggle';
 import { DateTime, DateTimeUnit } from 'luxon';
 
+export type TimePeriod = Extract<
+  DateTimeUnit,
+  'year' | 'month' | 'week' | 'day'
+>;
+
+export type TimeLevel = Extract<
+  DateTimeUnit,
+  'minute' | 'day' | 'week' | 'month'
+>;
+
+export type Selector = 'timeLevel' | 'timePeriod' | 'valueType';
+
+export type ValueType = 'temperature' | 'humidity' | 'pressure';
+
 export interface TimeFrameOptions {
   startTime: string;
   endTime: string;
-  timePeriod: DateTimeUnit;
-  valueType: string;
-  level: string;
+  timePeriod: TimePeriod;
+  valueType?: ValueType;
+  level: TimeLevel;
   showMinAndMax: boolean;
 }
 
 interface TimeFrameSelectorProps {
   onChange: (newOptions: TimeFrameOptions) => void;
   options: TimeFrameOptions;
+  selectors?: Selector[];
 }
 
 const StyledTimeFrameSelector = styled.div`
@@ -43,9 +57,23 @@ export const getEndTime = (endTime: string, timePeriod: DateTimeUnit) => {
   return endDateTime.endOf(timePeriod).toISO();
 };
 
+export const getDefaultTimeLevel = (timePeriod: TimePeriod): TimeLevel => {
+  switch (timePeriod) {
+    case 'day':
+      return 'minute';
+    case 'week':
+      return 'day';
+    case 'month':
+      return 'week';
+    case 'year':
+      return 'month';
+  }
+};
+
 export const TimeFrameSelector = ({
   onChange,
   options,
+  selectors = ['timePeriod', 'valueType'],
 }: TimeFrameSelectorProps) => {
   const getFormattedDateString = () => {
     if (options.timePeriod === 'day') {
@@ -74,6 +102,7 @@ export const TimeFrameSelector = ({
 
     changedOptions = {
       ...changedOptions,
+      level: getDefaultTimeLevel(changedOptions.timePeriod),
       startTime: startTime!,
       endTime: newEndTime!,
     };
@@ -114,7 +143,7 @@ export const TimeFrameSelector = ({
         <Select
           label="Time period"
           onSelect={(value: string) =>
-            onOptionsChange({ timePeriod: value as DateTimeUnit })
+            onOptionsChange({ timePeriod: value as TimePeriod })
           }
           initialValue="day"
           options={[
@@ -124,27 +153,35 @@ export const TimeFrameSelector = ({
             { value: 'year', label: 'Year' },
           ]}
         />
-        <Select
-          label="Graph type"
-          onSelect={(value: string) => onOptionsChange({ valueType: value })}
-          initialValue="temperature"
-          options={[
-            { value: 'temperature', label: 'Temperature' },
-            { value: 'humidity', label: 'Humidity' },
-            { value: 'pressure', label: 'Pressure' },
-          ]}
-        />
-        <Select
-          label="Graph level"
-          onSelect={(value: string) => onOptionsChange({ level: value })}
-          initialValue="hour"
-          options={[
-            { value: 'hour', label: 'Hour' },
-            { value: 'day', label: 'Day' },
-            { value: 'week', label: 'Week' },
-            { value: 'month', label: 'Month' },
-          ]}
-        />
+        {selectors?.includes('valueType') && (
+          <Select
+            label="Graph type"
+            onSelect={(value: string) =>
+              onOptionsChange({ valueType: value as ValueType })
+            }
+            initialValue="temperature"
+            options={[
+              { value: 'temperature', label: 'Temperature' },
+              { value: 'humidity', label: 'Humidity' },
+              { value: 'pressure', label: 'Pressure' },
+            ]}
+          />
+        )}
+        {selectors?.includes('timeLevel') && (
+          <Select
+            label="Graph level"
+            onSelect={(value: string) =>
+              onOptionsChange({ level: value as TimeLevel })
+            }
+            initialValue="hour"
+            options={[
+              { value: 'hour', label: 'Hour' },
+              { value: 'day', label: 'Day' },
+              { value: 'week', label: 'Week' },
+              { value: 'month', label: 'Month' },
+            ]}
+          />
+        )}
         <Toggle
           name="min-max-toggle"
           text="Min and max values"

@@ -27,8 +27,7 @@ export const Device = () => {
     endTime: getEndTime(timeNow, 'day')!,
     startTime: getStartTime(timeNow, 'day')!,
     timePeriod: 'day',
-    valueType: 'temperature',
-    level: 'hour',
+    level: 'minute',
     showMinAndMax: true,
   });
   const [latestData, setLatestData] = useState<
@@ -45,6 +44,7 @@ export const Device = () => {
   const fetchData = async () => {
     if (id) {
       const now = new Date().toISOString();
+
       const [latest, statisticsDay, statisticsWeek, statisticsMonth] =
         await Promise.all([
           api.getDeviceLatestReadings(id),
@@ -76,9 +76,28 @@ export const Device = () => {
     }
   };
 
+  const fetchReadings = async () => {
+    if (id) {
+      const startTime = getUTCTime(options.startTime);
+      const endTime = getUTCTime(options.endTime);
+
+      const readings = await api.getDeviceReadings({
+        deviceId: id,
+        startTime,
+        endTime,
+        types: ['temperature', 'humidity', 'pressure'],
+        level: options.level,
+      });
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    fetchReadings();
+  }, [id, options]);
 
   const timeDiff = latestData?.reading.created_at
     ? Math.abs(
@@ -141,6 +160,7 @@ export const Device = () => {
       <Box mt="s16">
         <TimeFrameSelector
           options={options}
+          selectors={['timePeriod']}
           onChange={newOptions => setOptions(newOptions)}
         />
       </Box>
