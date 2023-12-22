@@ -1,21 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import AppHeader from './components/header/header';
-import { Home } from './containers/home';
-import HomeOLD from './containers/home-OLD';
-import Device from './containers/device';
-import Login from './containers/login';
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
 } from 'react-router-dom';
+import WebFont from 'webfontloader';
+
+import AppHeader from './components/header/header';
+import { Home } from './containers/home';
+import HomeOLD from './containers/home-OLD';
+import Device from './containers/device';
+import Login from './containers/login';
 import { theme } from './theme';
 import api from './api/routes';
 import { isLoggedIn } from './utils/auth';
 import { GlobalStyle } from './theme/global-style';
 import { OldTheme } from './theme/old-theme';
+
+WebFont.load({
+  google: {
+    families: [
+      'Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900',
+    ],
+  },
+});
 
 const StyledApp = styled.div``;
 
