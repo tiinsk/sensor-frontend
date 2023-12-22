@@ -33,7 +33,14 @@ export const getStartTime = (endTime: string, timePeriod: DateTimeUnit) => {
 };
 
 export const getEndTime = (endTime: string, timePeriod: DateTimeUnit) => {
-  return DateTime.fromISO(endTime).endOf(timePeriod).toISO();
+  const now = DateTime.now();
+  let endDateTime = DateTime.fromISO(endTime);
+
+  if (endDateTime > now) {
+    endDateTime = now;
+  }
+
+  return endDateTime.endOf(timePeriod).toISO();
 };
 
 export const TimeFrameSelector = ({
@@ -63,10 +70,7 @@ export const TimeFrameSelector = ({
       changedOptions.timePeriod
     );
 
-    const startTime = getStartTime(
-      changedOptions.endTime,
-      changedOptions.timePeriod
-    );
+    const startTime = getStartTime(newEndTime!, changedOptions.timePeriod);
 
     changedOptions = {
       ...changedOptions,

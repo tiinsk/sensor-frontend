@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { LatestReadingResponse } from '../../api/types';
+import { LatestReadingResponse, StatisticsResponse } from '../../api/types';
 import { Body, Caption2Light } from '../styled/typography';
 import { Tag } from '../styled/tag';
 import { getTimeAgoString } from '../../utils/datetime';
@@ -43,9 +43,11 @@ const BottomCard = styled.div`
 
 export const DeviceCard = ({
   latestData,
+  statisticsData,
   options,
 }: {
   latestData: LatestReadingResponse;
+  statisticsData?: StatisticsResponse;
   options: TimeFrameOptions;
 }) => {
   const timeDiff = Math.abs(
@@ -66,7 +68,7 @@ export const DeviceCard = ({
           <BorderedFlex pl="s16">
             <Body>{latestData.name}</Body>
           </BorderedFlex>
-          <BorderedFlex justifyContent="flex-start">
+          <BorderedFlex pl="s16" justifyContent="flex-start">
             <Reading value={latestData.reading.humidity} unit="humidity" />
           </BorderedFlex>
           <BorderedFlex justifyContent="center">
@@ -83,21 +85,52 @@ export const DeviceCard = ({
               {options.timePeriod}
             </Caption2Light>
           </Flex>
-          <Flex flexDirection="column" pt="s16"></Flex>
-          <Flex flexDirection="column" pt="s16" alignItems="center"></Flex>
+          <Flex
+            flexDirection="column"
+            pt="s16"
+            pl="s16"
+            alignItems="flex-start"
+          >
+            <Reading
+              value={statisticsData?.statistics.humidity.max}
+              unit="humidity"
+              variant="max"
+              sizeVariant="small"
+            />
+            <Reading
+              value={statisticsData?.statistics.humidity.min}
+              unit="humidity"
+              variant="min"
+              sizeVariant="small"
+            />
+          </Flex>
+          <Flex flexDirection="column" pt="s16" alignItems="center">
+            <Reading
+              value={statisticsData?.statistics.pressure.max}
+              unit="pressure"
+              variant="max"
+              sizeVariant="small"
+            />
+            <Reading
+              value={statisticsData?.statistics.pressure.min}
+              unit="pressure"
+              variant="min"
+              sizeVariant="small"
+            />
+          </Flex>
           <Flex flexDirection="column" pt="s16" pr="s16" alignItems="flex-end">
-            {/*<Reading
-              value={latestData.max_temperature}
+            <Reading
+              value={statisticsData?.statistics.temperature.max}
               unit="temperature"
               variant="max"
               sizeVariant="small"
             />
             <Reading
-              value={latestData.min_temperature}
+              value={statisticsData?.statistics.temperature.min}
               unit="temperature"
               variant="min"
               sizeVariant="small"
-            />*/}
+            />
           </Flex>
         </TopGrid>
       </TopCard>

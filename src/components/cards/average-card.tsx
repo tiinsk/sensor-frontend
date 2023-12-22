@@ -1,16 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Unit } from '../../utils/unit';
-import { Caption2 } from '../styled/typography';
+import { Body, Caption2 } from '../styled/typography';
 import { Reading } from '../styled/readings';
+import { Flex } from '../styled/flex';
 
 const StyledDeviceCard = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacings.s16};
   padding: ${({ theme }) => theme.spacings.s16};
 
   flex-basis: 33%;
-
-  justify-content: space-between;
 
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
   background-color: ${({ theme }) => theme.colors.background.primary};
@@ -29,9 +30,9 @@ const Divider = styled.div`
 `;
 
 interface AverageMinMax {
-  avg?: number;
-  min?: number;
-  max?: number;
+  avg?: number | null;
+  min?: number | null;
+  max?: number | null;
 }
 
 interface AverageCardProps {
@@ -52,56 +53,74 @@ export const AverageCard = ({
 }: AverageCardProps) => {
   return (
     <StyledDeviceCard>
-      <TimeGroup>
-        <Caption2>Day</Caption2>
-        <Reading value={day.avg} unit={unit} />
-        <Reading
-          value={day.max}
-          unit={unit}
-          variant="max"
-          sizeVariant="small"
-        />
-        <Reading
-          value={day.min}
-          unit={unit}
-          variant="min"
-          sizeVariant="small"
-        />
-      </TimeGroup>
-      <Divider />
-      <TimeGroup>
-        <Caption2>Week</Caption2>
-        <Reading value={week.avg} unit={unit} />
-        <Reading
-          value={week.max}
-          unit={unit}
-          variant="max"
-          sizeVariant="small"
-        />
-        <Reading
-          value={week.min}
-          unit={unit}
-          variant="min"
-          sizeVariant="small"
-        />
-      </TimeGroup>
-      <Divider />
-      <TimeGroup>
-        <Caption2>Month</Caption2>
-        <Reading value={month.avg} unit={unit} />
-        <Reading
-          value={month.max}
-          unit={unit}
-          variant="max"
-          sizeVariant="small"
-        />
-        <Reading
-          value={month.min}
-          unit={unit}
-          variant="min"
-          sizeVariant="small"
-        />
-      </TimeGroup>
+      <Body>{title}</Body>
+      <Flex justifyContent="space-between">
+        <TimeGroup>
+          <Caption2 mb="s8">Day</Caption2>
+          <Reading
+            value={day.avg}
+            unit={unit}
+            sizeVariant="small"
+            variant="avg"
+          />
+          <Reading
+            value={day.max}
+            unit={unit}
+            variant="max"
+            sizeVariant="small"
+          />
+          <Reading
+            value={day.min}
+            unit={unit}
+            variant="min"
+            sizeVariant="small"
+          />
+        </TimeGroup>
+        <Divider />
+        <TimeGroup>
+          <Caption2 mb="s8">Week</Caption2>
+          <Reading
+            value={week.avg}
+            unit={unit}
+            sizeVariant="small"
+            variant="avg"
+          />
+          <Reading
+            value={week.max}
+            unit={unit}
+            variant="max"
+            sizeVariant="small"
+          />
+          <Reading
+            value={week.min}
+            unit={unit}
+            variant="min"
+            sizeVariant="small"
+          />
+        </TimeGroup>
+        <Divider />
+        <TimeGroup>
+          <Caption2 mb="s8">Month</Caption2>
+          <Reading
+            value={month.avg}
+            unit={unit}
+            sizeVariant="small"
+            variant="avg"
+          />
+          <Reading
+            value={month.max}
+            unit={unit}
+            variant="max"
+            sizeVariant="small"
+          />
+          <Reading
+            value={month.min}
+            unit={unit}
+            variant="min"
+            sizeVariant="small"
+          />
+        </TimeGroup>
+      </Flex>
     </StyledDeviceCard>
   );
 };

@@ -28,3 +28,7 @@ export const getTimeAgoString = (date: string) => {
   });
   return relativeFormatter.format(Math.trunc(diff.as(unit)), unit);
 };
+
+export const getUTCTime = (date: string) => {
+  return DateTime.fromISO(date).toUTC().toISO()!;
+};

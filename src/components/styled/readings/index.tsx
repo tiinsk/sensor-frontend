@@ -4,7 +4,7 @@ import { IconColor, IconType, MdiIcon } from '../mdi-icon';
 import { getUnit, Unit } from '../../../utils/unit';
 import { BodyStyle, Caption3Style, H3Style } from '../../../theme/typography';
 
-type ReadingVariant = 'default' | 'min' | 'max';
+type ReadingVariant = 'default' | 'min' | 'max' | 'avg';
 type ReadingSizeVariant = 'default' | 'small';
 
 interface ReadingProps {
@@ -44,6 +44,17 @@ const StyledReading = styled.div<{
   width: fit-content;
 
   ${({ $sizeVariant }) => $sizeVariant === 'default' && DefaultStyle};
+`;
+
+const AvgText = styled.span`
+  color: ${({ theme }) => theme.colors.typography.secondary};
+  font-size: 1rem;
+  line-height: 1rem;
+  font-family: ${({ theme }) => theme.fonts.fontBody};
+  text-transform: uppercase;
+  padding-right: ${({ theme }) => theme.spacings.s4};
+  padding-top: ${({ theme }) => theme.spacings.s4};
+  padding-bottom: ${({ theme }) => theme.spacings.s4};
 `;
 
 const getIconType = (variant: ReadingVariant): IconType | undefined => {
@@ -89,6 +100,7 @@ export const Reading = ({
           color={getIconColor(variant)}
         />
       )}
+      {variant === 'avg' && <AvgText>Avg</AvgText>}
       <StyledValue>{roundedValue}</StyledValue>
       {unitStr && <StyledUnit>{unitStr}</StyledUnit>}
     </StyledReading>

@@ -1,8 +1,8 @@
 import {
   ArrayResponse,
   DeviceResponse,
-  ExtremeResponse,
   LatestReadingResponse,
+  StatisticsResponse,
 } from './types';
 import * as api from './index';
 const { DateTime } = require('luxon');
@@ -20,6 +20,16 @@ const routes = {
     }),
   getExtremes: () =>
     api.get({ route: `/readings/extremes?localTimeZone=${getTimeZone()}` }),
+  getAllStatistics: ({
+    startTime,
+    endTime,
+  }: {
+    startTime: string;
+    endTime: string;
+  }) =>
+    api.get<ArrayResponse<StatisticsResponse>>({
+      route: `/devices/statistics?startTime=${startTime}&endTime=${endTime}`,
+    }),
   getAllReadings: (deviceId: string, params: any) =>
     api.get({
       route: `/devices/${deviceId}/readings`,
@@ -31,9 +41,17 @@ const routes = {
     api.get<LatestReadingResponse>({
       route: `/devices/${deviceId}/latest-readings`,
     }),
-  getAllDeviceExtremes: (deviceId: string) =>
-    api.get<ExtremeResponse>({
-      route: `/devices/${deviceId}/readings/extremes?localTimeZone=${getTimeZone()}`,
+  getAllDeviceStatistics: ({
+    startTime,
+    endTime,
+    deviceId,
+  }: {
+    startTime: string;
+    endTime: string;
+    deviceId: string;
+  }) =>
+    api.get<StatisticsResponse>({
+      route: `/devices/${deviceId}/statistics?startTime=${startTime}&endTime=${endTime}`,
     }),
 };
 
