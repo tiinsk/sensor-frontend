@@ -18,10 +18,20 @@ import { getUTCTime } from '../utils/datetime';
 import { Flex } from '../components/styled/flex';
 import { GraphLoading } from '../assets/loading/graph-loading';
 
+const CARD_MIN_WIDTH = '450px';
+
 const CardGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: ${({ theme }) => theme.spacings.s48} ${({ theme }) => theme.spacings.s24};
+  grid-template-columns: repeat(auto-fill, minmax(${CARD_MIN_WIDTH}, 1fr));
+  gap: ${({ theme }) => theme.spacings.s48} ${({ theme }) =>
+    theme.spacings.s24};
+  margin-bottom: ${({ theme }) => theme.spacings.s48}};
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    display: flex;
+    flex-direction: column;
+    gap: ${({ theme }) => theme.spacings.s16};
+  }
 `;
 
 const DEFAULT_PERIOD = 'day';
