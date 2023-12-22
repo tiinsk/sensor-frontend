@@ -127,20 +127,26 @@ export const lightColors = {
   },
   graphs: {
     background: {
-      temperature: primitiveColors.neutral.dark['08'],
-      temperatureHover: primitiveColors.neutral.dark['20'],
-      air: primitiveColors.air['20'],
-      airHover: primitiveColors.air['50'],
-      water: primitiveColors.water['20'],
-      waterHover: primitiveColors.water['50'],
+      temperature: {
+        primary: primitiveColors.neutral.dark['08'],
+        hover: primitiveColors.neutral.dark['20'],
+      },
+      pressure: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
+      humidity: {
+        primary: primitiveColors.water['20'],
+        hover: primitiveColors.water['50'],
+      },
     },
     line: {
-      air: primitiveColors.air['10'],
-      water: primitiveColors.water['10'],
+      pressure: primitiveColors.air['10'],
+      humidity: primitiveColors.water['10'],
     },
     point: {
-      air: primitiveColors.air['100'],
-      water: primitiveColors.water['100'],
+      pressure: primitiveColors.air['100'],
+      humidity: primitiveColors.water['100'],
     },
     map: {
       line: {
@@ -222,20 +228,26 @@ export const darkColors: ColorTheme = {
   },
   graphs: {
     background: {
-      temperature: primitiveColors.neutral.light['80'],
-      temperatureHover: primitiveColors.neutral.light['70'],
-      air: primitiveColors.air['20'],
-      airHover: primitiveColors.air['50'],
-      water: primitiveColors.water['20'],
-      waterHover: primitiveColors.water['50'],
+      temperature: {
+        primary: primitiveColors.neutral.light['80'],
+        hover: primitiveColors.neutral.light['70'],
+      },
+      pressure: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
+      humidity: {
+        primary: primitiveColors.water['20'],
+        hover: primitiveColors.water['50'],
+      },
     },
     line: {
-      air: primitiveColors.air['10'],
-      water: primitiveColors.water['10'],
+      pressure: primitiveColors.air['10'],
+      humidity: primitiveColors.water['10'],
     },
     point: {
-      air: primitiveColors.air['100'],
-      water: primitiveColors.water['100'],
+      pressure: primitiveColors.air['100'],
+      humidity: primitiveColors.water['100'],
     },
     map: {
       line: {

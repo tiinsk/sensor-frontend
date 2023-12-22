@@ -11,10 +11,7 @@ export type TimePeriod = Extract<
   'year' | 'month' | 'week' | 'day'
 >;
 
-export type TimeLevel = Extract<
-  DateTimeUnit,
-  'minute' | 'day' | 'week' | 'month'
->;
+export type TimeLevel = '10 minutes' | '30 minutes' | 'day' | 'week' | 'month';
 
 export type Selector = 'timeLevel' | 'timePeriod' | 'valueType';
 
@@ -60,7 +57,7 @@ export const getEndTime = (endTime: string, timePeriod: DateTimeUnit) => {
 export const getDefaultTimeLevel = (timePeriod: TimePeriod): TimeLevel => {
   switch (timePeriod) {
     case 'day':
-      return 'minute';
+      return '30 minutes';
     case 'week':
       return 'day';
     case 'month':

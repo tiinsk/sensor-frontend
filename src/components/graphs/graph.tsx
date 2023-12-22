@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { GraphSizeWrapper } from './graph-size-wrapper';
 import { Reading } from '../../api/types';
 import {
   TimeFrameOptions,
@@ -9,20 +8,22 @@ import {
 import { useGraphSizeContext } from './graph-size-context';
 import * as d3 from 'd3';
 import { useTheme } from 'styled-components';
+import { DateTime } from 'luxon';
 
 const MIN_TEMP = -30;
 const MAX_TEMP = 90;
 
 const formatAxes = (date: Date, timePeriod: TimePeriod) => {
+  const dateTime = DateTime.fromJSDate(date);
   switch (timePeriod) {
     case 'day':
-      return `${date.getMonth() + 1} / ${date.getDate()}`;
+      return dateTime.toFormat('hh:mm');
     case 'week':
-      return `${date.getMonth() + 1} / ${date.getDate()}`;
+      return dateTime.toFormat('ccc');
     case 'month':
-      return `${date.getDate()}.`;
+      return dateTime.toFormat('dd.');
     case 'year':
-      return `${date.getMonth() + 1} / ${date.getDate()}`;
+      return dateTime.toFormat('MMM');
   }
 };
 
@@ -121,17 +122,32 @@ export const Graph = ({
           d={area(data) || undefined}
         />
         <g fill="currentColor">
-          {data.map((d, i) => (
-            <g
-              key={i}
-              transform={`translate(${x(new Date(d.time))}, ${y(d.avg || 0)})`}
-            >
-              <text className="unit-text" x={-10} y={-10}>
-                {d.avg?.toFixed(1) || 0}
-              </text>
-              <circle r="3" fill={colorInterpolation(yColor(d.avg || 0))} />
-            </g>
-          ))}
+          {data.map((d, i) => {
+            const minMaxHeight = Math.abs(y(d.min || 0) - y(d.max || 0));
+            return (
+              <g
+                key={i}
+                transform={`translate(${x(new Date(d.time))}, ${y(
+                  d.avg || 0
+                )})`}
+              >
+                {options.showMinAndMax && (
+                  <rect
+                    fill={colors.graphs.background[valueType].primary}
+                    y={-(y(d.avg || 0) - y(d.max || 0))}
+                    x={-5}
+                    rx={4}
+                    height={minMaxHeight}
+                    width={10}
+                  />
+                )}
+                <circle r="3" fill={colorInterpolation(yColor(d.avg || 0))} />
+                <text className="unit-text" x={-10} y={-10}>
+                  {d.avg?.toFixed(1) || 0}
+                </text>
+              </g>
+            );
+          })}
         </g>
         <linearGradient
           id={`line-gradient-${deviceId}-${valueType}`}

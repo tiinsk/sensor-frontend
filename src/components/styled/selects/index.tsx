@@ -42,6 +42,7 @@ export const OptionList = styled.div`
   flex-direction: column;
   outline: 0;
   width: 100%;
+  z-index: 1;
 
   background-color: ${({ theme }) => theme.colors.buttons.background.secondary};
   border-radius: ${({ theme }) => theme.spacings.s4};

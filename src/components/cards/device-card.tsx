@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {
   LatestReadingResponse,
@@ -148,7 +148,7 @@ export const DeviceCard = ({
               deviceId={latestData.id}
               options={options}
               data={readingsData}
-              valueType="temperature"
+              valueType={options.valueType || 'temperature'}
             />
           )}
         </GraphSizeWrapper>
