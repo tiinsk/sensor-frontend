@@ -3,7 +3,6 @@ import styled, { css, DefaultTheme } from 'styled-components';
 import { IconColor, IconType, MdiIcon } from '../mdi-icon';
 import { getUnit, Unit } from '../../../utils/unit';
 import { BodyStyle, Caption3Style, H3Style } from '../../../theme/typography';
-import { Box } from '../box';
 
 type ReadingVariant = 'default' | 'min' | 'max';
 type ReadingSizeVariant = 'default' | 'small';
@@ -11,7 +10,7 @@ type ReadingSizeVariant = 'default' | 'small';
 interface ReadingProps {
   variant?: ReadingVariant;
   sizeVariant?: ReadingSizeVariant;
-  value?: number;
+  value?: number | null;
   unit?: Unit;
 }
 
@@ -78,7 +77,8 @@ export const Reading = ({
 }: ReadingProps) => {
   const iconType = getIconType(variant);
   const unitStr = unit && getUnit(unit);
-  const roundedValue = value ? value.toFixed(1) : '--';
+  const roundedValue =
+    value !== null && value !== undefined ? value.toFixed(1) : '--';
   return (
     <StyledReading {...props} $sizeVariant={sizeVariant}>
       {iconType && (

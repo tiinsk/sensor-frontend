@@ -64,19 +64,13 @@ export const DeviceCard = ({
             <Body>{latestData.name}</Body>
           </BorderedFlex>
           <BorderedFlex justifyContent="flex-start">
-            {latestData.humidity && (
-              <Reading value={latestData.humidity} unit="humidity" />
-            )}
+            <Reading value={latestData.humidity} unit="humidity" />
           </BorderedFlex>
           <BorderedFlex justifyContent="center">
-            {latestData.pressure && (
-              <Reading value={latestData.pressure} unit="pressure" />
-            )}
+            <Reading value={latestData.pressure} unit="pressure" />
           </BorderedFlex>
           <BorderedFlex pr="s16" justifyContent="flex-end">
-            {latestData.temperature && (
-              <Reading value={latestData.temperature} unit="temperature" />
-            )}
+            <Reading value={latestData.temperature} unit="temperature" />
           </BorderedFlex>
           <Flex pt="s16" pl="s16">
             <Caption2Light>Day</Caption2Light>
@@ -84,22 +78,18 @@ export const DeviceCard = ({
           <Flex flexDirection="column" pt="s16"></Flex>
           <Flex flexDirection="column" pt="s16" alignItems="center"></Flex>
           <Flex flexDirection="column" pt="s16" pr="s16" alignItems="flex-end">
-            {latestData.max_temperature && (
-              <Reading
-                value={latestData.max_temperature}
-                unit="temperature"
-                variant="max"
-                sizeVariant="small"
-              />
-            )}
-            {latestData.min_temperature && (
-              <Reading
-                value={latestData.min_temperature}
-                unit="temperature"
-                variant="min"
-                sizeVariant="small"
-              />
-            )}
+            <Reading
+              value={latestData.max_temperature}
+              unit="temperature"
+              variant="max"
+              sizeVariant="small"
+            />
+            <Reading
+              value={latestData.min_temperature}
+              unit="temperature"
+              variant="min"
+              sizeVariant="small"
+            />
           </Flex>
         </TopGrid>
       </TopCard>
