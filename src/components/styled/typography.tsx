@@ -60,7 +60,7 @@ export const BodyLight = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <StyledBodyLight {...props} component="body">
+    <StyledBodyLight {...props} component="p">
       {children}
     </StyledBodyLight>
   );
@@ -77,7 +77,7 @@ export const Body = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <StyledBody {...props} component="body">
+    <StyledBody {...props} component="p">
       {children}
     </StyledBody>
   );
@@ -111,7 +111,7 @@ export const Caption2Light = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <StyledCaption2Light {...props} component="body">
+    <StyledCaption2Light {...props} component="p">
       {children}
     </StyledCaption2Light>
   );
@@ -128,7 +128,7 @@ export const Caption2 = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <StyledCaption2 {...props} component="body">
+    <StyledCaption2 {...props} component="p">
       {children}
     </StyledCaption2>
   );
@@ -145,7 +145,7 @@ export const Caption3 = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <StyledCaption3 {...props} component="body">
+    <StyledCaption3 {...props} component="p">
       {children}
     </StyledCaption3>
   );
