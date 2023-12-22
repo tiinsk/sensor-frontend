@@ -117,6 +117,7 @@ export const lightColors = {
   borders: {
     primary: primitiveColors.neutral.dark['20'],
     secondary: primitiveColors.neutral.dark['08'],
+    secondaryHover: primitiveColors.neutral.dark['10'],
   },
   error: {
     background: primitiveColors.error['10'],
@@ -148,6 +149,7 @@ export const lightColors = {
   },
   shadows: {
     boxShadow: `0px 4px 30px 0px rgba(0, 0, 0, 0.05)`,
+    boxShadowHover: `0px 4px 30px 0px rgba(0, 0, 0, 0.08)`,
   },
 };
 
@@ -195,6 +197,7 @@ export const darkColors: ColorTheme = {
   borders: {
     primary: primitiveColors.neutral.light['80'],
     secondary: primitiveColors.neutral.light['90'],
+    secondaryHover: primitiveColors.neutral.light['90'],
   },
   error: {
     background: primitiveColors.error['130'],
@@ -226,5 +229,6 @@ export const darkColors: ColorTheme = {
   },
   shadows: {
     boxShadow: `0px 4px 30px 0px rgba(255, 255, 255, 0.06)`,
+    boxShadowHover: `0px 4px 30px 0px rgba(255, 255, 255, 0.13)`,
   },
 };

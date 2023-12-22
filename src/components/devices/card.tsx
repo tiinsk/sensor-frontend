@@ -7,12 +7,18 @@ import { getTimeAgoString } from '../../utils/datetime';
 import { DateTime } from 'luxon';
 import { Reading } from '../styled/readings';
 import { Flex } from '../styled/flex';
+import { Link } from 'react-router-dom';
 
-const StyledDeviceCard = styled.div`
+const StyledDeviceCard = styled(Link)`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
   background-color: ${({ theme }) => theme.colors.background.primary};
   border-radius: ${({ theme }) => theme.spacings.s4};
   box-shadow: ${({ theme }) => theme.colors.shadows.boxShadow};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.borders.secondaryHover};
+    box-shadow: ${({ theme }) => theme.colors.shadows.boxShadowHover};
+  }
 `;
 const TopCard = styled.div`
   display: block;
@@ -45,7 +51,7 @@ export const DeviceCard = ({
   const tagVariant = timeDiff > 20 ? 'error' : 'default';
 
   return (
-    <StyledDeviceCard>
+    <StyledDeviceCard to={`/devices/${latestData.device}`}>
       <TopCard>
         <Flex justifyContent="flex-end" px="s8" mb="s8">
           <Tag
