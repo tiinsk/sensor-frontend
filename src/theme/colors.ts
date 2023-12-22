@@ -99,7 +99,7 @@ export const lightColors = {
       secondaryDisabled: primitiveColors.neutral.dark['02'],
     },
     backgroundHover: {
-      primary: primitiveColors.neutral.filled['90'],
+      primary: primitiveColors.neutral.filled['100'],
       secondary: primitiveColors.neutral.filled['10'],
       basic: primitiveColors.neutral.filled['08'],
     },
@@ -116,12 +116,14 @@ export const lightColors = {
   },
   borders: {
     primary: primitiveColors.neutral.dark['20'],
+    primaryHover: primitiveColors.neutral.dark['80'],
     secondary: primitiveColors.neutral.dark['08'],
     secondaryHover: primitiveColors.neutral.dark['10'],
   },
   error: {
     background: primitiveColors.error['10'],
     typography: primitiveColors.error['130'],
+    plain: primitiveColors.error['100'],
   },
   graphs: {
     background: {
@@ -157,8 +159,8 @@ export type ColorTheme = typeof lightColors;
 
 export const darkColors: ColorTheme = {
   background: {
-    primary: primitiveColors.neutral.filled['90'],
-    secondary: primitiveColors.neutral.filled['100'],
+    primary: primitiveColors.neutral.filled['100'],
+    secondary: primitiveColors.neutral.filled['90'],
     disabled: primitiveColors.neutral.light['80'],
     tertiary: primitiveColors.neutral.light['80'],
   },
@@ -196,12 +198,14 @@ export const darkColors: ColorTheme = {
   },
   borders: {
     primary: primitiveColors.neutral.light['80'],
+    primaryHover: primitiveColors.neutral.filled['30'],
     secondary: primitiveColors.neutral.light['90'],
     secondaryHover: primitiveColors.neutral.light['90'],
   },
   error: {
     background: primitiveColors.error['130'],
     typography: primitiveColors.error['10'],
+    plain: primitiveColors.error['100'],
   },
   graphs: {
     background: {

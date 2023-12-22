@@ -12,7 +12,8 @@ const getTimeZone = () => {
 };
 
 const routes = {
-  login: (payload: any) => api.post({ route: '/login', payload }),
+  login: (payload: { username: string; password: string }) =>
+    api.post<string>({ route: '/login', payload }, false),
   getAllLatest: () =>
     api.get<LatestReadingResponse[]>({
       route: `/readings/now?localTimeZone=${getTimeZone()}`,

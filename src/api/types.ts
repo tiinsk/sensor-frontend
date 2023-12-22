@@ -1,3 +1,19 @@
+export interface ArrayResponse<DataType> {
+  count: number;
+  limit: number;
+  values: DataType[];
+}
+
+export type PostResponse<DataType> =
+  | {
+      data: DataType;
+      error: undefined;
+    }
+  | {
+      data: undefined;
+      error: { statusCode: number; message: string };
+    };
+
 export type DeviceLocation = 'inside' | 'outside';
 
 export interface LatestReadingResponse {
@@ -37,10 +53,4 @@ export interface DeviceResponse {
   location_type: DeviceLocation;
   name: string;
   order: number;
-}
-
-export interface ArrayResponse<DataType> {
-  count: number;
-  limit: number;
-  values: DataType[];
 }

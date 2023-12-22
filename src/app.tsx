@@ -13,7 +13,8 @@ import { Home } from './containers/home';
 import HomeOLD from './containers/home-OLD';
 import DeviceOLD from './containers/device-OLD';
 import { Device } from './containers/device';
-import Login from './containers/login';
+import LoginOLD from './containers/login-OLD';
+import { Login } from './containers/login';
 import api from './api/routes';
 import { isLoggedIn } from './utils/auth';
 import { GlobalStyle } from './theme/global-style';
@@ -30,7 +31,9 @@ WebFont.load({
   },
 });
 
-const StyledApp = styled.div``;
+const StyledLoggedInRoutes = styled.div`
+  padding: 0 ${({ theme }) => theme.spacings.s48};
+`;
 
 export let FORCE_RERENDER: () => void;
 
@@ -43,15 +46,16 @@ const App = () => {
     <ThemeContextProvider>
       <ThemeProvider>
         <GlobalStyle />
-        <StyledApp>
+        <div>
           <Router>
             <Routes>
-              <Route path="/old/login" element={<Login />} />
+              <Route path="/old/login" element={<LoginOLD />} />
+              <Route path="/login" element={<Login />} />
               <Route path="/old/*" element={<OldLoggedInRoutes />} />
               <Route path="/*" element={<LoggedInRoutes />} />
             </Routes>
           </Router>
-        </StyledApp>
+        </div>
       </ThemeProvider>
     </ThemeContextProvider>
   );
@@ -89,31 +93,20 @@ const OldLoggedInRoutes = () => {
 };
 
 const LoggedInRoutes = () => {
-  const [devices, setDevices] = useState<DeviceResponse[]>([]);
   const loggedIn = isLoggedIn();
-
-  useEffect(() => {
-    const fetchDevices = async () => {
-      const devices = await api.getAllDevices();
-      if (devices && devices.values) {
-        setDevices(devices.values);
-      }
-    };
-    fetchDevices();
-  }, []);
 
   if (!loggedIn) {
     return <Navigate to="/login" />;
   }
 
   return (
-    <>
+    <StyledLoggedInRoutes>
       <TopNav />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="devices/:id" Component={Device} />
       </Routes>
-    </>
+    </StyledLoggedInRoutes>
   );
 };
 
