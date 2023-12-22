@@ -30,7 +30,7 @@ WebFont.load({
 
 const StyledApp = styled.div``;
 
-export let FORCE_RERENDER;
+export let FORCE_RERENDER: () => void;
 
 const App = () => {
   const [forceReRender, setForceReRender] = useState(0);
