@@ -13,14 +13,16 @@ import {
   PageTitleStyle,
 } from '../../theme/typography';
 
+interface TypographyProps extends BoxProps {
+  children?: React.ReactNode;
+  style?: React.CSSProperties;
+}
+
 const StyledH1 = styled(Box)`
   ${H1Style};
 `;
 
-export const H1 = ({
-  children,
-  ...props
-}: { children?: React.ReactNode } & BoxProps) => {
+export const H1 = ({ children, ...props }: TypographyProps) => {
   return (
     <StyledH1 {...props} component="h1">
       {children}
@@ -32,10 +34,7 @@ const StyledH2 = styled(Box)`
   ${H2Style};
 `;
 
-export const H2 = ({
-  children,
-  ...props
-}: { children?: React.ReactNode } & BoxProps) => {
+export const H2 = ({ children, ...props }: TypographyProps) => {
   return (
     <StyledH2 {...props} component="h2">
       {children}
@@ -47,10 +46,7 @@ const StyledH3 = styled(Box)`
   ${H3Style};
 `;
 
-export const H3 = ({
-  children,
-  ...props
-}: { children?: React.ReactNode } & BoxProps) => {
+export const H3 = ({ children, ...props }: TypographyProps) => {
   return (
     <StyledH3 {...props} component="h3">
       {children}
@@ -62,12 +58,7 @@ const StyledBodyLight = styled(Box)`
   ${BodyLightStyle};
 `;
 
-export const BodyLight = ({
-  children,
-  ...props
-}: {
-  children?: React.ReactNode;
-} & BoxProps) => {
+export const BodyLight = ({ children, ...props }: TypographyProps) => {
   return (
     <StyledBodyLight {...props} component="p">
       {children}
@@ -79,12 +70,7 @@ const StyledBody = styled(Box)`
   ${BodyStyle};
 `;
 
-export const Body = ({
-  children,
-  ...props
-}: {
-  children?: React.ReactNode;
-} & BoxProps) => {
+export const Body = ({ children, ...props }: TypographyProps) => {
   return (
     <StyledBody {...props} component="p">
       {children}
@@ -96,12 +82,7 @@ const StyledPageTitle = styled(Box)`
   ${PageTitleStyle};
 `;
 
-export const PageTitle = ({
-  children,
-  ...props
-}: {
-  children?: React.ReactNode;
-} & BoxProps) => {
+export const PageTitle = ({ children, ...props }: TypographyProps) => {
   return (
     <StyledPageTitle {...props} component="span">
       {children}
@@ -113,12 +94,7 @@ const StyledCaption2Light = styled(Box)`
   ${Caption2LightStyle};
 `;
 
-export const Caption2Light = ({
-  children,
-  ...props
-}: {
-  children?: React.ReactNode;
-} & BoxProps) => {
+export const Caption2Light = ({ children, ...props }: TypographyProps) => {
   return (
     <StyledCaption2Light {...props} component="p">
       {children}
@@ -130,12 +106,7 @@ const StyledCaption2 = styled(Box)`
   ${Caption2Style};
 `;
 
-export const Caption2 = ({
-  children,
-  ...props
-}: {
-  children?: React.ReactNode;
-} & BoxProps) => {
+export const Caption2 = ({ children, ...props }: TypographyProps) => {
   return (
     <StyledCaption2 {...props} component="p">
       {children}
@@ -147,12 +118,7 @@ const StyledCaption3 = styled(Box)`
   ${Caption3Style};
 `;
 
-export const Caption3 = ({
-  children,
-  ...props
-}: {
-  children?: React.ReactNode;
-} & BoxProps) => {
+export const Caption3 = ({ children, ...props }: TypographyProps) => {
   return (
     <StyledCaption3 {...props} component="p">
       {children}
