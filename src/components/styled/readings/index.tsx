@@ -52,7 +52,7 @@ const AvgText = styled.span`
   line-height: 1rem;
   font-family: ${({ theme }) => theme.fonts.fontBody};
   text-transform: uppercase;
-  padding-right: ${({ theme }) => theme.spacings.s4};
+  padding-right: ${({ theme }) => theme.spacings.s8};
   padding-top: ${({ theme }) => theme.spacings.s4};
   padding-bottom: ${({ theme }) => theme.spacings.s4};
 `;
@@ -94,7 +94,7 @@ export const Reading = ({
     <StyledReading {...props} $sizeVariant={sizeVariant}>
       {iconType && (
         <MdiIcon
-          mr="s8"
+          mr="s12"
           type={iconType}
           size="s16"
           color={getIconColor(variant)}

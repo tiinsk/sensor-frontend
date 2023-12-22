@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Reading } from '../../api/types';
 import {
   TimeFrameOptions,
@@ -7,8 +7,9 @@ import {
 } from '../selectors/time-frame-selector';
 import { useGraphSizeContext } from './graph-size-context';
 import * as d3 from 'd3';
-import { useTheme } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { DateTime } from 'luxon';
+import { GraphTooltip, TooltipContent } from '../styled/tooltips/graph-tooltip';
 
 const MIN_TEMP = -30;
 const MAX_TEMP = 90;
@@ -35,6 +36,20 @@ interface GraphProps {
   showAxis?: boolean;
 }
 
+const PointG = styled.g<{ $valueType: ValueType }>`
+  cursor: pointer;
+  rect {
+    fill: ${({ theme, $valueType }) =>
+      theme.colors.graphs.background[$valueType].primary};
+  }
+  &:hover {
+    rect {
+      fill: ${({ theme, $valueType }) =>
+        theme.colors.graphs.background[$valueType].hover};
+    }
+  }
+`;
+
 export const Graph = ({
   deviceId,
   data,
@@ -42,6 +57,9 @@ export const Graph = ({
   valueType,
   showAxis = true,
 }: GraphProps) => {
+  const [tooltipContent, setTooltip] = useState<TooltipContent | undefined>(
+    undefined
+  );
   const { colors } = useTheme();
   const gx = useRef<SVGGElement>(null);
   const { width, height } = useGraphSizeContext();
@@ -125,15 +143,28 @@ export const Graph = ({
           {data.map((d, i) => {
             const minMaxHeight = Math.abs(y(d.min || 0) - y(d.max || 0));
             return (
-              <g
+              <PointG
                 key={i}
+                $valueType={valueType}
                 transform={`translate(${x(new Date(d.time))}, ${y(
                   d.avg || 0
                 )})`}
+                onMouseEnter={e => {
+                  const circleElem = e.currentTarget
+                    .querySelector('circle')
+                    ?.getBoundingClientRect();
+                  if (circleElem) {
+                    setTooltip({
+                      date: d.time,
+                      reading: d,
+                      position: { x: circleElem.x, y: circleElem.y },
+                    });
+                  }
+                }}
+                onMouseLeave={e => setTooltip(undefined)}
               >
                 {options.showMinAndMax && (
                   <rect
-                    fill={colors.graphs.background[valueType].primary}
                     y={-(y(d.avg || 0) - y(d.max || 0))}
                     x={-5}
                     rx={4}
@@ -145,7 +176,7 @@ export const Graph = ({
                 <text className="unit-text" x={-10} y={-10}>
                   {d.avg?.toFixed(1) || 0}
                 </text>
-              </g>
+              </PointG>
             );
           })}
         </g>
@@ -183,6 +214,11 @@ export const Graph = ({
           ))}
         </linearGradient>
       </svg>
+      <GraphTooltip
+        tooltipContent={tooltipContent}
+        timePeriod={options.timePeriod}
+        valueType={valueType}
+      />
     </>
   );
 };
