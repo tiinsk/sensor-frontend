@@ -15,6 +15,8 @@ import {
   TimeFrameSelector,
 } from '../components/selectors/time-frame-selector';
 import { getUTCTime } from '../utils/datetime';
+import { Flex } from '../components/styled/flex';
+import { GraphLoading } from '../assets/loading/graph-loading';
 
 const CardGrid = styled.div`
   display: grid;
@@ -143,27 +145,40 @@ export const Home = () => {
     <>
       <TimeFrameSelector
         options={options}
-        onChange={newOptions => setOptions(newOptions)}
+        onChange={newOptions => {
+          setLoadingReadings(true);
+          setOptions(newOptions);
+        }}
       />
-      <CardGrid>
-        {devices.map(device => (
-          <DeviceCard
-            id={device.id}
-            name={device.name}
-            key={device.id}
-            options={options}
-            latestData={latestData[device.id]}
-            statisticsData={statisticsData[device.id]}
-            readingsData={readingsData[device.id]?.values}
-            isLoadingMainContent={
-              isLoadingMainContent || isLoadingMainContent === undefined
-            }
-            isLoadingReadings={
-              isLoadingReadings || isLoadingReadings === undefined
-            }
-          />
-        ))}
-      </CardGrid>
+      {devices.length === 0 && isLoadingMainContent ? (
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          style={{ height: '600px', maxHeight: 'calc(100vh - 200px)' }}
+        >
+          <GraphLoading />
+        </Flex>
+      ) : (
+        <CardGrid>
+          {devices.map(device => (
+            <DeviceCard
+              id={device.id}
+              name={device.name}
+              key={device.id}
+              options={options}
+              latestData={latestData[device.id]}
+              statisticsData={statisticsData[device.id]}
+              readingsData={readingsData[device.id]?.values}
+              isLoadingMainContent={
+                isLoadingMainContent || isLoadingMainContent === undefined
+              }
+              isLoadingReadings={
+                isLoadingReadings || isLoadingReadings === undefined
+              }
+            />
+          ))}
+        </CardGrid>
+      )}
     </>
   );
 };
