@@ -6,6 +6,7 @@
     "@mdi/js": "^7.3.67",
     "@mdi/react": "^1.6.1",
     "@types/jest": "^29.5.9",
+    "@types/luxon": "^3.3.5",
     "@types/node": "^20.9.3",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.16",
