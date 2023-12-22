@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Reading } from '../../api/types';
 import {
   TimeFrameOptions,
@@ -9,10 +9,11 @@ import { useGraphSizeContext } from './graph-size-context';
 import * as d3 from 'd3';
 import styled, { useTheme } from 'styled-components';
 import { DateTime } from 'luxon';
-import { GraphTooltip, TooltipContent } from '../styled/tooltips/graph-tooltip';
+import { GraphTooltip } from '../styled/tooltips/graph-tooltip';
 
 const MIN_TEMP = -30;
 const MAX_TEMP = 90;
+const SMALL_GRAPH_LIMIT = 500;
 
 const formatAxes = (date: Date, timePeriod: TimePeriod) => {
   const dateTime = DateTime.fromJSDate(date);
@@ -28,10 +29,24 @@ const formatAxes = (date: Date, timePeriod: TimePeriod) => {
   }
 };
 
-const axisTicks = (timePeriod: TimePeriod) => {
+const getAxisTicks = (timePeriod: TimePeriod, width?: number) => {
+  const isSmallGraph = width && width < SMALL_GRAPH_LIMIT;
   switch (timePeriod) {
     case 'day':
-      return d3.timeHour.every(1);
+      return isSmallGraph ? d3.timeHour.every(2) : d3.timeHour.every(1);
+    case 'week':
+      return d3.timeDay.every(1);
+    case 'month':
+      return isSmallGraph ? d3.timeDay.every(2) : d3.timeDay.every(1);
+    case 'year':
+      return d3.timeMonth.every(1);
+  }
+};
+
+const getHoverBlocks = (timePeriod: TimePeriod) => {
+  switch (timePeriod) {
+    case 'day':
+      return d3.timeMinute.every(30);
     case 'week':
       return d3.timeDay.every(1);
     case 'month':
@@ -123,17 +138,17 @@ export const Graph = ({
     d => y(d.avg || 0)
   );
 
-  const axisTickInterval = axisTicks(options.timePeriod);
+  const hoverBlockInterval = getHoverBlocks(options.timePeriod);
 
-  const ticks = axisTickInterval ? x.ticks(axisTickInterval) : [];
-  const tickWidth = (width - margins.left - margins.right) / ticks.length;
+  const hoverBlocks = hoverBlockInterval ? x.ticks(hoverBlockInterval) : [];
+  const tickWidth = (width - margins.left - margins.right) / hoverBlocks.length;
 
   useEffect(() => {
     if (gx.current) {
       void d3.select(gx.current).call(
         d3
           .axisBottom<Date>(x)
-          .tickArguments([axisTicks(options.timePeriod)])
+          .tickArguments([getAxisTicks(options.timePeriod, width)])
           .tickFormat((d, i) => formatAxes(d, options.timePeriod))
           .tickSize(0)
       );
@@ -180,6 +195,10 @@ export const Graph = ({
         <g fill="currentColor">
           {data.map((d, i) => {
             const minMaxHeight = Math.abs(y(d.min || 0) - y(d.max || 0));
+            const showValue =
+              width >= SMALL_GRAPH_LIMIT ||
+              i % 2 === 0 ||
+              ['year', 'week'].includes(options.timePeriod);
             return (
               <PointG
                 key={i}
@@ -199,14 +218,16 @@ export const Graph = ({
                   />
                 )}
                 <circle r="3" fill={colorInterpolation(yColor(d.avg || 0))} />
-                <text className="unit-text" x={-10} y={-10}>
-                  {d.avg?.toFixed(1) || 0}
-                </text>
+                {showValue && (
+                  <text className="unit-text" x={-10} y={-10}>
+                    {d.avg?.toFixed(1) || 0}
+                  </text>
+                )}
               </PointG>
             );
           })}
         </g>
-        {ticks.map((d, i) => (
+        {hoverBlocks.map((d, i) => (
           <HoverableRect
             key={i}
             y={y(max) - margins.top}
