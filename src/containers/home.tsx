@@ -8,11 +8,14 @@ import {
 } from '../api/types';
 import styled from 'styled-components';
 import {
+  DEFAULT_PERIOD,
+  getEndDateFromNow,
   getDefaultTimeLevel,
-  getEndTime,
   getStartTime,
   TimeFrameOptions,
   TimeFrameSelector,
+  getGraphStartTime,
+  getGraphEndDateFromNow,
 } from '../components/selectors/time-frame-selector';
 import { getUTCTime } from '../utils/datetime';
 import { Flex } from '../components/styled/flex';
@@ -33,8 +36,6 @@ const CardGrid = styled.div`
   }
 `;
 
-const DEFAULT_PERIOD = 'day';
-
 interface SavedDevice {
   id: string;
   name: string;
@@ -50,15 +51,13 @@ const setLocalstorageDevices = (devices: SavedDevice[]) => {
 };
 
 export const Home = () => {
-  const timeNow = new Date().toISOString();
-  const [options, setOptions] = useState<TimeFrameOptions>({
-    endTime: getEndTime(timeNow, DEFAULT_PERIOD)!,
-    startTime: getStartTime(timeNow, DEFAULT_PERIOD)!,
+  const [options, setOptions] = useState<TimeFrameOptions>(() => ({
+    offsetFromNow: 0,
     timePeriod: DEFAULT_PERIOD,
     valueType: 'temperature',
-    level: getDefaultTimeLevel(DEFAULT_PERIOD),
+    level: getDefaultTimeLevel(),
     showMinAndMax: true,
-  });
+  }));
 
   const [devices, setDevices] = useState<SavedDevice[]>(
     getLocalstorageDevices()
@@ -91,17 +90,25 @@ export const Home = () => {
   };
 
   const fetchReadings = async () => {
+    const endTime = getGraphEndDateFromNow(
+      options.offsetFromNow,
+      options.timePeriod
+    )!;
+    const startTime = getGraphStartTime(
+      options.offsetFromNow,
+      options.timePeriod
+    )!;
     setLoadingReadings(true);
-    const startTime = getUTCTime(options.startTime);
-    const endTime = getUTCTime(options.endTime);
+    const startUTC = getUTCTime(startTime);
+    const endUTC = getUTCTime(endTime);
     const [statisticsResult, readingsResult] = await Promise.all([
       api.getAllStatistics({
-        startTime,
-        endTime,
+        startTime: startUTC,
+        endTime: endUTC,
       }),
       api.getAllReadings({
-        startTime,
-        endTime,
+        startTime: startUTC,
+        endTime: endUTC,
         type: options.valueType || 'temperature',
         level: options.level,
       }),

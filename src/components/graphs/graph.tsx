@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Reading } from '../../api/types';
 import {
+  getEndDateFromNow,
+  getStartTime,
   TimeFrameOptions,
   TimePeriod,
   ValueType,
@@ -94,8 +96,8 @@ export const Graph = ({
   const gx = useRef<SVGGElement>(null);
   const { width, height } = useGraphSizeContext();
 
-  const start = options.startTime;
-  const end = options.endTime;
+  const endTime = getEndDateFromNow(options.offsetFromNow, options.timePeriod)!;
+  const startTime = getStartTime(options.offsetFromNow, options.timePeriod)!;
 
   const max = Math.max(...data?.map(r => r.max || 0));
   const min = Math.min(...data?.map(r => r.min || 0));
@@ -108,7 +110,7 @@ export const Graph = ({
   };
 
   const x = d3.scaleTime(
-    [new Date(start), new Date(end)],
+    [new Date(startTime), new Date(endTime)],
     [margins.left, width - margins.right]
   );
 
@@ -194,6 +196,10 @@ export const Graph = ({
         />
         <g fill="currentColor">
           {data.map((d, i) => {
+            const date = new Date(d.time);
+            if (date < new Date(startTime) || date > new Date(endTime))
+              return null;
+
             const minMaxHeight = Math.abs(y(d.min || 0) - y(d.max || 0));
             const showValue =
               width >= SMALL_GRAPH_LIMIT ||

@@ -11,11 +11,14 @@ import { DateTime } from 'luxon';
 import { getTimeAgoString, getUTCTime } from '../utils/datetime';
 import { AverageCard } from '../components/cards/average-card';
 import {
+  DEFAULT_PERIOD,
   getDefaultTimeLevel,
-  getEndTime,
   getStartTime,
   TimeFrameOptions,
   TimeFrameSelector,
+  getEndTime,
+  getGraphStartTime,
+  getGraphEndDateFromNow,
 } from '../components/selectors/time-frame-selector';
 import { Box } from '../components/styled/box';
 import styled from 'styled-components';
@@ -70,18 +73,14 @@ const StyledGraphContainer = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.borders.secondary};
 `;
 
-const DEFAULT_PERIOD = 'month';
-
 export const Device = () => {
   const [hoveredDate, setHoveredDate] = useState<string | undefined>(undefined);
-  const timeNow = new Date().toISOString();
-  const [options, setOptions] = useState<TimeFrameOptions>({
-    endTime: getEndTime(timeNow, DEFAULT_PERIOD)!,
-    startTime: getStartTime(timeNow, DEFAULT_PERIOD)!,
+  const [options, setOptions] = useState<TimeFrameOptions>(() => ({
+    offsetFromNow: 0,
     timePeriod: DEFAULT_PERIOD,
-    level: getDefaultTimeLevel(DEFAULT_PERIOD),
+    level: getDefaultTimeLevel(),
     showMinAndMax: true,
-  });
+  }));
   const [latestData, setLatestData] = useState<
     LatestReadingResponse | undefined
   >(undefined);
@@ -103,24 +102,22 @@ export const Device = () => {
   const fetchData = async () => {
     if (id) {
       setLoadingMainContent(true);
-      const now = new Date().toISOString();
-
       const [latest, statisticsDay, statisticsWeek, statisticsMonth] =
         await Promise.all([
           api.getDeviceLatestReadings(id),
           api.getAllDeviceStatistics({
-            startTime: getUTCTime(getStartTime(now, 'day')!),
-            endTime: getUTCTime(getEndTime(now, 'day')!),
+            startTime: getUTCTime(getStartTime(0, 'day')!),
+            endTime: getUTCTime(getEndTime(0, 'day')!),
             deviceId: id,
           }),
           api.getAllDeviceStatistics({
-            startTime: getUTCTime(getStartTime(now, 'week')!),
-            endTime: getUTCTime(getEndTime(now, 'week')!),
+            startTime: getUTCTime(getStartTime(0, 'week')!),
+            endTime: getUTCTime(getEndTime(0, 'week')!),
             deviceId: id,
           }),
           api.getAllDeviceStatistics({
-            startTime: getUTCTime(getStartTime(now, 'month')!),
-            endTime: getUTCTime(getEndTime(now, 'month')!),
+            startTime: getUTCTime(getStartTime(0, 'month')!),
+            endTime: getUTCTime(getEndTime(0, 'month')!),
             deviceId: id,
           }),
         ]);
@@ -139,13 +136,21 @@ export const Device = () => {
 
   const fetchReadings = async () => {
     if (id) {
-      const startTime = getUTCTime(options.startTime);
-      const endTime = getUTCTime(options.endTime);
+      const endTime = getGraphEndDateFromNow(
+        options.offsetFromNow,
+        options.timePeriod
+      )!;
+      const startTime = getGraphStartTime(
+        options.offsetFromNow,
+        options.timePeriod
+      )!;
+      const startUTC = getUTCTime(startTime);
+      const endUTC = getUTCTime(endTime);
 
       const readings = await api.getDeviceReadings({
         deviceId: id,
-        startTime,
-        endTime,
+        startTime: startUTC,
+        endTime: endUTC,
         types: ['temperature', 'humidity', 'pressure'],
         level: options.level,
       });

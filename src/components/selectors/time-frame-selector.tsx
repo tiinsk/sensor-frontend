@@ -1,14 +1,15 @@
 import styled from 'styled-components';
-import { Body, Caption2, H2 } from '../styled/typography';
+import { Body, H2 } from '../styled/typography';
 import { Button } from '../styled/buttons';
 import { Flex } from '../styled/flex';
 import { Select } from '../styled/selects';
 import { Toggle } from '../styled/inputs/toggle';
 import { DateTime, DateTimeUnit } from 'luxon';
-import { RightNav } from '../nav/right-nav';
 import React, { PropsWithChildren } from 'react';
 import { RightDrawer } from '../styled/menus/right-drawer';
 import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
+
+export const DEFAULT_PERIOD = 'month';
 
 export type TimePeriod = Extract<
   DateTimeUnit,
@@ -22,9 +23,8 @@ export type Selector = 'timeLevel' | 'timePeriod' | 'valueType';
 export type ValueType = 'temperature' | 'humidity' | 'pressure';
 
 export interface TimeFrameOptions {
-  startTime: string;
-  endTime: string;
   timePeriod: TimePeriod;
+  offsetFromNow: number;
   valueType?: ValueType;
   level: TimeLevel;
   showMinAndMax: boolean;
@@ -90,22 +90,71 @@ const MobileRightDrawer = styled(RightDrawer)`
   }
 `;
 
-export const getStartTime = (endTime: string, timePeriod: DateTimeUnit) => {
+const getTimePeriodMaxUnitAmount = (timePeriod: DateTimeUnit) => {
+  switch (timePeriod) {
+    case 'day':
+      return { hours: 24 };
+    case 'week':
+      return { days: 7 };
+    case 'month':
+      return { days: 31 };
+    case 'year':
+      return { months: 12 };
+    default:
+      return { days: 0 };
+  }
+};
+
+const addTimePeriod = (
+  date: string,
+  timePeriod: TimePeriod,
+  addValue: number
+) => {
+  return DateTime.fromISO(date)
+    .plus({
+      year: timePeriod === 'year' ? addValue : 0,
+      month: timePeriod === 'month' ? addValue : 0,
+      week: timePeriod === 'week' ? addValue : 0,
+      day: timePeriod === 'day' ? addValue : 0,
+    })
+    .toUTC()
+    .toISO();
+};
+
+export const getStartTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
+  const endTime = getEndDateFromNow(offsetFromNow, timePeriod)!;
+  const endDateTime = DateTime.fromISO(endTime);
+  const endOfPeriod = endDateTime.endOf(timePeriod);
+
+  const isFullTimePeriod = endDateTime
+    .toUTC()
+    .hasSame(endOfPeriod.toUTC(), 'minute');
+
+  if (offsetFromNow === 0 && !isFullTimePeriod) {
+    return DateTime.now().minus(getTimePeriodMaxUnitAmount(timePeriod)).toISO();
+  }
   return DateTime.fromISO(endTime).startOf(timePeriod).toISO();
 };
 
-export const getEndTime = (endTime: string, timePeriod: DateTimeUnit) => {
-  const now = DateTime.now();
-  let endDateTime = DateTime.fromISO(endTime);
+export const getGraphStartTime = (
+  offsetFromNow: number,
+  timePeriod: TimePeriod
+) => {
+  const startTime = getStartTime(offsetFromNow, timePeriod)!;
 
-  if (endDateTime > now) {
-    endDateTime = now;
-  }
-
-  return endDateTime.endOf(timePeriod).toISO();
+  return DateTime.fromISO(startTime)
+    .minus({
+      months: timePeriod === 'year' ? 1 : 0,
+      days: ['month', 'week'].includes(timePeriod) ? 1 : 0,
+      hours: timePeriod === 'day' ? 30 : 0,
+    })
+    .toUTC()
+    .toISO();
 };
 
-export const getDefaultTimeLevel = (timePeriod: TimePeriod): TimeLevel => {
+export const getDefaultTimeLevel = (
+  timePeriod: TimePeriod = DEFAULT_PERIOD
+): TimeLevel => {
   switch (timePeriod) {
     case 'day':
       return '30 minutes';
@@ -118,38 +167,65 @@ export const getDefaultTimeLevel = (timePeriod: TimePeriod): TimeLevel => {
   }
 };
 
-export const isLastTimePeriod = (
-  timePeriod: TimePeriod,
-  startTime: string
-): boolean => {
-  const date = DateTime.fromISO(startTime);
-  switch (timePeriod) {
-    case 'day':
-      return date.diffNow('days').days > -1;
-    case 'week':
-      return date.diffNow('weeks').weeks > -1;
-    case 'month':
-      return date.diffNow('months').months > -1;
-    case 'year':
-      return date.diffNow('years').years > -1;
-  }
+export const getEndTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
+  const endTime = addTimePeriod(
+    DateTime.now().toISO()!,
+    timePeriod,
+    offsetFromNow
+  )!;
+  return DateTime.fromISO(endTime).endOf(timePeriod).toISO();
 };
 
-const MobileDrawerContent: React.FC<PropsWithChildren> = ({ children }) => {
-  const { setOpen } = useRightDrawerContext();
-  return (
-    <Flex flexDirection="column" p="s16" gap="s16">
-      <Flex justifyContent="flex-end" mb="s16">
-        <Button
-          iconLeft="mdiChevronRight"
-          variant="basic"
-          onClick={() => setOpen(false)}
-        />
-      </Flex>
-      <Body mb="s8">Graph settings</Body>
-      {children}
-    </Flex>
-  );
+export const getEndDateFromNow = (
+  offsetFromNow: number,
+  timePeriod: TimePeriod
+) => {
+  if (offsetFromNow === 0) {
+    return DateTime.now().toUTC().toISO();
+  }
+
+  const currentPeriodEnd = getEndTime(0, timePeriod)!;
+  return addTimePeriod(currentPeriodEnd, timePeriod, offsetFromNow);
+};
+
+export const getGraphEndDateFromNow = (
+  offsetFromNow: number,
+  timePeriod: TimePeriod
+) => {
+  const endOfPeriod = getEndDateFromNow(offsetFromNow, timePeriod)!;
+
+  if (offsetFromNow === 0) {
+    return endOfPeriod;
+  }
+
+  return DateTime.fromISO(endOfPeriod)
+    .plus({
+      months: timePeriod === 'year' ? 1 : 0,
+      days: ['month', 'week'].includes(timePeriod) ? 1 : 0,
+      hours: timePeriod === 'day' ? 30 : 0,
+    })
+    .toUTC()
+    .toISO();
+};
+
+const getFormattedDateString = (
+  offsetFromNow: number,
+  timePeriod: TimePeriod
+) => {
+  const endTime = getEndDateFromNow(offsetFromNow, timePeriod)!;
+  switch (timePeriod) {
+    case 'day':
+      return DateTime.fromISO(endTime).toFormat('ccc dd.LL.yy');
+    case 'week':
+      const startDate = getStartTime(offsetFromNow, timePeriod);
+      const start = DateTime.fromISO(startDate!).toFormat('ccc dd.LL.');
+      const end = DateTime.fromISO(endTime).toFormat('dd.LL.yy');
+      return `${start} - ${end}`;
+    case 'month':
+      return DateTime.fromISO(endTime).toFormat('LLLL yyyy');
+    case 'year':
+      return DateTime.fromISO(endTime).toFormat('yyyy');
+  }
 };
 
 export const TimeFrameSelector = ({
@@ -157,53 +233,19 @@ export const TimeFrameSelector = ({
   options,
   selectors = ['timePeriod', 'valueType'],
 }: TimeFrameSelectorProps) => {
-  const getFormattedDateString = () => {
-    if (options.timePeriod === 'day') {
-      return DateTime.fromISO(options.endTime).toFormat('ccc dd.LL.yy');
-    } else if (options.timePeriod === 'week') {
-      const startDate = getStartTime(options.endTime, options.timePeriod);
-      const start = DateTime.fromISO(startDate!).toFormat('ccc dd.LL.');
-      const end = DateTime.fromISO(options.endTime).toFormat('dd.LL.yy');
-      return `${start} - ${end}`;
-    } else if (options.timePeriod === 'month') {
-      return DateTime.fromISO(options.endTime).toFormat('LLLL yyyy');
-    } else if (options.timePeriod === 'year') {
-      return DateTime.fromISO(options.endTime).toFormat('yyyy');
-    }
-  };
-
   const onOptionsChange = (newOptions: Partial<TimeFrameOptions>) => {
     let changedOptions = { ...options, ...newOptions };
-
-    const newEndTime = getEndTime(
-      changedOptions.endTime,
-      changedOptions.timePeriod
-    );
-
-    const startTime = getStartTime(newEndTime!, changedOptions.timePeriod);
 
     changedOptions = {
       ...changedOptions,
       level: getDefaultTimeLevel(changedOptions.timePeriod),
-      startTime: startTime!,
-      endTime: newEndTime!,
     };
 
     onChange(changedOptions);
   };
 
   const onTimeButtonClick = (direction: -1 | 1) => {
-    const newEndTime = DateTime.fromISO(options.endTime)
-      .plus({
-        year: options.timePeriod === 'year' ? direction : 0,
-        month: options.timePeriod === 'month' ? direction : 0,
-        week: options.timePeriod === 'week' ? direction : 0,
-        day: options.timePeriod === 'day' ? direction : 0,
-      })
-      .toUTC()
-      .toISO();
-
-    onOptionsChange({ ...options, endTime: newEndTime! });
+    onOptionsChange({ offsetFromNow: options.offsetFromNow + direction });
   };
 
   const rightSide = (
@@ -211,7 +253,7 @@ export const TimeFrameSelector = ({
       <Select
         label="Time period"
         onSelect={(value: string) =>
-          onOptionsChange({ timePeriod: value as TimePeriod })
+          onOptionsChange({ timePeriod: value as TimePeriod, offsetFromNow: 0 })
         }
         initialValue={options.timePeriod}
         options={[
@@ -272,11 +314,13 @@ export const TimeFrameSelector = ({
             iconLeft="mdiChevronRight"
             variant="secondary"
             onClick={() => onTimeButtonClick(1)}
-            disabled={isLastTimePeriod(options.timePeriod, options.startTime)}
+            disabled={options.offsetFromNow === 0}
           />
         </Flex>
         <TitleWrapper>
-          <H2 mr="s16">{getFormattedDateString()}</H2>
+          <H2 mr="s16">
+            {getFormattedDateString(options.offsetFromNow, options.timePeriod)}
+          </H2>
           <MobileRightDrawer
             buttonProps={{
               iconLeft: 'mdiTuneVertical',
@@ -289,5 +333,22 @@ export const TimeFrameSelector = ({
       </LeftSideWrapper>
       <MobileHiddenRightSide>{rightSide}</MobileHiddenRightSide>
     </StyledTimeFrameSelector>
+  );
+};
+
+const MobileDrawerContent: React.FC<PropsWithChildren> = ({ children }) => {
+  const { setOpen } = useRightDrawerContext();
+  return (
+    <Flex flexDirection="column" p="s16" gap="s16">
+      <Flex justifyContent="flex-end" mb="s16">
+        <Button
+          iconLeft="mdiChevronRight"
+          variant="basic"
+          onClick={() => setOpen(false)}
+        />
+      </Flex>
+      <Body mb="s8">Graph settings</Body>
+      {children}
+    </Flex>
   );
 };
