@@ -90,7 +90,7 @@ export const Select = ({
         onSelect(value);
       }
     },
-    []
+    [onSelect]
   );
 
   const handleTypeaheadMatch = (index: number | null) => {

@@ -5,19 +5,26 @@ import { Button } from '../styled/buttons';
 import { Flex } from '../styled/flex';
 import { Select } from '../styled/selects';
 import { Toggle } from '../styled/inputs/toggle';
-import { DateTime } from 'luxon';
+import { DateTime, DateTimeUnit } from 'luxon';
 
-interface Options {
+export interface TimeFrameOptions {
   startTime: string;
   endTime: string;
-  timePeriod: string;
+  valueType: string;
+  level: string;
+  showMinAndMax: boolean;
+}
+
+interface TimeFrameInternalOptions {
+  endTime: string;
+  timePeriod: DateTimeUnit;
   valueType: string;
   level: string;
   showMinAndMax: boolean;
 }
 
 interface TimeFrameSelectorProps {
-  onChange: (newOptions: Options) => void;
+  onChange: (newOptions: TimeFrameOptions) => void;
 }
 
 const StyledTimeFrameSelector = styled.div`
@@ -27,33 +34,96 @@ const StyledTimeFrameSelector = styled.div`
   margin-bottom: ${({ theme }) => theme.spacings.s16};
 `;
 
-export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
-  const endTime = new Date().toISOString();
-  const startTime = DateTime.fromISO(endTime).minus({ days: 1 }).toISO();
+const getStartTime = (endTime: string, timePeriod: DateTimeUnit) => {
+  return DateTime.fromISO(endTime).startOf(timePeriod).toISO();
+};
 
-  const [options, setOptions] = useState<Options>({
-    startTime: startTime || endTime,
-    endTime,
+const getEndTime = (endTime: string, timePeriod: DateTimeUnit) => {
+  return DateTime.fromISO(endTime).endOf(timePeriod).toISO();
+};
+
+export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
+  const [options, setOptions] = useState<TimeFrameInternalOptions>({
+    endTime: getEndTime(new Date().toISOString(), 'day')!,
     timePeriod: 'day',
     valueType: 'temperature',
     level: 'hour',
     showMinAndMax: true,
   });
 
-  const formattedTimeStr = DateTime.fromISO(endTime).toFormat('ccc dd.LL.');
+  const getFormattedDateString = () => {
+    if (options.timePeriod === 'day') {
+      return DateTime.fromISO(options.endTime).toFormat('ccc dd.LL.yy');
+    } else if (options.timePeriod === 'week') {
+      const startDate = getStartTime(options.endTime, options.timePeriod);
+      const start = DateTime.fromISO(startDate!).toFormat('ccc dd.LL.');
+      const end = DateTime.fromISO(options.endTime).toFormat('dd.LL.yy');
+      return `${start} - ${end}`;
+    } else if (options.timePeriod === 'month') {
+      return DateTime.fromISO(options.endTime).toFormat('LLLL yyyy');
+    } else if (options.timePeriod === 'year') {
+      return DateTime.fromISO(options.endTime).toFormat('yyyy');
+    }
+  };
+
+  const onOptionsChange = (newOptions: Partial<TimeFrameInternalOptions>) => {
+    const changedOptions = { ...options, ...newOptions };
+
+    const newEndTime = getEndTime(
+      changedOptions.endTime,
+      changedOptions.timePeriod
+    );
+
+    setOptions({ ...changedOptions, endTime: newEndTime! });
+
+    const startTime = getStartTime(
+      changedOptions.endTime,
+      changedOptions.timePeriod
+    );
+
+    onChange({
+      startTime: startTime!,
+      endTime: changedOptions.endTime,
+      showMinAndMax: changedOptions.showMinAndMax,
+      valueType: changedOptions.valueType,
+      level: changedOptions.level,
+    });
+  };
+
+  const onTimeButtonClick = (direction: -1 | 1) => {
+    const newEndTime = DateTime.fromISO(options.endTime)
+      .plus({
+        year: options.timePeriod === 'year' ? direction : 0,
+        month: options.timePeriod === 'month' ? direction : 0,
+        week: options.timePeriod === 'week' ? direction : 0,
+        day: options.timePeriod === 'day' ? direction : 0,
+      })
+      .toUTC()
+      .toISO();
+
+    onOptionsChange({ ...options, endTime: newEndTime! });
+  };
 
   return (
     <StyledTimeFrameSelector>
       <Flex gap="s8" alignItems="center">
-        <H2 mr="s16">{formattedTimeStr}</H2>
-        <Button iconLeft="mdiChevronLeft" variant="secondary" />
-        <Button iconLeft="mdiChevronRight" variant="secondary" />
+        <H2 mr="s16">{getFormattedDateString()}</H2>
+        <Button
+          iconLeft="mdiChevronLeft"
+          variant="secondary"
+          onClick={() => onTimeButtonClick(-1)}
+        />
+        <Button
+          iconLeft="mdiChevronRight"
+          variant="secondary"
+          onClick={() => onTimeButtonClick(1)}
+        />
       </Flex>
       <Flex gap="s16" alignItems="flex-end">
         <Select
           label="Time period"
           onSelect={(value: string) =>
-            setOptions({ ...options, timePeriod: value })
+            onOptionsChange({ timePeriod: value as DateTimeUnit })
           }
           initialValue="day"
           options={[
@@ -65,9 +135,7 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
         />
         <Select
           label="Graph type"
-          onSelect={(value: string) =>
-            setOptions({ ...options, valueType: value })
-          }
+          onSelect={(value: string) => onOptionsChange({ valueType: value })}
           initialValue="temperature"
           options={[
             { value: 'temperature', label: 'Temperature' },
@@ -77,7 +145,7 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
         />
         <Select
           label="Graph level"
-          onSelect={(value: string) => setOptions({ ...options, level: value })}
+          onSelect={(value: string) => onOptionsChange({ level: value })}
           initialValue="hour"
           options={[
             { value: 'hour', label: 'Hour' },
@@ -90,7 +158,7 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
           name="min-max-toggle"
           text="Min and max values"
           isSelected={options.showMinAndMax}
-          onChange={value => setOptions({ ...options, showMinAndMax: value })}
+          onChange={value => onOptionsChange({ showMinAndMax: value })}
         />
       </Flex>
     </StyledTimeFrameSelector>
