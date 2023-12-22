@@ -33,6 +33,10 @@ WebFont.load({
 
 const StyledLoggedInRoutes = styled.div`
   padding: 0 ${({ theme }) => theme.spacings.s48};
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 0 ${({ theme }) => theme.spacings.s8};
+  }
 `;
 
 export let FORCE_RERENDER: () => void;

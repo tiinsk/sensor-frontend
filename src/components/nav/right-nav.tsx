@@ -45,6 +45,22 @@ const ThemeSection = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.borders.secondary};
 `;
 
+const MobileOnlyButton = styled(Button)`
+  display: none;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    display: flex;
+  }
+`;
+
+const MobileHiddenButton = styled(Button)`
+  display: flex;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    display: none;
+  }
+`;
+
 interface RightNavProps {
   isOpen: boolean;
   onClose: () => void;
@@ -71,9 +87,14 @@ export const RightNav = ({ isOpen, onClose }: RightNavProps) => {
       style={{ visibility: isHidden ? 'hidden' : 'visible' }}
     >
       <Flex justifyContent="flex-end" mb="s16">
-        <Button
+        <MobileHiddenButton
           iconLeft="mdiChevronRight"
           text="Settings"
+          variant="basic"
+          onClick={onClose}
+        />
+        <MobileOnlyButton
+          iconLeft="mdiChevronRight"
           variant="basic"
           onClick={onClose}
         />
@@ -88,6 +109,12 @@ export const RightNav = ({ isOpen, onClose }: RightNavProps) => {
         />
       </ThemeSection>
       <Flex flexDirection="column" alignItems="flex-start" mt="s24">
+        <MobileOnlyButton
+          iconLeft="mdiHomeMapMarker"
+          text="Map"
+          variant="basic"
+          onClick={() => {}}
+        />
         <Button
           iconLeft="mdiShieldAccount"
           text="Admin Settings"

@@ -14,6 +14,30 @@ const StyledNav = styled.nav`
   padding: ${({ theme }) => theme.spacings.s24} 0;
 `;
 
+const MobileHiddenLinkButton = styled(LinkButton)`
+  display: flex;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    display: none;
+  }
+`;
+
+const MobileHiddenButton = styled(Button)`
+  display: flex;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    display: none;
+  }
+`;
+
+const MobileOnlyButton = styled(Button)`
+  display: none;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    display: flex;
+  }
+`;
+
 export const TopNav = () => {
   const [isRightNavOpen, setRightNavOpen] = useState(false);
 
@@ -24,15 +48,20 @@ export const TopNav = () => {
           <PageTitle>Home monitor</PageTitle>
         </Link>
         <Flex>
-          <LinkButton
+          <MobileHiddenLinkButton
             iconLeft="mdiHomeMapMarker"
             text="Map"
             variant="basic"
             to="/map"
           />
-          <Button
+          <MobileHiddenButton
             iconLeft="mdiCogOutline"
             text="Settings"
+            variant="basic"
+            onClick={() => setRightNavOpen(!isRightNavOpen)}
+          />
+          <MobileOnlyButton
+            iconLeft="mdiMenu"
             variant="basic"
             onClick={() => setRightNavOpen(!isRightNavOpen)}
           />

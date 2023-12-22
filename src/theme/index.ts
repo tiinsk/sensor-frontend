@@ -1,5 +1,11 @@
 import { lightColors, darkColors } from './colors';
 
+const breakpoints = {
+  lg: '1200px',
+  md: '900px',
+  sm: '600px',
+};
+
 const variables = {
   fonts: {
     fontBody: 'Roboto, sans-serif',
@@ -11,13 +17,11 @@ const variables = {
     medium: '500',
     bold: '700',
   },
-  breakpoints: {
-    xxlgSize: '1900px',
-    xlgSize: '1600px',
-    lgSize: '1200px',
-    mdSize: '999px',
-    smSize: '799px',
-    xsSize: '499px',
+  breakpoints,
+  mediaQueries: {
+    sm: `@media (max-width: ${breakpoints.sm})`,
+    md: `@media (max-width: ${breakpoints.md})`,
+    lg: `@media (max-width: ${breakpoints.lg})`,
   },
   spacings: {
     s2: '0.2rem',
