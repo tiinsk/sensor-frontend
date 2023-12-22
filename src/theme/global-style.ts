@@ -30,5 +30,17 @@ export const GlobalStyle = createGlobalStyle`
   a {
     color: ${({ theme }) => theme.colors.typography.primary};
     text-decoration: none;
-  } 
+  }
+
+  [aria-haspopup="listbox"] {
+    user-select: none;
+  }
+
+  [role="listbox"] {
+    outline: 0;
+  }
+
+  [role="option"] {
+    outline: 0;
+  }
 `;

@@ -3,6 +3,7 @@ import api from '../api/routes';
 import { DeviceCard } from '../components/devices/card';
 import { LatestReadingResponse } from '../api/types';
 import styled from 'styled-components';
+import { TimeFrameSelector } from '../components/selectors/time-frame-selector';
 
 const CardGrid = styled.div`
   display: grid;
@@ -26,10 +27,13 @@ export const Home = () => {
   }, []);
 
   return (
-    <CardGrid>
-      {latestData?.map(item => (
-        <DeviceCard key={item.temperature} latestData={item} />
-      ))}
-    </CardGrid>
+    <>
+      <TimeFrameSelector onChange={() => {}} />
+      <CardGrid>
+        {latestData?.map(item => (
+          <DeviceCard key={item.temperature} latestData={item} />
+        ))}
+      </CardGrid>
+    </>
   );
 };
