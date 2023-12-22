@@ -2,11 +2,10 @@ import Qs from 'qs';
 import axios from 'axios';
 import {FORCE_RERENDER} from "../app";
 
-import config from '../config';
 import {getJWTToken, removeJWTToken} from '../utils/auth';
 
 const instance = axios.create({
-  baseURL: config.api.route
+  baseURL: '/api'
 });
 
 export const get = async (params) => {
