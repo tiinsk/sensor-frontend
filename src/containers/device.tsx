@@ -40,6 +40,7 @@ const StyledGraphContainer = styled.div`
 const DEFAULT_PERIOD = 'month';
 
 export const Device = () => {
+  const [hoveredDate, setHoveredDate] = useState<string | undefined>(undefined);
   const timeNow = new Date().toISOString();
   const [options, setOptions] = useState<TimeFrameOptions>({
     endTime: getEndTime(timeNow, DEFAULT_PERIOD)!,
@@ -204,6 +205,8 @@ export const Device = () => {
                 options={options}
                 valueType="temperature"
                 showAxis={false}
+                hoveredDate={hoveredDate}
+                onHover={date => setHoveredDate(date)}
               />
             </GraphSizeWrapper>
           )}
@@ -217,6 +220,8 @@ export const Device = () => {
                 options={options}
                 valueType="humidity"
                 showAxis={false}
+                hoveredDate={hoveredDate}
+                onHover={date => setHoveredDate(date)}
               />
             </GraphSizeWrapper>
           )}
@@ -229,6 +234,8 @@ export const Device = () => {
                 data={readingData.pressure}
                 options={options}
                 valueType="pressure"
+                hoveredDate={hoveredDate}
+                onHover={date => setHoveredDate(date)}
               />
             </GraphSizeWrapper>
           )}

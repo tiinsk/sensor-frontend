@@ -1,26 +1,15 @@
 import * as React from 'react';
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-  useClientPoint,
-} from '@floating-ui/react';
-import { PropsWithChildren } from 'react';
-import { ReadingValue } from '../../../api/types';
+import { FloatingPortal } from '@floating-ui/react';
+import { PropsWithChildren, useState } from 'react';
+import { Reading as ReadingType } from '../../../api/types';
 import styled from 'styled-components';
 import { Caption3 } from '../typography';
 import { DateTime } from 'luxon';
 import { TimePeriod, ValueType } from '../../selectors/time-frame-selector';
 import { Reading } from '../readings';
+import { useGraphSizeContext } from '../../graphs/graph-size-context';
 
-export interface TooltipContent {
-  date: string;
-  reading: ReadingValue;
+export interface TooltipContent extends ReadingType {
   position: { x: number; y: number };
 }
 
@@ -31,11 +20,14 @@ interface TooltipProps {
 }
 
 const StyledTooltip = styled.div`
+  position: absolute;
+
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
   background-color: ${({ theme }) => theme.colors.background.primary};
   border-radius: ${({ theme }) => theme.spacings.s4};
   box-shadow: ${({ theme }) => theme.colors.shadows.boxShadow};
-  min-width: ${({ theme }) => theme.spacings.s96};
+  min-width: ${({ theme }) => theme.spacings.s128};
+  pointer-events: none;
 `;
 
 const StyledTitle = styled.div`
@@ -64,67 +56,109 @@ const formatDate = (timePeriod: TimePeriod, date?: string) => {
   }
 };
 
+const tooltipMargins = {
+  left: 12,
+};
+
 export const GraphTooltip: React.FC<PropsWithChildren<TooltipProps>> = ({
   tooltipContent,
   timePeriod,
   valueType,
 }) => {
-  const { refs, floatingStyles, context } = useFloating({
-    open: !!tooltipContent,
-    placement: 'right',
-    whileElementsMounted: autoUpdate,
-    middleware: [
-      offset(16),
-      flip({
-        fallbackAxisSideDirection: 'start',
-      }),
-      shift(),
-    ],
-  });
+  const [position, setPosition] = useState<
+    | {
+        top: number;
+        left: number;
+      }
+    | undefined
+  >(undefined);
 
-  const clientPoint = useClientPoint(context, {
-    enabled: true,
-    x: tooltipContent?.position?.x,
-    y: tooltipContent?.position?.y,
-  });
+  const {
+    rootRef,
+    height: graphHeight,
+    width: graphWidth,
+  } = useGraphSizeContext();
 
-  const role = useRole(context, { role: 'tooltip' });
+  const reposition = (element: HTMLDivElement) => {
+    let left = tooltipContent?.position.x;
+    let top = tooltipContent?.position.y;
 
-  const { getFloatingProps } = useInteractions([clientPoint, role]);
+    const tooltipWidth = element?.offsetWidth;
+    const tooltipHeight = element?.offsetHeight;
+    if (
+      left === undefined ||
+      top === undefined ||
+      tooltipWidth === undefined ||
+      tooltipHeight === undefined
+    ) {
+      if (position) {
+        setPosition(undefined);
+      }
+      return;
+    }
 
+    left += tooltipMargins.left;
+    top -= tooltipHeight / 2;
+
+    if (left < 0) {
+      left = 0;
+    }
+    if (top < 0) {
+      top = 0;
+    }
+
+    const right = left + tooltipWidth;
+    const bottom = top + tooltipHeight;
+
+    if (right > graphWidth) {
+      left -= tooltipWidth + tooltipMargins.left * 2;
+    }
+
+    if (bottom > graphHeight) {
+      top -= bottom - graphHeight;
+    }
+    if (position?.left !== left || position?.top !== top) {
+      setPosition({ top, left });
+    }
+  };
   return (
-    <FloatingPortal>
+    <>
       {tooltipContent && (
-        <StyledTooltip
-          ref={refs.setFloating}
-          style={floatingStyles}
-          {...getFloatingProps()}
-        >
-          <StyledTitle>
-            <Caption3>{formatDate(timePeriod, tooltipContent.date)}</Caption3>
-          </StyledTitle>
-          <StyledContent>
-            <Reading
-              variant="avg"
-              sizeVariant="small"
-              value={tooltipContent.reading.avg}
-              unit={valueType}
-            />
-            <Reading
-              variant="max"
-              sizeVariant="small"
-              value={tooltipContent.reading.max}
-              unit={valueType}
-            />
-            <Reading
-              variant="min"
-              sizeVariant="small"
-              value={tooltipContent.reading.max}
-              unit={valueType}
-            />
-          </StyledContent>
-        </StyledTooltip>
+        <FloatingPortal root={rootRef}>
+          <StyledTooltip
+            role="tooltip"
+            ref={reposition}
+            style={{
+              left: position?.left,
+              top: position?.top,
+            }}
+          >
+            <StyledTitle>
+              <Caption3>{formatDate(timePeriod, tooltipContent.time)}</Caption3>
+            </StyledTitle>
+            <StyledContent>
+              <Reading
+                variant="avg"
+                sizeVariant="small"
+                value={tooltipContent.avg}
+                unit={valueType}
+              />
+              <Reading
+                variant="max"
+                sizeVariant="small"
+                value={tooltipContent.max}
+                unit={valueType}
+              />
+              <Reading
+                variant="min"
+                sizeVariant="small"
+                value={tooltipContent.min}
+                unit={valueType}
+              />
+            </StyledContent>
+          </StyledTooltip>
+        </FloatingPortal>
       )}
-    </FloatingPortal>
+    </>
   );
 };

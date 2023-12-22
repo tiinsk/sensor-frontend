@@ -127,6 +127,7 @@ export const lightColors = {
   },
   graphs: {
     background: {
+      hover: primitiveColors.neutral.dark['02'],
       temperature: {
         primary: primitiveColors.neutral.dark['08'],
         hover: primitiveColors.neutral.dark['20'],
@@ -228,6 +229,7 @@ export const darkColors: ColorTheme = {
   },
   graphs: {
     background: {
+      hover: primitiveColors.neutral.light['90'],
       temperature: {
         primary: primitiveColors.neutral.light['80'],
         hover: primitiveColors.neutral.light['70'],

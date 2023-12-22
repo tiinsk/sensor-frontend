@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { debounce } from 'lodash';
 import styled from 'styled-components';
-import { GraphSizeContext } from './graph-size-context';
+import { GraphSizeContext, GraphSizeContextValue } from './graph-size-context';
 import { Caption3Style } from '../../theme/typography';
 
 export const StyledResponsiveFrame = styled.div`
@@ -16,14 +16,12 @@ export const StyledResponsiveFrame = styled.div`
 `;
 
 export const GraphSizeWrapper: React.FC<PropsWithChildren> = ({ children }) => {
-  const [graphSize, setGraphSize] = useState<{ width: number; height: number }>(
-    {
-      height: 0,
-      width: 0,
-    }
-  );
   const ref = useRef<HTMLDivElement>(null);
-
+  const [graphSize, setGraphSize] = useState<GraphSizeContextValue>({
+    height: 0,
+    width: 0,
+    rootRef: ref,
+  });
   const resizeGraph = () => {
     const elementWidth = ref.current?.offsetWidth;
     const elementHeight = ref.current?.offsetHeight;
@@ -31,7 +29,11 @@ export const GraphSizeWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       elementWidth !== graphSize.width ||
       elementHeight !== graphSize.height
     ) {
-      setGraphSize({ width: elementWidth || 0, height: elementHeight || 0 });
+      setGraphSize({
+        width: elementWidth || 0,
+        height: elementHeight || 0,
+        rootRef: ref,
+      });
     }
   };
 

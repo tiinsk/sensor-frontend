@@ -46,21 +46,24 @@ interface GraphProps {
   data: Reading[];
   options: TimeFrameOptions;
   valueType: ValueType;
+  hoveredDate?: string;
+  onHover: (date?: string) => void;
   showAxis?: boolean;
 }
 
-const PointG = styled.g<{ $valueType: ValueType }>`
+const PointG = styled.g<{ $valueType: ValueType; $isHovered: boolean }>`
   cursor: pointer;
   rect {
-    fill: ${({ theme, $valueType }) =>
-      theme.colors.graphs.background[$valueType].primary};
+    fill: ${({ theme, $valueType, $isHovered }) =>
+      $isHovered
+        ? theme.colors.graphs.background[$valueType].hover
+        : theme.colors.graphs.background[$valueType].primary};
   }
-  &:hover {
-    rect {
-      fill: ${({ theme, $valueType }) =>
-        theme.colors.graphs.background[$valueType].hover};
-    }
-  }
+`;
+
+const HoverableRect = styled.rect<{ $isHovered: boolean }>`
+  fill: ${({ theme, $isHovered }) =>
+    $isHovered ? theme.colors.graphs.background.hover : 'transparent'};
 `;
 
 export const Graph = ({
@@ -68,11 +71,10 @@ export const Graph = ({
   data,
   options,
   valueType,
+  hoveredDate,
+  onHover,
   showAxis = true,
 }: GraphProps) => {
-  const [tooltipContent, setTooltip] = useState<TooltipContent | undefined>(
-    undefined
-  );
   const { colors } = useTheme();
   const gx = useRef<SVGGElement>(null);
   const { width, height } = useGraphSizeContext();
@@ -121,6 +123,11 @@ export const Graph = ({
     d => y(d.avg || 0)
   );
 
+  const axisTickInterval = axisTicks(options.timePeriod);
+
+  const ticks = axisTickInterval ? x.ticks(axisTickInterval) : [];
+  const tickWidth = (width - margins.left - margins.right) / ticks.length;
+
   useEffect(() => {
     if (gx.current) {
       void d3.select(gx.current).call(
@@ -133,9 +140,26 @@ export const Graph = ({
     }
   }, [gx, x]);
 
+  const hoveredDatapoint = data.find(d => d.time === hoveredDate);
+
+  const tooltipContent = hoveredDatapoint && {
+    ...hoveredDatapoint,
+    position: {
+      x: x(new Date(hoveredDatapoint.time)),
+      y: y(hoveredDatapoint.avg || 0),
+    },
+  };
+
   return (
     <>
-      <svg width={width} height={height}>
+      <svg
+        width={width}
+        height={height}
+        onMouseLeave={e => {
+          e.stopPropagation();
+          onHover(undefined);
+        }}
+      >
         {showAxis && (
           <g
             ref={gx}
@@ -163,19 +187,7 @@ export const Graph = ({
                 transform={`translate(${x(new Date(d.time))}, ${y(
                   d.avg || 0
                 )})`}
-                onMouseEnter={e => {
-                  const circleElem = e.currentTarget
-                    .querySelector('circle')
-                    ?.getBoundingClientRect();
-                  if (circleElem) {
-                    setTooltip({
-                      date: d.time,
-                      reading: d,
-                      position: { x: circleElem.x, y: circleElem.y },
-                    });
-                  }
-                }}
-                onMouseLeave={e => setTooltip(undefined)}
+                $isHovered={d.time === hoveredDate}
               >
                 {options.showMinAndMax && (
                   <rect
@@ -194,6 +206,17 @@ export const Graph = ({
             );
           })}
         </g>
+        {ticks.map((d, i) => (
+          <HoverableRect
+            key={i}
+            y={y(max) - margins.top}
+            x={x(d) - tickWidth / 2}
+            height={height}
+            width={tickWidth > 0 ? tickWidth : 0}
+            $isHovered={hoveredDate === d.toISOString()}
+            onMouseEnter={e => onHover(d.toISOString())}
+          />
+        ))}
         <linearGradient
           id={`line-gradient-${deviceId}-${valueType}`}
           gradientUnits="userSpaceOnUse"

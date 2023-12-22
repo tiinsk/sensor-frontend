@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import {
   LatestReadingResponse,
@@ -57,6 +57,8 @@ export const DeviceCard = ({
   readingsData?: ReadingType[];
   options: TimeFrameOptions;
 }) => {
+  const [hoveredDate, setHoveredDate] = useState<string | undefined>(undefined);
+
   const timeDiff = Math.abs(
     DateTime.fromISO(latestData.reading.created_at).diffNow('minutes').minutes
   );
@@ -149,6 +151,8 @@ export const DeviceCard = ({
               options={options}
               data={readingsData}
               valueType={options.valueType || 'temperature'}
+              hoveredDate={hoveredDate}
+              onHover={date => setHoveredDate(date)}
             />
           )}
         </GraphSizeWrapper>
