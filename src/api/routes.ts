@@ -15,8 +15,8 @@ const routes = {
   login: (payload: { username: string; password: string }) =>
     api.post<string>({ route: '/login', payload }, false),
   getAllLatest: () =>
-    api.get<LatestReadingResponse[]>({
-      route: `/readings/now?localTimeZone=${getTimeZone()}`,
+    api.get<ArrayResponse<LatestReadingResponse>>({
+      route: `/devices/latest-readings`,
     }),
   getExtremes: () =>
     api.get({ route: `/readings/extremes?localTimeZone=${getTimeZone()}` }),
@@ -27,9 +27,9 @@ const routes = {
     }),
   getAllDevices: () =>
     api.get<ArrayResponse<DeviceResponse>>({ route: '/devices' }),
-  getAllDeviceReadingsNow: (deviceId: string) =>
+  getDeviceLatestReadings: (deviceId: string) =>
     api.get<LatestReadingResponse>({
-      route: `/devices/${deviceId}/readings/now?localTimeZone=${getTimeZone()}`,
+      route: `/devices/${deviceId}/latest-readings`,
     }),
   getAllDeviceExtremes: (deviceId: string) =>
     api.get<ExtremeResponse>({

@@ -39,7 +39,7 @@ export const Device = () => {
   const fetchData = async () => {
     if (id) {
       const [latest, extremes] = await Promise.all([
-        api.getAllDeviceReadingsNow(id),
+        api.getDeviceLatestReadings(id),
         api.getAllDeviceExtremes(id),
       ]);
       if (latest) {
@@ -55,9 +55,10 @@ export const Device = () => {
     fetchData();
   }, [id]);
 
-  const timeDiff = latestData?.created_at
+  const timeDiff = latestData?.reading.created_at
     ? Math.abs(
-        DateTime.fromISO(latestData?.created_at).diffNow('minutes').minutes
+        DateTime.fromISO(latestData?.reading.created_at).diffNow('minutes')
+          .minutes
       )
     : 0;
   const tagVariant = timeDiff > 20 ? 'error' : 'default';
@@ -67,21 +68,24 @@ export const Device = () => {
       <Flex justifyContent="space-between" alignItems="flex-end" mb="s16">
         <H2 mb="s4">{latestData?.name}</H2>
         <Flex flexDirection="column" alignItems="flex-end">
-          {latestData?.created_at && (
+          {latestData?.reading.created_at && (
             <Tag
               variant={tagVariant}
-              text={getTimeAgoString(latestData.created_at)}
+              text={getTimeAgoString(latestData.reading.created_at)}
             />
           )}
           <Flex gap="s16">
-            {latestData?.temperature && (
-              <Reading value={latestData?.temperature} unit="temperature" />
+            {latestData?.reading.temperature && (
+              <Reading
+                value={latestData?.reading.temperature}
+                unit="temperature"
+              />
             )}
-            {latestData?.humidity && (
-              <Reading value={latestData?.humidity} unit="humidity" />
+            {latestData?.reading.humidity && (
+              <Reading value={latestData?.reading.humidity} unit="humidity" />
             )}
-            {latestData?.pressure && (
-              <Reading value={latestData?.pressure} unit="pressure" />
+            {latestData?.reading.pressure && (
+              <Reading value={latestData?.reading.pressure} unit="pressure" />
             )}
           </Flex>
         </Flex>

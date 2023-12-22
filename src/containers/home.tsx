@@ -34,7 +34,7 @@ export const Home = () => {
       api.getAllLatest(),
       api.getExtremes(),
     ]);
-    setLatestData(latestResult || []);
+    setLatestData(latestResult?.values || []);
   };
 
   useEffect(() => {
@@ -49,11 +49,7 @@ export const Home = () => {
       />
       <CardGrid>
         {latestData?.map(item => (
-          <DeviceCard
-            key={item.temperature}
-            options={options}
-            latestData={item}
-          />
+          <DeviceCard key={item.id} options={options} latestData={item} />
         ))}
       </CardGrid>
     </>

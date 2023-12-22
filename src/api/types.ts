@@ -15,22 +15,22 @@ export type PostResponse<DataType> =
     };
 
 export type DeviceLocation = 'inside' | 'outside';
+export type Sensor = 'humidity' | 'temperature' | 'pressure';
 
 export interface LatestReadingResponse {
-  battery: number;
-  created_at: string;
-  device: string;
-  disabled: boolean;
-  humidity: number | null;
   id: number;
-  location_type: DeviceLocation;
-  lux: number | null;
-  max_temperature: number | null;
-  min_temperature: number | null;
   name: string;
-  pressure: number | null;
-  temperature: number | null;
+  location_type: DeviceLocation;
+  sensor_info: Sensor[];
+  reading: {
+    temperature: number | null;
+    humidity: number | null;
+    pressure: number | null;
+    created_at: string;
+    battery: number;
+  };
 }
+
 export interface ExtremeResponse {
   device: string;
   max_humidity_month?: number;

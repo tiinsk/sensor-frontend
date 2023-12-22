@@ -49,17 +49,17 @@ export const DeviceCard = ({
   options: TimeFrameOptions;
 }) => {
   const timeDiff = Math.abs(
-    DateTime.fromISO(latestData.created_at).diffNow('minutes').minutes
+    DateTime.fromISO(latestData.reading.created_at).diffNow('minutes').minutes
   );
   const tagVariant = timeDiff > 20 ? 'error' : 'default';
 
   return (
-    <StyledDeviceCard to={`/devices/${latestData.device}`}>
+    <StyledDeviceCard to={`/devices/${latestData.id}`}>
       <TopCard>
         <Flex justifyContent="flex-end" px="s8" mb="s8">
           <Tag
             variant={tagVariant}
-            text={getTimeAgoString(latestData.created_at)}
+            text={getTimeAgoString(latestData.reading.created_at)}
           />
         </Flex>
         <TopGrid>
@@ -67,13 +67,16 @@ export const DeviceCard = ({
             <Body>{latestData.name}</Body>
           </BorderedFlex>
           <BorderedFlex justifyContent="flex-start">
-            <Reading value={latestData.humidity} unit="humidity" />
+            <Reading value={latestData.reading.humidity} unit="humidity" />
           </BorderedFlex>
           <BorderedFlex justifyContent="center">
-            <Reading value={latestData.pressure} unit="pressure" />
+            <Reading value={latestData.reading.pressure} unit="pressure" />
           </BorderedFlex>
           <BorderedFlex pr="s16" justifyContent="flex-end">
-            <Reading value={latestData.temperature} unit="temperature" />
+            <Reading
+              value={latestData.reading.temperature}
+              unit="temperature"
+            />
           </BorderedFlex>
           <Flex pt="s16" pl="s16">
             <Caption2Light style={{ textTransform: 'capitalize' }}>
@@ -83,7 +86,7 @@ export const DeviceCard = ({
           <Flex flexDirection="column" pt="s16"></Flex>
           <Flex flexDirection="column" pt="s16" alignItems="center"></Flex>
           <Flex flexDirection="column" pt="s16" pr="s16" alignItems="flex-end">
-            <Reading
+            {/*<Reading
               value={latestData.max_temperature}
               unit="temperature"
               variant="max"
@@ -94,7 +97,7 @@ export const DeviceCard = ({
               unit="temperature"
               variant="min"
               sizeVariant="small"
-            />
+            />*/}
           </Flex>
         </TopGrid>
       </TopCard>
