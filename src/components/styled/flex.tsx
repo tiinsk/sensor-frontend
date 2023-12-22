@@ -24,7 +24,7 @@ const StyledFlex = styled(Box)<FlexStyles>`
   flex-wrap: ${({ flexWrap }) => flexWrap};
   justify-content: ${({ justifyContent }) => justifyContent};
   align-items: ${({ alignItems }) => alignItems};
-  gap: ${({ theme, gap }) => gap ? theme.spacings[gap] : 0};
+  gap: ${({ theme, gap }) => (gap ? theme.spacings[gap] : 0)};
 `;
 
 export const Flex = ({ children, ...props }: FlexProps) => {

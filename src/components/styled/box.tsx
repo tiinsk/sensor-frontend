@@ -16,7 +16,7 @@ interface Margins {
   mr?: Space;
 }
 
-interface BoxProps extends Paddings, Margins {
+export interface BoxProps extends Paddings, Margins {
   children?: React.ReactNode;
   component?: React.ElementType;
 
@@ -29,18 +29,27 @@ interface BoxProps extends Paddings, Margins {
   my?: Space;
 }
 
-const StyledBox = styled.div<Paddings & Margins>`
+const StyledBox = styled.div<{
+  $pt?: Space;
+  $pb?: Space;
+  $pl?: Space;
+  $pr?: Space;
+  $mt?: Space;
+  $mb?: Space;
+  $ml?: Space;
+  $mr?: Space;
+}>`
   display: block;
 
-  padding-left: ${({ theme, pl }) => (pl ? theme.spacings[pl] : 0)};
-  padding-right: ${({ theme, pr }) => (pr ? theme.spacings[pr] : 0)};
-  padding-bottom: ${({ theme, pb }) => (pb ? theme.spacings[pb] : 0)};
-  padding-top: ${({ theme, pt }) => (pt ? theme.spacings[pt] : 0)};
+  padding-left: ${({ theme, $pl }) => ($pl ? theme.spacings[$pl] : 0)};
+  padding-right: ${({ theme, $pr }) => ($pr ? theme.spacings[$pr] : 0)};
+  padding-bottom: ${({ theme, $pb }) => ($pb ? theme.spacings[$pb] : 0)};
+  padding-top: ${({ theme, $pt }) => ($pt ? theme.spacings[$pt] : 0)};
 
-  margin-left: ${({ theme, ml }) => (ml ? theme.spacings[ml] : 0)};
-  margin-right: ${({ theme, mr }) => (mr ? theme.spacings[mr] : 0)};
-  margin-bottom: ${({ theme, mb }) => (mb ? theme.spacings[mb] : 0)};
-  margin-top: ${({ theme, mt }) => (mt ? theme.spacings[mt] : 0)};
+  margin-left: ${({ theme, $ml }) => ($ml ? theme.spacings[$ml] : 0)};
+  margin-right: ${({ theme, $mr }) => ($mr ? theme.spacings[$mr] : 0)};
+  margin-bottom: ${({ theme, $mb }) => ($mb ? theme.spacings[$mb] : 0)};
+  margin-top: ${({ theme, $mt }) => ($mt ? theme.spacings[$mt] : 0)};
 `;
 
 export const Box = ({
@@ -63,15 +72,15 @@ export const Box = ({
   ...props
 }: BoxProps) => {
   const paddingsAndMargins = {
-    paddingLeft: pl || px || p,
-    paddingRight: pr || px || p,
-    paddingTop: pt || py || p,
-    paddingBottom: pb || py || p,
+    $pl: pl || px || p,
+    $pr: pr || px || p,
+    $pt: pt || py || p,
+    $pb: pb || py || p,
 
-    marginLeft: ml || mx || m,
-    marginRight: mr || mx || m,
-    marginTop: mt || my || m,
-    marginBottom: mb || my || m,
+    $ml: ml || mx || m,
+    $mr: mr || mx || m,
+    $mt: mt || my || m,
+    $mb: mb || my || m,
   };
 
   return (
