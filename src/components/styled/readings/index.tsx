@@ -11,7 +11,7 @@ type ReadingSizeVariant = 'default' | 'small';
 interface ReadingProps {
   variant?: ReadingVariant;
   sizeVariant?: ReadingSizeVariant;
-  value: number;
+  value?: number;
   unit?: Unit;
 }
 
@@ -78,7 +78,7 @@ export const Reading = ({
 }: ReadingProps) => {
   const iconType = getIconType(variant);
   const unitStr = unit && getUnit(unit);
-  const roundedValue = value.toFixed(1);
+  const roundedValue = value ? value.toFixed(1) : '--';
   return (
     <StyledReading {...props} $sizeVariant={sizeVariant}>
       {iconType && (

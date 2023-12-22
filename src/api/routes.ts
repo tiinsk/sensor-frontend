@@ -1,4 +1,9 @@
-import { ArrayResponse, DeviceResponse, LatestReadingResponse } from './types';
+import {
+  ArrayResponse,
+  DeviceResponse,
+  ExtremeResponse,
+  LatestReadingResponse,
+} from './types';
 import * as api from './index';
 const { DateTime } = require('luxon');
 
@@ -26,7 +31,7 @@ const routes = {
       route: `/devices/${deviceId}/readings/now?localTimeZone=${getTimeZone()}`,
     }),
   getAllDeviceExtremes: (deviceId: string) =>
-    api.get({
+    api.get<ExtremeResponse>({
       route: `/devices/${deviceId}/readings/extremes?localTimeZone=${getTimeZone()}`,
     }),
 };

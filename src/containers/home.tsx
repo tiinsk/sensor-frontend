@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api/routes';
-import { DeviceCard } from '../components/devices/card';
+import { DeviceCard } from '../components/cards/device-card';
 import { LatestReadingResponse } from '../api/types';
 import styled from 'styled-components';
 import { TimeFrameSelector } from '../components/selectors/time-frame-selector';
