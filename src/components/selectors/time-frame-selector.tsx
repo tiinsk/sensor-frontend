@@ -118,6 +118,23 @@ export const getDefaultTimeLevel = (timePeriod: TimePeriod): TimeLevel => {
   }
 };
 
+export const isLastTimePeriod = (
+  timePeriod: TimePeriod,
+  startTime: string
+): boolean => {
+  const date = DateTime.fromISO(startTime);
+  switch (timePeriod) {
+    case 'day':
+      return date.diffNow('days').days > -1;
+    case 'week':
+      return date.diffNow('weeks').weeks > -1;
+    case 'month':
+      return date.diffNow('months').months > -1;
+    case 'year':
+      return date.diffNow('years').years > -1;
+  }
+};
+
 const MobileDrawerContent: React.FC<PropsWithChildren> = ({ children }) => {
   const { setOpen } = useRightDrawerContext();
   return (
@@ -255,6 +272,7 @@ export const TimeFrameSelector = ({
             iconLeft="mdiChevronRight"
             variant="secondary"
             onClick={() => onTimeButtonClick(1)}
+            disabled={isLastTimePeriod(options.timePeriod, options.startTime)}
           />
         </Flex>
         <TitleWrapper>
