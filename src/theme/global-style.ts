@@ -9,6 +9,11 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
   
+  body {
+    margin: 0;
+     background-color: ${({ theme }) => theme.colors.background.secondary};
+  }
+  
   ul {
     margin: 0;
     padding: 0;
@@ -16,4 +21,7 @@ export const GlobalStyle = createGlobalStyle`
       list-style-type: none;
     }
   }
+  a {
+    color: ${({ theme }) => theme.colors.typography.primary};
+  } 
 `;

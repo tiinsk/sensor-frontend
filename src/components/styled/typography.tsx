@@ -4,13 +4,13 @@ import { Box } from './box';
 import {
   BodyLightStyle,
   BodyStyle,
-  Caption1Style,
   Caption2LightStyle,
   Caption2Style,
   Caption3Style,
   H1Style,
   H2Style,
   H3Style,
+  PageTitleStyle,
 } from '../../theme/typography';
 
 const StyledH1 = styled(Box)`
@@ -83,20 +83,20 @@ export const Body = ({
   );
 };
 
-const StyledCaption1 = styled(Box)`
-  ${Caption1Style};
+const StyledPageTitle = styled(Box)`
+  ${PageTitleStyle};
 `;
 
-export const Caption1 = ({
+export const PageTitle = ({
   children,
   ...props
 }: {
   children?: React.ReactNode;
 }) => {
   return (
-    <StyledCaption1 {...props} component="body">
+    <StyledPageTitle {...props} component="span">
       {children}
-    </StyledCaption1>
+    </StyledPageTitle>
   );
 };
 

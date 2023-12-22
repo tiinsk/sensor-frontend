@@ -3,11 +3,11 @@ import styled, { useTheme } from 'styled-components';
 
 import * as mdiIcons from '@mdi/js';
 import Icon from '@mdi/react';
-import { Box } from './box';
+import { Box, BoxProps } from './box';
 import { Space, theme } from '../../theme';
 
 type IconColor = keyof (typeof theme)['colors']['icons'];
-type IconType = keyof typeof mdiIcons;
+export type IconType = keyof typeof mdiIcons;
 
 const StyledIcon = styled(Box)``;
 
@@ -22,15 +22,15 @@ export const MdiIcon = ({
   color = 'primary',
   size = 's24',
   ...props
-}: MdiIconProps) => {
+}: MdiIconProps & BoxProps) => {
   const { spacings, colors } = useTheme();
   return (
-    <StyledIcon {...props}>
+    <Box {...props}>
       <Icon
         size={spacings[size]}
         color={colors.icons[color]}
         path={mdiIcons[type]}
       />
-    </StyledIcon>
+    </Box>
   );
 };
