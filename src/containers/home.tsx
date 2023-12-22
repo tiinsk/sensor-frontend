@@ -24,6 +24,20 @@ const CardGrid = styled.div`
 
 const DEFAULT_PERIOD = 'day';
 
+interface SavedDevice {
+  id: string;
+  name: string;
+}
+
+const getLocalstorageDevices = () => {
+  const savedDevices = localStorage.getItem('devices');
+  return savedDevices ? JSON.parse(savedDevices) : [];
+};
+
+const setLocalstorageDevices = (devices: SavedDevice[]) => {
+  localStorage.setItem('devices', JSON.stringify(devices));
+};
+
 export const Home = () => {
   const timeNow = new Date().toISOString();
   const [options, setOptions] = useState<TimeFrameOptions>({
@@ -35,7 +49,20 @@ export const Home = () => {
     showMinAndMax: true,
   });
 
-  const [latestData, setLatestData] = useState<LatestReadingResponse[]>([]);
+  const [devices, setDevices] = useState<SavedDevice[]>(
+    getLocalstorageDevices()
+  );
+
+  const [isLoadingMainContent, setLoadingMainContent] = useState<
+    boolean | undefined
+  >(undefined);
+  const [isLoadingReadings, setLoadingReadings] = useState<boolean | undefined>(
+    undefined
+  );
+
+  const [latestData, setLatestData] = useState<{
+    [id: string]: LatestReadingResponse | undefined;
+  }>({});
   const [statisticsData, setStatisticsData] = useState<{
     [id: string]: StatisticsResponse | undefined;
   }>({});
@@ -43,11 +70,20 @@ export const Home = () => {
     [id: string]: ReadingsResponse | undefined;
   }>({});
 
-  const fetchData = async () => {
+  const saveDevicesToLocalStorage = (latestData: LatestReadingResponse[]) => {
+    const devices = latestData.map(device => ({
+      id: device.id,
+      name: device.name,
+    }));
+    setLocalstorageDevices(devices);
+    setDevices(devices);
+  };
+
+  const fetchReadings = async () => {
+    setLoadingReadings(true);
     const startTime = getUTCTime(options.startTime);
     const endTime = getUTCTime(options.endTime);
-    const [latestResult, statisticsResult, readingsResult] = await Promise.all([
-      api.getAllLatest(),
+    const [statisticsResult, readingsResult] = await Promise.all([
       api.getAllStatistics({
         startTime,
         endTime,
@@ -59,6 +95,7 @@ export const Home = () => {
         level: options.level,
       }),
     ]);
+
     const statisticsByDevice = statisticsResult?.values.reduce<{
       [id: string]: StatisticsResponse | undefined;
     }>((acc, cur) => {
@@ -73,13 +110,33 @@ export const Home = () => {
       return acc;
     }, {});
 
-    setLatestData(latestResult?.values || []);
     setStatisticsData(statisticsByDevice || {});
     setReadingsData(readingsByDevice || {});
+    setLoadingReadings(false);
+  };
+
+  const fetchData = async () => {
+    setLoadingMainContent(true);
+    const [latestResult] = await Promise.all([api.getAllLatest()]);
+
+    const latestByDevice = latestResult?.values.reduce<{
+      [id: string]: LatestReadingResponse | undefined;
+    }>((acc, cur) => {
+      acc[cur.id] = cur;
+      return acc;
+    }, {});
+
+    setLatestData(latestByDevice || {});
+    saveDevicesToLocalStorage(latestResult?.values || []);
+    setLoadingMainContent(false);
   };
 
   useEffect(() => {
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    fetchReadings();
   }, [options]);
 
   return (
@@ -89,13 +146,21 @@ export const Home = () => {
         onChange={newOptions => setOptions(newOptions)}
       />
       <CardGrid>
-        {latestData?.map(device => (
+        {devices.map(device => (
           <DeviceCard
+            id={device.id}
+            name={device.name}
             key={device.id}
             options={options}
-            latestData={device}
+            latestData={latestData[device.id]}
             statisticsData={statisticsData[device.id]}
             readingsData={readingsData[device.id]?.values}
+            isLoadingMainContent={
+              isLoadingMainContent || isLoadingMainContent === undefined
+            }
+            isLoadingReadings={
+              isLoadingReadings || isLoadingReadings === undefined
+            }
           />
         ))}
       </CardGrid>

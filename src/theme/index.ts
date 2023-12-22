@@ -33,6 +33,7 @@ const variables = {
     s80: '8.0rem',
     s96: '9.6rem',
     s128: '12.8rem',
+    s192: '19.2rem',
   },
   zIndex: {
     menus: 1000,

@@ -61,6 +61,8 @@ export const Device = () => {
   }>({ day: undefined, week: undefined, month: undefined });
 
   const [isLoadingReadings, setLoadingReadings] = useState<boolean>(false);
+  const [isLoadingMainContent, setLoadingMainContent] =
+    useState<boolean>(false);
   const [readingData, setReadingData] = useState<
     { [type: string]: ReadingType[] | undefined } | undefined
   >(undefined);
@@ -68,6 +70,7 @@ export const Device = () => {
   const { id } = useParams();
   const fetchData = async () => {
     if (id) {
+      setLoadingMainContent(true);
       const now = new Date().toISOString();
 
       const [latest, statisticsDay, statisticsWeek, statisticsMonth] =
@@ -98,6 +101,7 @@ export const Device = () => {
         week: statisticsWeek?.statistics,
         month: statisticsMonth?.statistics,
       });
+      setLoadingMainContent(false);
     }
   };
 
@@ -146,27 +150,31 @@ export const Device = () => {
   return (
     <div>
       <Flex justifyContent="space-between" alignItems="flex-end" mb="s16">
-        <H2 mb="s4">{latestData?.name}</H2>
+        <H2 mb="s4" isLoading={!latestData?.name} loadingWidth="s192">
+          {latestData?.name}
+        </H2>
         <Flex flexDirection="column" alignItems="flex-end">
-          {latestData?.reading.created_at && (
-            <Tag
-              variant={tagVariant}
-              text={getTimeAgoString(latestData.reading.created_at)}
-            />
-          )}
+          <Tag
+            variant={tagVariant}
+            text={getTimeAgoString(latestData?.reading.created_at)}
+            isLoading={isLoadingMainContent}
+          />
           <Flex gap="s16">
-            {latestData?.reading.temperature && (
-              <Reading
-                value={latestData?.reading.temperature}
-                unit="temperature"
-              />
-            )}
-            {latestData?.reading.humidity && (
-              <Reading value={latestData?.reading.humidity} unit="humidity" />
-            )}
-            {latestData?.reading.pressure && (
-              <Reading value={latestData?.reading.pressure} unit="pressure" />
-            )}
+            <Reading
+              value={latestData?.reading.temperature}
+              unit="temperature"
+              isLoading={isLoadingMainContent}
+            />
+            <Reading
+              value={latestData?.reading.humidity}
+              unit="humidity"
+              isLoading={isLoadingMainContent}
+            />
+            <Reading
+              value={latestData?.reading.pressure}
+              unit="pressure"
+              isLoading={isLoadingMainContent}
+            />
           </Flex>
         </Flex>
       </Flex>
@@ -177,6 +185,7 @@ export const Device = () => {
           day={statisticsData.day?.temperature || {}}
           week={statisticsData.week?.temperature || {}}
           month={statisticsData.month?.temperature || {}}
+          isLoading={isLoadingMainContent}
         />
         <AverageCard
           title="Humidity"
@@ -184,6 +193,7 @@ export const Device = () => {
           day={statisticsData.day?.humidity || {}}
           week={statisticsData.week?.humidity || {}}
           month={statisticsData.month?.humidity || {}}
+          isLoading={isLoadingMainContent}
         />
         <AverageCard
           title="Pressure"
@@ -191,6 +201,7 @@ export const Device = () => {
           day={statisticsData.day?.pressure || {}}
           week={statisticsData.week?.pressure || {}}
           month={statisticsData.month?.pressure || {}}
+          isLoading={isLoadingMainContent}
         />
       </Flex>
       <Box mt="s16">

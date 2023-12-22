@@ -3,6 +3,7 @@ import styled, { css, DefaultTheme } from 'styled-components';
 import { IconColor, IconType, MdiIcon } from '../mdi-icon';
 import { getUnit, Unit } from '../../../utils/unit';
 import { BodyStyle, Caption3Style, H3Style } from '../../../theme/typography';
+import { Skeleton } from '../../../assets/loading/skeleton';
 
 type ReadingVariant = 'default' | 'min' | 'max' | 'avg';
 type ReadingSizeVariant = 'default' | 'small';
@@ -12,6 +13,7 @@ interface ReadingProps {
   sizeVariant?: ReadingSizeVariant;
   value?: number | null;
   unit?: Unit;
+  isLoading?: boolean;
 }
 
 const StyledValue = styled.p`
@@ -84,6 +86,7 @@ export const Reading = ({
   sizeVariant = 'default',
   value,
   unit,
+  isLoading,
   ...props
 }: ReadingProps) => {
   const iconType = getIconType(variant);
@@ -101,8 +104,17 @@ export const Reading = ({
         />
       )}
       {variant === 'avg' && <AvgText>Avg</AvgText>}
-      <StyledValue>{roundedValue}</StyledValue>
-      {unitStr && <StyledUnit>{unitStr}</StyledUnit>}
+      {isLoading ? (
+        <Skeleton
+          variant={sizeVariant === 'default' ? 'H3' : 'Caption3'}
+          width={sizeVariant === 'default' ? 's64' : 's48'}
+        />
+      ) : (
+        <>
+          <StyledValue>{roundedValue}</StyledValue>
+          {unitStr && <StyledUnit>{unitStr}</StyledUnit>}
+        </>
+      )}
     </StyledReading>
   );
 };

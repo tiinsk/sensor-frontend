@@ -12,17 +12,30 @@ import {
   H3Style,
   PageTitleStyle,
 } from '../../theme/typography';
+import { Skeleton } from '../../assets/loading/skeleton';
+import { Space } from '../../theme';
 
 interface TypographyProps extends BoxProps {
   children?: React.ReactNode;
   style?: React.CSSProperties;
+  isLoading?: boolean;
+  loadingWidth?: Space;
 }
 
 const StyledH1 = styled(Box)`
   ${H1Style};
 `;
 
-export const H1 = ({ children, ...props }: TypographyProps) => {
+export const H1 = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="H1" width={loadingWidth} />;
+  }
+
   return (
     <StyledH1 {...props} component="h1">
       {children}
@@ -34,7 +47,16 @@ const StyledH2 = styled(Box)`
   ${H2Style};
 `;
 
-export const H2 = ({ children, ...props }: TypographyProps) => {
+export const H2 = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="H2" width={loadingWidth} />;
+  }
+
   return (
     <StyledH2 {...props} component="h2">
       {children}
@@ -46,7 +68,16 @@ const StyledH3 = styled(Box)`
   ${H3Style};
 `;
 
-export const H3 = ({ children, ...props }: TypographyProps) => {
+export const H3 = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="H3" width={loadingWidth} />;
+  }
+
   return (
     <StyledH3 {...props} component="h3">
       {children}
@@ -58,7 +89,16 @@ const StyledBodyLight = styled(Box)`
   ${BodyLightStyle};
 `;
 
-export const BodyLight = ({ children, ...props }: TypographyProps) => {
+export const BodyLight = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="Body" width={loadingWidth} />;
+  }
+
   return (
     <StyledBodyLight {...props} component="p">
       {children}
@@ -70,7 +110,16 @@ const StyledBody = styled(Box)`
   ${BodyStyle};
 `;
 
-export const Body = ({ children, ...props }: TypographyProps) => {
+export const Body = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="Body" width={loadingWidth} />;
+  }
+
   return (
     <StyledBody {...props} component="p">
       {children}
@@ -82,7 +131,16 @@ const StyledPageTitle = styled(Box)`
   ${PageTitleStyle};
 `;
 
-export const PageTitle = ({ children, ...props }: TypographyProps) => {
+export const PageTitle = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="PageTitle" width={loadingWidth} />;
+  }
+
   return (
     <StyledPageTitle {...props} component="span">
       {children}
@@ -94,7 +152,16 @@ const StyledCaption2Light = styled(Box)`
   ${Caption2LightStyle};
 `;
 
-export const Caption2Light = ({ children, ...props }: TypographyProps) => {
+export const Caption2Light = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="Caption2" width={loadingWidth} />;
+  }
+
   return (
     <StyledCaption2Light {...props} component="p">
       {children}
@@ -106,7 +173,16 @@ const StyledCaption2 = styled(Box)`
   ${Caption2Style};
 `;
 
-export const Caption2 = ({ children, ...props }: TypographyProps) => {
+export const Caption2 = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="Caption2" width={loadingWidth} />;
+  }
+
   return (
     <StyledCaption2 {...props} component="p">
       {children}
@@ -118,7 +194,16 @@ const StyledCaption3 = styled(Box)`
   ${Caption3Style};
 `;
 
-export const Caption3 = ({ children, ...props }: TypographyProps) => {
+export const Caption3 = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="Caption3" width={loadingWidth} />;
+  }
+
   return (
     <StyledCaption3 {...props} component="p">
       {children}

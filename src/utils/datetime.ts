@@ -18,7 +18,9 @@ const units: Intl.RelativeTimeFormatUnit[] = [
   'second',
 ];
 
-export const getTimeAgoString = (date: string) => {
+export const getTimeAgoString = (date?: string) => {
+  if (!date) return '';
+
   let dateTime = DateTime.fromISO(date);
   const diff = dateTime.diffNow().shiftTo(...units);
   const unit = units.find(unit => diff.get(unit) !== 0) || 'second';

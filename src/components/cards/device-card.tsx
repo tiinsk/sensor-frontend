@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { TimeFrameOptions } from '../selectors/time-frame-selector';
 import { Graph } from '../graphs/graph';
 import { GraphSizeWrapper } from '../graphs/graph-size-wrapper';
+import { GraphLoading } from '../../assets/loading/graph-loading';
 
 const StyledDeviceCard = styled(Link)`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
@@ -47,46 +48,67 @@ const BottomCard = styled.div`
 `;
 
 export const DeviceCard = ({
+  id,
+  name,
   latestData,
   statisticsData,
   readingsData,
   options,
+  isLoadingMainContent,
+  isLoadingReadings,
 }: {
-  latestData: LatestReadingResponse;
+  id: string;
+  name: string;
+  latestData?: LatestReadingResponse;
   statisticsData?: StatisticsResponse;
   readingsData?: ReadingType[];
   options: TimeFrameOptions;
+  isLoadingMainContent?: boolean;
+  isLoadingReadings?: boolean;
 }) => {
   const [hoveredDate, setHoveredDate] = useState<string | undefined>(undefined);
 
-  const timeDiff = Math.abs(
-    DateTime.fromISO(latestData.reading.created_at).diffNow('minutes').minutes
-  );
+  const timeDiff = latestData?.reading.created_at
+    ? Math.abs(
+        DateTime.fromISO(latestData.reading.created_at).diffNow('minutes')
+          .minutes
+      )
+    : 0;
   const tagVariant = timeDiff > 20 ? 'error' : 'default';
 
   return (
-    <StyledDeviceCard to={`/devices/${latestData.id}`}>
+    <StyledDeviceCard to={`/devices/${id}`}>
       <TopCard>
-        <Flex justifyContent="flex-end" px="s8" mb="s8">
+        <Flex justifyContent="flex-end" px="s16" mb="s8">
           <Tag
             variant={tagVariant}
-            text={getTimeAgoString(latestData.reading.created_at)}
+            text={getTimeAgoString(latestData?.reading.created_at)}
+            isLoading={isLoadingMainContent}
           />
         </Flex>
         <TopGrid>
           <BorderedFlex pl="s16">
-            <Body>{latestData.name}</Body>
+            <Body>{name}</Body>
           </BorderedFlex>
           <BorderedFlex pl="s16" justifyContent="flex-start">
-            <Reading value={latestData.reading.humidity} unit="humidity" />
+            <Reading
+              value={latestData?.reading.humidity}
+              unit="humidity"
+              isLoading={isLoadingMainContent}
+            />
           </BorderedFlex>
           <BorderedFlex justifyContent="center">
-            <Reading value={latestData.reading.pressure} unit="pressure" />
+            <Reading
+              value={latestData?.reading.pressure}
+              unit="pressure"
+              isLoading={isLoadingMainContent}
+            />
           </BorderedFlex>
           <BorderedFlex pr="s16" justifyContent="flex-end">
             <Reading
-              value={latestData.reading.temperature}
+              value={latestData?.reading.temperature}
               unit="temperature"
+              isLoading={isLoadingMainContent}
             />
           </BorderedFlex>
           <Flex pt="s16" pl="s16">
@@ -105,12 +127,14 @@ export const DeviceCard = ({
               unit="humidity"
               variant="max"
               sizeVariant="small"
+              isLoading={isLoadingReadings}
             />
             <Reading
               value={statisticsData?.statistics.humidity.min}
               unit="humidity"
               variant="min"
               sizeVariant="small"
+              isLoading={isLoadingReadings}
             />
           </Flex>
           <Flex flexDirection="column" pt="s16" alignItems="center">
@@ -119,12 +143,14 @@ export const DeviceCard = ({
               unit="pressure"
               variant="max"
               sizeVariant="small"
+              isLoading={isLoadingReadings}
             />
             <Reading
               value={statisticsData?.statistics.pressure.min}
               unit="pressure"
               variant="min"
               sizeVariant="small"
+              isLoading={isLoadingReadings}
             />
           </Flex>
           <Flex flexDirection="column" pt="s16" pr="s16" alignItems="flex-end">
@@ -133,23 +159,33 @@ export const DeviceCard = ({
               unit="temperature"
               variant="max"
               sizeVariant="small"
+              isLoading={isLoadingReadings}
             />
             <Reading
               value={statisticsData?.statistics.temperature.min}
               unit="temperature"
               variant="min"
               sizeVariant="small"
+              isLoading={isLoadingReadings}
             />
           </Flex>
         </TopGrid>
       </TopCard>
       <BottomCard>
         <GraphSizeWrapper>
-          {readingsData && (
+          {isLoadingReadings ? (
+            <Flex
+              style={{ height: '100%' }}
+              justifyContent="center"
+              alignItems="center"
+            >
+              <GraphLoading />
+            </Flex>
+          ) : (
             <Graph
-              deviceId={latestData.id}
+              deviceId={id}
               options={options}
-              data={readingsData}
+              data={readingsData || []}
               valueType={options.valueType || 'temperature'}
               hoveredDate={hoveredDate}
               onHover={date => setHoveredDate(date)}

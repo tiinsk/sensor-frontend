@@ -42,6 +42,7 @@ interface AverageCardProps {
 
   unit?: Unit;
   title: string;
+  isLoading?: boolean;
 }
 
 export const AverageCard = ({
@@ -50,6 +51,7 @@ export const AverageCard = ({
   day,
   week,
   month,
+  isLoading,
 }: AverageCardProps) => {
   return (
     <StyledDeviceCard>
@@ -62,18 +64,21 @@ export const AverageCard = ({
             unit={unit}
             sizeVariant="small"
             variant="avg"
+            isLoading={isLoading}
           />
           <Reading
             value={day.max}
             unit={unit}
             variant="max"
             sizeVariant="small"
+            isLoading={isLoading}
           />
           <Reading
             value={day.min}
             unit={unit}
             variant="min"
             sizeVariant="small"
+            isLoading={isLoading}
           />
         </TimeGroup>
         <Divider />
@@ -84,18 +89,21 @@ export const AverageCard = ({
             unit={unit}
             sizeVariant="small"
             variant="avg"
+            isLoading={isLoading}
           />
           <Reading
             value={week.max}
             unit={unit}
             variant="max"
             sizeVariant="small"
+            isLoading={isLoading}
           />
           <Reading
             value={week.min}
             unit={unit}
             variant="min"
             sizeVariant="small"
+            isLoading={isLoading}
           />
         </TimeGroup>
         <Divider />
@@ -106,18 +114,21 @@ export const AverageCard = ({
             unit={unit}
             sizeVariant="small"
             variant="avg"
+            isLoading={isLoading}
           />
           <Reading
             value={month.max}
             unit={unit}
             variant="max"
             sizeVariant="small"
+            isLoading={isLoading}
           />
           <Reading
             value={month.min}
             unit={unit}
             variant="min"
             sizeVariant="small"
+            isLoading={isLoading}
           />
         </TimeGroup>
       </Flex>
