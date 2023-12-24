@@ -4,9 +4,10 @@ import { FORCE_RERENDER } from '../app';
 
 import { getJWTToken, removeJWTToken } from '../utils/auth';
 import { PostResponse } from './types';
+import config from '../config';
 
 const instance = axios.create({
-  baseURL: '/api',
+  baseURL: `${config.api.route}/api`,
 });
 
 interface ApiParams {

@@ -5,7 +5,7 @@ module.exports = function (app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: config.api.route,
+      target: config.api.proxyRoute,
       changeOrigin: true,
     })
   );
