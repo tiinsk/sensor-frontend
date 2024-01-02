@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { darkTheme, lightTheme } from '../theme';
-import { theme } from '../assets/styles/variables';
 
 type Theme = 'light' | 'dark';
 
