@@ -34,8 +34,6 @@ const routes = {
     api.get<ArrayResponse<LatestReadingResponse>>({
       route: `/devices/latest-readings`,
     }),
-  getExtremes: () =>
-    api.get({ route: `/readings/extremes?localTimeZone=${getTimeZone()}` }),
   getAllStatistics: (params: TimeParams) =>
     api.get<ArrayResponse<StatisticsResponse>>({
       route: `/devices/statistics`,
