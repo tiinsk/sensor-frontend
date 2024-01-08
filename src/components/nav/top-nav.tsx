@@ -6,6 +6,7 @@ import { Flex } from '../styled/flex';
 import { LinkButton } from '../styled/buttons/link';
 import { RightNav } from './right-nav';
 import { RightDrawer } from '../styled/menus/right-drawer';
+import { Blueprint } from '../../assets/icons/blueprint';
 
 const StyledNav = styled.nav`
   display: flex;
@@ -47,7 +48,7 @@ export const TopNav = () => {
         </Link>
         <Flex>
           <MobileHiddenLinkButton
-            iconLeft="mdiHomeMapMarker"
+            iconLeft={<Blueprint />}
             text="Map"
             variant="basic"
             to="/map"

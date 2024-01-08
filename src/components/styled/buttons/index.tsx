@@ -4,6 +4,7 @@ import styled, { css, DefaultTheme } from 'styled-components';
 import { MdiIcon } from '../mdi-icon';
 import { IconType } from '../mdi-icon';
 import { BodyStyle, Caption2Style } from '../../../theme/typography';
+import { Box } from '../box';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'basic';
 export type SizeVariant = 'default' | 'small';
@@ -111,9 +112,9 @@ export const StyledButton = styled.button<{
 export interface ButtonProps {
   variant?: ButtonVariant;
   sizeVariant?: SizeVariant;
-  iconLeft?: IconType;
+  iconLeft?: IconType | React.ReactNode;
   text?: string;
-  iconRight?: IconType;
+  iconRight?: IconType | React.ReactNode;
   disabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   buttonRef?: React.Ref<HTMLButtonElement>;
@@ -129,15 +130,23 @@ export const ButtonContent = ({
   const iconSize = sizeVariant === 'default' ? 's24' : 's16';
   return (
     <>
-      {iconLeft && (
+      {iconLeft && typeof iconLeft === 'string' && (
         <MdiIcon
           size={iconSize}
-          type={iconLeft}
+          type={iconLeft as IconType}
           mr={text ? 's16' : undefined}
         />
       )}
+      {iconLeft && typeof iconLeft !== 'string' && (
+        <Box mr={text ? 's16' : undefined}>{iconLeft}</Box>
+      )}
       {text && <ButtonText $sizeVariant={sizeVariant}>{text}</ButtonText>}
-      {iconRight && <MdiIcon size={iconSize} type={iconRight} ml="s16" />}
+      {iconRight && typeof iconRight === 'string' && (
+        <MdiIcon size={iconSize} type={iconRight as IconType} ml="s16" />
+      )}
+      {iconRight && typeof iconRight !== 'string' && (
+        <Box ml="s16">{iconRight}</Box>
+      )}
     </>
   );
 };

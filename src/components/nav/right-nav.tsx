@@ -9,6 +9,7 @@ import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
 import { removeJWTToken } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { LinkButton } from '../styled/buttons/link';
+import { Blueprint } from '../../assets/icons/blueprint';
 
 const StyledNav = styled.div`
   display: flex;
@@ -69,7 +70,7 @@ export const RightNav = ({ isMobile }: { isMobile: boolean }) => {
       <Flex flexDirection="column" alignItems="flex-start" mt="s24">
         {isMobile && (
           <LinkButton
-            iconLeft="mdiHomeMapMarker"
+            iconLeft={<Blueprint />}
             text="Map"
             variant="basic"
             to="/map"
