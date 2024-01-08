@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { LinkProps } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 
 import {
   ButtonContent,
@@ -10,7 +10,7 @@ import {
   SizeVariant,
 } from './index';
 
-export const StyledLinkButton = styled.a<{
+export const StyledLinkButton = styled(Link)<{
   $variant: ButtonVariant;
   $sizeVariant: SizeVariant;
 }>`

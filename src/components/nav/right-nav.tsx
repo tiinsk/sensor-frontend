@@ -8,6 +8,7 @@ import { useThemeContext } from '../../contexts/theme-context';
 import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
 import { removeJWTToken } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
+import { LinkButton } from '../styled/buttons/link';
 
 const StyledNav = styled.div`
   display: flex;
@@ -66,14 +67,14 @@ export const RightNav = ({ isMobile }: { isMobile: boolean }) => {
         />
       </ThemeSection>
       <Flex flexDirection="column" alignItems="flex-start" mt="s24">
-        {/*TODO {isMobile && (
-          <Button
+        {isMobile && (
+          <LinkButton
             iconLeft="mdiHomeMapMarker"
             text="Map"
             variant="basic"
-            onClick={() => {}}
+            to="/map"
           />
-        )}*/}
+        )}
         {/*TODO <Button
           iconLeft="mdiShieldAccount"
           text="Admin Settings"

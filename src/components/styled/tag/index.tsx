@@ -36,6 +36,8 @@ const StyledTag = styled.div<{
   padding-left: 0;
   padding-right: 0;
 
+  white-space: nowrap;
+
   ${({ $variant }) => $variant === 'error' && ErrorStyle};
 `;
 
@@ -56,7 +58,7 @@ export const Tag = ({
 }: TagProps) => {
   const iconType = getIconType(variant);
   return (
-    <StyledTag {...props} $variant={variant}>
+    <StyledTag {...props} $variant={isLoading ? 'default' : variant}>
       {isLoading ? (
         <Skeleton variant="Caption2" width="s96" />
       ) : (

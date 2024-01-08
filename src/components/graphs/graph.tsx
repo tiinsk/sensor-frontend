@@ -12,8 +12,8 @@ import { DateTime } from 'luxon';
 import { GraphTooltip } from '../styled/tooltips/graph-tooltip';
 import { getEndTime, getStartTime } from '../selectors/time-frames';
 
-const MIN_TEMP = -30;
-const MAX_TEMP = 90;
+export const MIN_TEMP = -30;
+export const MAX_TEMP = 90;
 const SMALL_GRAPH_LIMIT = 500;
 
 const formatAxes = (date: Date, timePeriod: TimePeriod) => {

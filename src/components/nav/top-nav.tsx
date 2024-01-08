@@ -46,12 +46,12 @@ export const TopNav = () => {
           <PageTitle>Home monitor</PageTitle>
         </Link>
         <Flex>
-          {/* TODO <MobileHiddenLinkButton
+          <MobileHiddenLinkButton
             iconLeft="mdiHomeMapMarker"
             text="Map"
             variant="basic"
             to="/map"
-          />*/}
+          />
           <MobileHiddenRightDrawer
             buttonProps={{
               iconLeft: 'mdiCogOutline',

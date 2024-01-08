@@ -50,11 +50,15 @@ export interface StatisticsResponse {
   statistics: Statistics;
 }
 
+export interface Location {
+  x: number;
+  y: number;
+}
+
 export interface DeviceResponse {
   id: string;
-  location_type: DeviceLocation;
   name: string;
-  order: number;
+  location: Location;
 }
 
 export interface Reading extends ReadingValue {

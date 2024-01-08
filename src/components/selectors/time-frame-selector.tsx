@@ -19,7 +19,7 @@ export type TimePeriod = Extract<
 
 export type TimeLevel = '10 minutes' | '30 minutes' | 'day' | 'week' | 'month';
 
-export type Selector = 'timeLevel' | 'timePeriod' | 'valueType';
+export type Selector = 'timeLevel' | 'timePeriod' | 'valueType' | 'minMax';
 
 export type ValueType = 'temperature' | 'humidity' | 'pressure';
 
@@ -110,7 +110,7 @@ const getFormattedDateString = (options: TimeFrameOptions) => {
 export const TimeFrameSelector = ({
   onChange,
   options,
-  selectors = ['timePeriod', 'valueType'],
+  selectors = ['timePeriod', 'valueType', 'minMax'],
 }: TimeFrameSelectorProps) => {
   const onOptionsChange = (newOptions: Partial<TimeFrameOptions>) => {
     let changedOptions = { ...options, ...newOptions };
@@ -129,22 +129,27 @@ export const TimeFrameSelector = ({
 
   const rightSide = (
     <>
-      <Select
-        label="Time period"
-        onSelect={(value: string) =>
-          onOptionsChange({ timePeriod: value as TimePeriod, offsetFromNow: 0 })
-        }
-        initialValue={options.timePeriod}
-        options={[
-          { value: 'day', label: 'Day' },
-          { value: 'week', label: 'Week' },
-          { value: 'month', label: 'Month' },
-          { value: 'year', label: 'Year' },
-        ]}
-      />
+      {selectors?.includes('timePeriod') && (
+        <Select
+          label="Time period"
+          onSelect={(value: string) =>
+            onOptionsChange({
+              timePeriod: value as TimePeriod,
+              offsetFromNow: 0,
+            })
+          }
+          initialValue={options.timePeriod}
+          options={[
+            { value: 'day', label: 'Day' },
+            { value: 'week', label: 'Week' },
+            { value: 'month', label: 'Month' },
+            { value: 'year', label: 'Year' },
+          ]}
+        />
+      )}
       {selectors?.includes('valueType') && (
         <Select
-          label="Graph type"
+          label="Sensor type"
           onSelect={(value: string) =>
             onOptionsChange({ valueType: value as ValueType })
           }
@@ -171,12 +176,14 @@ export const TimeFrameSelector = ({
           ]}
         />
       )}
-      <Toggle
-        name="min-max-toggle"
-        text="Min and max values"
-        isSelected={options.showMinAndMax}
-        onChange={value => onOptionsChange({ showMinAndMax: value })}
-      />
+      {selectors?.includes('minMax') && (
+        <Toggle
+          name="min-max-toggle"
+          text="Min and max values"
+          isSelected={options.showMinAndMax}
+          onChange={value => onOptionsChange({ showMinAndMax: value })}
+        />
+      )}
     </>
   );
 

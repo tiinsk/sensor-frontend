@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import styled, { css, DefaultTheme } from 'styled-components';
 import { IconColor, IconType, MdiIcon } from '../mdi-icon';
 import { getUnit, Unit } from '../../../utils/unit';
@@ -14,6 +14,7 @@ interface ReadingProps {
   value?: number | null;
   unit?: Unit;
   isLoading?: boolean;
+  style?: CSSProperties;
 }
 
 const StyledValue = styled.p`

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api/routes';
 import { DeviceCard } from '../components/cards/device-card';
 import {
+  DeviceResponse,
   LatestReadingResponse,
   ReadingsResponse,
   StatisticsResponse,
@@ -34,17 +35,12 @@ const CardGrid = styled.div`
   }
 `;
 
-interface SavedDevice {
-  id: string;
-  name: string;
-}
-
-const getLocalstorageDevices = () => {
+export const getLocalstorageDevices = () => {
   const savedDevices = localStorage.getItem('devices');
   return savedDevices ? JSON.parse(savedDevices) : [];
 };
 
-const setLocalstorageDevices = (devices: SavedDevice[]) => {
+export const setLocalstorageDevices = (devices: DeviceResponse[]) => {
   localStorage.setItem('devices', JSON.stringify(devices));
 };
 
@@ -57,7 +53,7 @@ export const Home = () => {
     showMinAndMax: true,
   }));
 
-  const [devices, setDevices] = useState<SavedDevice[]>(
+  const [devices, setDevices] = useState<DeviceResponse[]>(
     getLocalstorageDevices()
   );
 
@@ -78,10 +74,11 @@ export const Home = () => {
     [id: string]: ReadingsResponse | undefined;
   }>({});
 
-  const saveDevicesToLocalStorage = (latestData: LatestReadingResponse[]) => {
+  const saveDevicesToLocalStorage = (latestData: DeviceResponse[]) => {
     const devices = latestData.map(device => ({
       id: device.id,
       name: device.name,
+      location: device.location,
     }));
     setLocalstorageDevices(devices);
     setDevices(devices);
@@ -124,7 +121,10 @@ export const Home = () => {
 
   const fetchData = async () => {
     setLoadingMainContent(true);
-    const [latestResult] = await Promise.all([api.getAllLatest()]);
+    const [devicesResult, latestResult] = await Promise.all([
+      api.getAllDevices(),
+      api.getAllLatest(),
+    ]);
 
     const latestByDevice = latestResult?.values.reduce<{
       [id: string]: LatestReadingResponse | undefined;
@@ -134,7 +134,7 @@ export const Home = () => {
     }, {});
 
     setLatestData(latestByDevice || {});
-    saveDevicesToLocalStorage(latestResult?.values || []);
+    saveDevicesToLocalStorage(devicesResult?.values || []);
     setLoadingMainContent(false);
   };
 
