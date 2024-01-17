@@ -16,6 +16,7 @@ import { TimeFrameOptions } from '../selectors/time-frame-selector';
 import { Graph } from '../graphs/graph';
 import { GraphSizeWrapper } from '../graphs/graph-size-wrapper';
 import { GraphLoading } from '../../assets/loading/graph-loading';
+import { TimeAgoTag } from '../tags/time-ago-tag';
 
 const StyledDeviceCard = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
@@ -67,14 +68,6 @@ export const DeviceCard = ({
 }) => {
   const [hoveredDate, setHoveredDate] = useState<string | undefined>(undefined);
 
-  const timeDiff = latestData?.reading.created_at
-    ? Math.abs(
-        DateTime.fromISO(latestData.reading.created_at).diffNow('minutes')
-          .minutes
-      )
-    : 0;
-  const tagVariant = timeDiff > 20 ? 'error' : 'default';
-
   return (
     <StyledDeviceCard>
       <TopCard to={`/devices/${id}`}>
@@ -83,9 +76,8 @@ export const DeviceCard = ({
         </Flex>
         <Flex alignItems="center" gap="s8">
           <Flex pl="s16" style={{ flexGrow: 1 }}>
-            <Tag
-              variant={tagVariant}
-              text={getTimeAgoString(latestData?.reading.created_at)}
+            <TimeAgoTag
+              date={latestData?.reading.created_at}
               isLoading={isLoadingMainContent}
             />
           </Flex>

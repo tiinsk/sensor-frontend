@@ -26,6 +26,7 @@ import {
   getStartTime,
   getTimeFrame,
 } from '../components/selectors/time-frames';
+import { TimeAgoTag } from '../components/tags/time-ago-tag';
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -168,14 +169,6 @@ export const Device = () => {
     fetchReadings();
   }, [id, options]);
 
-  const timeDiff = latestData?.reading.created_at
-    ? Math.abs(
-        DateTime.fromISO(latestData?.reading.created_at).diffNow('minutes')
-          .minutes
-      )
-    : 0;
-  const tagVariant = timeDiff > 20 ? 'error' : 'default';
-
   return (
     <div>
       <TitleWrapper>
@@ -183,9 +176,8 @@ export const Device = () => {
           {latestData?.name}
         </H2>
         <LatestReadings>
-          <Tag
-            variant={tagVariant}
-            text={getTimeAgoString(latestData?.reading.created_at)}
+          <TimeAgoTag
+            date={latestData?.reading.created_at}
             isLoading={isLoadingMainContent}
           />
           <Flex gap="s16" style={{ minWidth: '250px' }}>
