@@ -59,6 +59,7 @@ export interface DeviceResponse {
   id: string;
   name: string;
   location: Location;
+  disabled: boolean;
 }
 
 export interface Reading extends ReadingValue {

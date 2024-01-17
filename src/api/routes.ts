@@ -52,8 +52,8 @@ const routes = {
       route: `/devices/${deviceId}/readings`,
       params,
     }),
-  getAllDevices: () =>
-    api.get<ArrayResponse<DeviceResponse>>({ route: '/devices' }),
+  getAllDevices: (params?: { includeDisabled?: boolean }) =>
+    api.get<ArrayResponse<DeviceResponse>>({ route: '/devices', params }),
   getDeviceLatestReadings: (deviceId: string) =>
     api.get<LatestReadingResponse>({
       route: `/devices/${deviceId}/latest-readings`,

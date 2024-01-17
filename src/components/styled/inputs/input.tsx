@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Caption2Style } from '../../../theme/typography';
+import { CSSProperties } from 'react';
 
 const StyledInputWrapper = styled.div`
   padding: ${({ theme }) => theme.spacings.s8} 0;
@@ -11,14 +12,15 @@ const StyledInputWrapper = styled.div`
   width: 100%;
 `;
 
-const StyledInput = styled.input`
+const StyledInput = styled.input<{ $variant: 'default' | 'small' }>`
   background-color: ${({ theme }) => theme.colors.background.secondary};
   border: 1px solid ${({ theme }) => theme.colors.borders.primary};
   border-radius: ${({ theme }) => theme.spacings.s4};
   color: ${({ theme }) => theme.colors.typography.primary};
   outline: none;
 
-  padding: ${({ theme }) => theme.spacings.s16};
+  padding: ${({ $variant, theme }) =>
+    $variant === 'default' ? theme.spacings.s16 : theme.spacings.s8};
   width: 100%;
 
   &:focus {
@@ -40,14 +42,16 @@ export const StyledError = styled.div`
 `;
 
 interface InputProps {
-  name: string;
+  name?: string;
   label?: string;
   placeholder?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
   value: string;
-  type?: 'input' | 'password';
+  type?: 'input' | 'password' | 'number';
   error?: string;
+  style?: CSSProperties;
+  variant?: 'default' | 'small';
 }
 
 export const Input = ({
@@ -59,14 +63,18 @@ export const Input = ({
   value,
   type = 'input',
   error,
+  variant = 'default',
   ...props
 }: InputProps) => {
   return (
     <StyledInputWrapper {...props}>
-      <StyledLabel htmlFor={name} $disabled={disabled}>
-        {label}
-      </StyledLabel>
+      {label && (
+        <StyledLabel htmlFor={name} $disabled={disabled}>
+          {label}
+        </StyledLabel>
+      )}
       <StyledInput
+        $variant={variant}
         type={type}
         id={name}
         name={name}

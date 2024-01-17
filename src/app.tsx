@@ -16,6 +16,7 @@ import { GlobalStyle } from './theme/global-style';
 import { TopNav } from './components/nav/top-nav';
 import { ThemeContextProvider, ThemeProvider } from './contexts/theme-context';
 import { Map } from './containers/map';
+import { Admin } from './containers/admin';
 
 WebFont.load({
   google: {
@@ -71,6 +72,7 @@ const LoggedInRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="devices/:id" Component={Device} />
         <Route path="map" Component={Map} />
+        <Route path="admin" Component={Admin} />
       </Routes>
     </StyledLoggedInRoutes>
   );

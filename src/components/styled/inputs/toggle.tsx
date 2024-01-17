@@ -62,7 +62,7 @@ const ToggleCircle = styled.div<{ $isSelected: boolean; $disabled: boolean }>`
 `;
 
 interface ToggleProps {
-  name: string;
+  name?: string;
   text?: string;
   onChange?: (value: boolean) => void;
   isSelected?: boolean;

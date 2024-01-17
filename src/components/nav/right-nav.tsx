@@ -76,12 +76,12 @@ export const RightNav = ({ isMobile }: { isMobile: boolean }) => {
             to="/map"
           />
         )}
-        {/*TODO <Button
+        <LinkButton
           iconLeft="mdiShieldAccount"
           text="Admin Settings"
           variant="basic"
-          onClick={() => {}}
-        />*/}
+          to="/admin"
+        />
         <Button
           iconLeft="mdiLogoutVariant"
           text="Logout"
