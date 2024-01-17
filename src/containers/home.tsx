@@ -74,13 +74,8 @@ export const Home = () => {
     [id: string]: ReadingsResponse | undefined;
   }>({});
 
-  const saveDevicesToLocalStorage = (latestData: DeviceResponse[]) => {
-    const devices = latestData.map(device => ({
-      id: device.id,
-      name: device.name,
-      location: device.location,
-    }));
-    setLocalstorageDevices(devices);
+  const saveDevicesToLocalStorage = (deviceResponse: DeviceResponse[]) => {
+    setLocalstorageDevices(deviceResponse);
     setDevices(devices);
   };
 
