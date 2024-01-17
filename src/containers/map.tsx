@@ -42,7 +42,8 @@ const MapCard = styled.div`
   background-size: 10px 10px;
 
   ${({ theme }) => theme.mediaQueries.md} {
-    width: fit-content;
+    min-width: fit-content;
+    width: 100%;
   }
 `;
 
@@ -51,6 +52,8 @@ const CardWrapper = styled.div`
     overflow-x: auto;
     margin-left: -${({ theme }) => theme.spacings.s48};
     margin-right: -${({ theme }) => theme.spacings.s48};
+    padding-bottom: ${({ theme }) => theme.spacings.s16};
+    margin-bottom: ${({ theme }) => theme.spacings.s40};
 
     padding-left: ${({ theme }) => theme.spacings.s48};
     padding-right: ${({ theme }) => theme.spacings.s48};
