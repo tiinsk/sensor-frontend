@@ -5,7 +5,11 @@ import {
 } from '../../api/types';
 import styled from 'styled-components';
 import { Caption2Style } from '../../theme/typography';
-import { AdminTableRow, EditableAdminTableRow } from './admin-table-row';
+import {
+  AdminTableRow,
+  EditableAdminTableRow,
+  EditableDevice,
+} from './admin-table-row';
 import { useState } from 'react';
 import { H3 } from '../styled/typography';
 import { Button } from '../styled/buttons';
@@ -50,9 +54,7 @@ export const AdminTable = ({
     [id: string]: DeviceResponse | undefined;
   }>({});
 
-  const [newDevices, setNewDevices] = useState<
-    { id: string; name: string; location: Location; disabled: boolean }[]
-  >([]);
+  const [newDevices, setNewDevices] = useState<EditableDevice[]>([]);
 
   return (
     <>
@@ -65,7 +67,13 @@ export const AdminTable = ({
           onClick={() =>
             setNewDevices(old => [
               ...old,
-              { id: '', name: '', location: { x: 0, y: 0 }, disabled: false },
+              {
+                id: '',
+                name: '',
+                location: { x: 0, y: 0 },
+                disabled: false,
+                order: 0,
+              },
             ])
           }
         />
@@ -74,10 +82,11 @@ export const AdminTable = ({
         <StyledAdminTable>
           <thead>
             <StyledTr>
+              <StyledTh style={{ width: '60px' }}>Order</StyledTh>
               <StyledTh style={{ width: 'auto' }}>Name</StyledTh>
-              <StyledTh style={{ width: '15%' }}>Serial Number</StyledTh>
+              <StyledTh style={{ width: '12%' }}>Serial Number</StyledTh>
               <StyledTh style={{ width: '15%' }}>Type</StyledTh>
-              <StyledTh style={{ width: '15%' }}>Last Connection</StyledTh>
+              <StyledTh style={{ width: '12%' }}>Last Connection</StyledTh>
               <StyledTh style={{ width: '20%' }}>Location</StyledTh>
               <StyledTh style={{ width: '48px' }}>Enabled</StyledTh>
               <StyledTh style={{ width: '250px', textAlign: 'right' }}>

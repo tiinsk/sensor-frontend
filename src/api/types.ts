@@ -60,6 +60,7 @@ export interface DeviceResponse {
   name: string;
   location: Location;
   disabled: boolean;
+  order: number;
 }
 
 export interface Reading extends ReadingValue {

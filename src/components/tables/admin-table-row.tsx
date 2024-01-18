@@ -39,6 +39,7 @@ export const AdminTableRow = ({
   const { spacings } = useTheme();
   return (
     <StyledTr key={device.id}>
+      <StyledTd>{device.order}</StyledTd>
       <StyledTd>{device.name}</StyledTd>
       <StyledTd>{device.id}</StyledTd>
       <StyledTd></StyledTd>
@@ -70,11 +71,12 @@ export const AdminTableRow = ({
   );
 };
 
-interface EditableDevice {
+export interface EditableDevice {
   id: string;
   name: string;
   location: Location;
   disabled: boolean;
+  order: number;
 }
 
 interface EditableAdminTableRowProps {
@@ -95,6 +97,14 @@ export const EditableAdminTableRow = ({
   const { spacings } = useTheme();
   return (
     <StyledTr key={device.id}>
+      <StyledTd>
+        <Input
+          variant="small"
+          value={device.order.toString()}
+          onChange={newVal => onChange({ order: parseInt(newVal) })}
+          style={{ padding: 0 }}
+        />
+      </StyledTd>
       <StyledTd>
         <Input
           variant="small"
