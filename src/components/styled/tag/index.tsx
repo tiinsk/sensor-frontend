@@ -5,7 +5,7 @@ import { Caption2 } from '../typography';
 import { Box } from '../box';
 import { Skeleton } from '../../../assets/loading/skeleton';
 
-type TagVariant = 'default' | 'error';
+type TagVariant = 'default' | 'error' | 'grey';
 
 interface TagProps {
   variant?: TagVariant;
@@ -17,6 +17,13 @@ interface TagProps {
 const ErrorStyle = ({ theme }: { theme: DefaultTheme }) => css`
   background-color: ${theme.colors.error.background};
   color: ${theme.colors.error.typography};
+  padding-left: ${({ theme }) => theme.spacings.s8};
+  padding-right: ${({ theme }) => theme.spacings.s8};
+`;
+
+const GreyStyle = ({ theme }: { theme: DefaultTheme }) => css`
+  background-color: ${theme.colors.background.tertiary};
+  color: ${theme.colors.typography.secondary};
   padding-left: ${({ theme }) => theme.spacings.s8};
   padding-right: ${({ theme }) => theme.spacings.s8};
 `;
@@ -39,6 +46,7 @@ const StyledTag = styled.div<{
   white-space: nowrap;
 
   ${({ $variant }) => $variant === 'error' && ErrorStyle};
+  ${({ $variant }) => $variant === 'grey' && GreyStyle};
 `;
 
 const getIconType = (variant: TagVariant): IconType | undefined => {

@@ -17,7 +17,7 @@ export const TimeAgoTag = ({ date, isLoading }: TimeAgoTagProps) => {
     !date || timeDiff > ERROR_TIME_DIFF_MIN ? 'error' : 'default';
   return (
     <Tag
-      variant={tagVariant}
+      variant={date ? tagVariant : 'grey'}
       text={date ? getTimeAgoString(date) : 'No connections'}
       isLoading={isLoading}
     />
