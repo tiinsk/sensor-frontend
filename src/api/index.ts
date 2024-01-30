@@ -12,7 +12,7 @@ const instance = axios.create({
 
 interface ApiParams {
   route: string;
-  payload?: { [key: string]: string };
+  payload?: any;
   params?: any;
 }
 
@@ -72,6 +72,7 @@ export const post = async <DataType>(
       const isUnauthorized = error.response?.data.statusCode === 401;
       if (isUnauthorized) {
         removeJWTToken();
+        FORCE_RERENDER();
       }
       return {
         data: undefined,

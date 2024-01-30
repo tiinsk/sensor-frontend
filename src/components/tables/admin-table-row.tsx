@@ -5,44 +5,70 @@ import { Toggle } from '../styled/inputs/toggle';
 import { TimeAgoTag } from '../tags/time-ago-tag';
 import {
   DeviceResponse,
+  DeviceType,
   LatestReadingResponse,
   Location,
 } from '../../api/types';
 import { Input } from '../styled/inputs/input';
 import { Flex } from '../styled/flex';
 import { Caption2 } from '../styled/typography';
+import { getDeviceTypeName } from '../../utils/device';
+import { Select } from '../styled/selects';
 
-const StyledTr = styled.tr``;
+const StyledTr = styled.tr<{ $isNewlyEdited?: boolean }>`
+  background-color: ${({ theme, $isNewlyEdited }) =>
+    $isNewlyEdited ? theme.colors.success.background : undefined};
+`;
 
-export const StyledTd = styled.th`
+export const StyledTd = styled.td`
   ${BodyLightStyle};
   text-align: left;
 
   padding: ${({ theme }) => theme.spacings.s8};
   border-bottom: 1px solid ${({ theme }) => theme.colors.borders.secondary};
-  height: ${({ theme }) => theme.spacings.s64};
+  min-height: ${({ theme }) => theme.spacings.s64};
 
   white-space: nowrap;
+`;
+
+const EditableTd = styled(StyledTd)`
+  padding-top: 0;
+  padding-bottom: 0;
+`;
+
+const LocationInput = styled(Input)`
+  padding: 0;
+  width: ${({ theme }) => theme.spacings.s96};
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacings.s8};
+
+  input {
+    margin-top: 0 !important;
+  }
 `;
 
 interface AdminTableRowProps {
   device: DeviceResponse;
   latestReading?: LatestReadingResponse;
   onEdit: () => void;
+  isNewlyEdited: boolean;
 }
 
 export const AdminTableRow = ({
   device,
   latestReading,
   onEdit,
+  isNewlyEdited,
 }: AdminTableRowProps) => {
   const { spacings } = useTheme();
   return (
-    <StyledTr key={device.id}>
+    <StyledTr $isNewlyEdited={isNewlyEdited}>
       <StyledTd>{device.order}</StyledTd>
       <StyledTd>{device.name}</StyledTd>
       <StyledTd>{device.id}</StyledTd>
-      <StyledTd></StyledTd>
+      <StyledTd>{getDeviceTypeName(device.type)}</StyledTd>
       <StyledTd>
         <TimeAgoTag date={latestReading?.reading.created_at} />
       </StyledTd>
@@ -74,16 +100,31 @@ export const AdminTableRow = ({
 export interface EditableDevice {
   id: string;
   name: string;
-  location: Location;
+  location: {
+    x: string;
+    y: string;
+  };
   disabled: boolean;
-  order: number;
+  order: string;
+  type: DeviceType;
+  errors?:
+    | string
+    | {
+        id?: string;
+        name?: string;
+        location?: string;
+        disabled?: string;
+        order?: string;
+        type?: string;
+      };
 }
 
 interface EditableAdminTableRowProps {
   device: EditableDevice;
   latestReading?: LatestReadingResponse;
-  onChange: (device: Partial<EditableDevice>) => void;
+  onChange: (device: EditableDevice) => void;
   onCancel: () => void;
+  onSave: () => void;
   isNew: boolean;
 }
 
@@ -92,93 +133,105 @@ export const EditableAdminTableRow = ({
   latestReading,
   onChange,
   onCancel,
+  onSave,
   isNew,
 }: EditableAdminTableRowProps) => {
   const { spacings } = useTheme();
   return (
-    <StyledTr key={device.id}>
-      <StyledTd>
+    <StyledTr>
+      <EditableTd>
         <Input
           variant="small"
-          value={device.order.toString()}
-          onChange={newVal => onChange({ order: parseInt(newVal) })}
+          value={device.order}
+          onChange={newVal => onChange({ ...device, order: newVal })}
           style={{ padding: 0 }}
+          error={
+            typeof device.errors !== 'string' ? device.errors?.order : undefined
+          }
         />
-      </StyledTd>
-      <StyledTd>
+      </EditableTd>
+      <EditableTd>
         <Input
           variant="small"
           value={device.name}
-          onChange={newVal => onChange({ name: newVal })}
+          onChange={newVal => onChange({ ...device, name: newVal })}
           style={{ padding: 0 }}
+          error={
+            typeof device.errors !== 'string' ? device.errors?.name : undefined
+          }
         />
-      </StyledTd>
-      <StyledTd>
-        {isNew ? (
-          <Input
-            variant="small"
-            value={device.id}
-            style={{ padding: 0 }}
-            onChange={newVal => onChange({ id: newVal })}
-          />
-        ) : (
-          device.id
-        )}
-      </StyledTd>
-      <StyledTd></StyledTd>
-      <StyledTd>
+      </EditableTd>
+      <EditableTd>
+        <Input
+          variant="small"
+          disabled={!isNew}
+          value={device.id}
+          onChange={newVal => onChange({ ...device, id: newVal })}
+          style={{ padding: 0 }}
+          error={
+            typeof device.errors !== 'string' ? device.errors?.id : undefined
+          }
+        />
+      </EditableTd>
+      <EditableTd>
+        <Select
+          initialValue={device.type}
+          onSelect={newVal => {
+            onChange({ ...device, type: newVal as DeviceType });
+          }}
+          options={[
+            { value: 'ruuvi', label: getDeviceTypeName('ruuvi') },
+            { value: 'sensorbug', label: getDeviceTypeName('sensorbug') },
+          ]}
+        />
+      </EditableTd>
+      <EditableTd>
         <TimeAgoTag date={latestReading?.reading.created_at} />
-      </StyledTd>
-      <StyledTd>
+      </EditableTd>
+      <EditableTd>
         <Flex alignItems="center" gap="s8">
-          <Input
+          <LocationInput
             label="X:"
             variant="small"
             value={device.location.x.toString()}
-            style={{
-              padding: 0,
-              width: spacings.s96,
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
             type="number"
             onChange={newVal =>
               onChange({
-                location: { y: device.location.y, x: parseInt(newVal) },
+                ...device,
+                location: { y: device.location.y, x: newVal },
               })
             }
+            error={
+              typeof device.errors !== 'string'
+                ? device.errors?.location
+                : undefined
+            }
           />
-          <Input
+          <LocationInput
             label="Y:"
             variant="small"
             value={device.location.y.toString()}
-            style={{
-              padding: 0,
-              width: spacings.s96,
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
             type="number"
             onChange={newVal =>
               onChange({
-                location: { x: device.location.x, y: parseInt(newVal) },
+                ...device,
+                location: { x: device.location.x, y: newVal },
               })
             }
           />
         </Flex>
-      </StyledTd>
-      <StyledTd>
+      </EditableTd>
+      <EditableTd>
         <Toggle isSelected={!device.disabled} disabled={false} />
-      </StyledTd>
-      <StyledTd>
+      </EditableTd>
+      <EditableTd>
         <Flex gap="s16" justifyContent="flex-end">
           <Button
             iconLeft="mdiContentSaveOutline"
             variant="primary"
             sizeVariant="small"
             text="Save"
+            onClick={onSave}
           />
           <Button
             iconLeft="mdiClose"
@@ -188,7 +241,7 @@ export const EditableAdminTableRow = ({
             onClick={onCancel}
           />
         </Flex>
-      </StyledTd>
+      </EditableTd>
     </StyledTr>
   );
 };

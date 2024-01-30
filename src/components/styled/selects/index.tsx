@@ -30,6 +30,7 @@ interface SelectProps {
 
 export const SelectWrapper = styled.div`
   position: relative;
+  width: fit-content;
 `;
 
 export const StyledSelect = styled(Button)`
@@ -132,7 +133,7 @@ export const Select = ({
 
   return (
     <SelectWrapper>
-      <Caption2Light mb="s8">{label}</Caption2Light>
+      {label && <Caption2Light mb="s8">{label}</Caption2Light>}
       <StyledSelect
         variant="secondary"
         sizeVariant="small"

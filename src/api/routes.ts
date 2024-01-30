@@ -3,6 +3,7 @@ import {
   DeviceReadingResponse,
   DeviceResponse,
   LatestReadingResponse,
+  PostResponse,
   ReadingsResponse,
   StatisticsResponse,
 } from './types';
@@ -70,6 +71,11 @@ const routes = {
       route: `/devices/${deviceId}/statistics`,
       params,
     }),
+  addDevice: (payload: DeviceResponse) =>
+    api.post<PostResponse<DeviceResponse>>(
+      { route: '/devices', payload },
+      true
+    ),
 };
 
 export default routes;

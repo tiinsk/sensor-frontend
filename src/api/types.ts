@@ -55,12 +55,15 @@ export interface Location {
   y: number;
 }
 
+export type DeviceType = 'ruuvi' | 'sensorbug';
+
 export interface DeviceResponse {
   id: string;
   name: string;
   location: Location;
   disabled: boolean;
   order: number;
+  type: DeviceType;
 }
 
 export interface Reading extends ReadingValue {

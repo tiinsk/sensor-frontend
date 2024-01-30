@@ -11,6 +11,7 @@ const Card = styled.div`
   border-radius: ${({ theme }) => theme.spacings.s4};
   box-shadow: ${({ theme }) => theme.colors.shadows.boxShadow};
   margin-top: ${({ theme }) => theme.spacings.s24};
+  margin-bottom: ${({ theme }) => theme.spacings.s24};
 `;
 
 export const Admin = () => {
@@ -55,6 +56,7 @@ export const Admin = () => {
           devices={devices}
           latestData={latestData}
           isLoading={isLoadingMainContent}
+          fetchDevices={() => fetchMainContent()}
         />
       </Card>
     </div>

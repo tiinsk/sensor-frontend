@@ -125,6 +125,11 @@ export const lightColors = {
     typography: primitiveColors.error['130'],
     plain: primitiveColors.error['100'],
   },
+  success: {
+    background: primitiveColors.success['10'],
+    typography: primitiveColors.success['130'],
+    plain: primitiveColors.success['100'],
+  },
   graphs: {
     background: {
       hover: primitiveColors.neutral.dark['02'],
@@ -226,6 +231,11 @@ export const darkColors: ColorTheme = {
     background: primitiveColors.error['130'],
     typography: primitiveColors.error['10'],
     plain: primitiveColors.error['100'],
+  },
+  success: {
+    background: primitiveColors.success['130'],
+    typography: primitiveColors.success['10'],
+    plain: primitiveColors.success['100'],
   },
   graphs: {
     background: {

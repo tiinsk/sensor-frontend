@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { Caption2Style } from '../../../theme/typography';
 import { CSSProperties } from 'react';
 
@@ -7,7 +7,6 @@ const StyledInputWrapper = styled.div`
 
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacings.s8};
 
   width: 100%;
 `;
@@ -38,7 +37,11 @@ const StyledLabel = styled.label<{ $disabled: boolean }>`
 
 export const StyledError = styled.div`
   ${Caption2Style};
+  line-height: ${({ theme }) => theme.spacings.s12};
   color: ${({ theme }) => theme.colors.error.plain};
+  min-height: ${({ theme }) => theme.spacings.s12};
+  margin-top: ${({ theme }) => theme.spacings.s4};
+  margin-bottom: ${({ theme }) => theme.spacings.s4};
 `;
 
 interface InputProps {
@@ -66,6 +69,7 @@ export const Input = ({
   variant = 'default',
   ...props
 }: InputProps) => {
+  const { spacings } = useTheme();
   return (
     <StyledInputWrapper {...props}>
       {label && (
@@ -82,8 +86,9 @@ export const Input = ({
         onChange={({ target }) => onChange?.(target.value)}
         disabled={disabled}
         placeholder={placeholder}
+        style={{ marginTop: label ? spacings.s8 : spacings.s16 }}
       ></StyledInput>
-      {error && <StyledError>{error}</StyledError>}
+      <StyledError>{error}</StyledError>
     </StyledInputWrapper>
   );
 };
