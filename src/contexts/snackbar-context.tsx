@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   CLOSE_TIMEOUT,
   Snackbar as SnackbarComponent,
@@ -8,12 +14,13 @@ import styled from 'styled-components';
 export type SnackbarVariant = 'success' | 'error';
 export type SnackbarState = 'open' | 'closing' | 'closed';
 
+const AUTO_CLOSE_TIMEOUT_MS = 5000;
+
 export interface Snackbar {
-  id: string;
   variant: SnackbarVariant;
   text: string;
   isCloseable?: boolean;
-  autoCloseTimeoutMs?: number;
+  isAutoCloseable?: boolean;
 }
 
 export interface SnackbarContextType {
@@ -37,12 +44,35 @@ export const SnackbarContextProvider: React.FC<React.PropsWithChildren> = ({
 
   const [snackbarState, setSnackbarState] = useState<SnackbarState>('closed');
 
-  const openSnackbar = (newSnackbar: Snackbar) => {
+  const autoCloseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const setSnackbarOpen = (newSnackbar: Snackbar) => {
     setSnackbar(newSnackbar);
     setSnackbarState('open');
+
+    if (newSnackbar.isAutoCloseable) {
+      autoCloseTimeout.current = setTimeout(() => {
+        closeSnackbar();
+      }, AUTO_CLOSE_TIMEOUT_MS);
+    }
+  };
+
+  const openSnackbar = (newSnackbar: Snackbar) => {
+    if (snackbarState !== 'closed') {
+      closeSnackbar();
+      setTimeout(() => {
+        setSnackbarOpen(newSnackbar);
+      }, CLOSE_TIMEOUT);
+    } else {
+      setSnackbarOpen(newSnackbar);
+    }
   };
 
   const closeSnackbar = () => {
+    if (autoCloseTimeout.current) {
+      clearTimeout(autoCloseTimeout.current);
+    }
+    autoCloseTimeout.current = null;
     setSnackbarState('closing');
     setTimeout(() => {
       setSnackbarState('closed');
