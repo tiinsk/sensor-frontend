@@ -6,7 +6,7 @@ import {
 import { Flex } from '../flex';
 import { MdiIcon } from '../mdi-icon';
 import { Button, StyledButton } from '../buttons';
-import { Body } from '../typography';
+import { Body, Caption2Light } from '../typography';
 
 export const CLOSE_TIMEOUT = 300;
 
@@ -64,7 +64,10 @@ export const Snackbar = () => {
               : 'mdiAlertCircleOutline'
           }
         />
-        <Body>{snackbar?.text}</Body>
+        <Flex flexDirection="column">
+          <Body>{snackbar?.title}</Body>
+          <Caption2Light>{snackbar?.body}</Caption2Light>
+        </Flex>
       </Flex>
       {snackbar?.isCloseable && (
         <Button

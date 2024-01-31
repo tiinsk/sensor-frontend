@@ -12,8 +12,9 @@ import { Button } from '../styled/buttons';
 import { Flex } from '../styled/flex';
 import { SkeletonRows } from './skeleton-rows';
 import api from '../../api/routes';
+import { useSnackbarContext } from '../../contexts/snackbar-context';
 
-const NEW_ROW_FADE_OUT_MS = 1000;
+const NEW_ROW_FADE_OUT_MS = 5000;
 
 const TableWrapper = styled.div`
   overflow-x: auto;
@@ -51,6 +52,7 @@ export const AdminTable = ({
   isLoading,
   fetchDevices,
 }: AdminTableProps) => {
+  const { openSnackbar } = useSnackbarContext();
   const [devicesUnderEdit, setDevicesUnderEdit] = useState<{
     [id: string]: EditableDevice | undefined;
   }>({});
@@ -118,10 +120,21 @@ export const AdminTable = ({
           setNewOrAdded(old => old.filter(id => id !== device.id));
         }, NEW_ROW_FADE_OUT_MS);
         fetchDevices();
+        openSnackbar({
+          variant: 'success',
+          title: 'New device added successfully!',
+          isAutoCloseable: true,
+          isCloseable: true,
+        });
       } else {
-        newDevices[i].errors = result.error.message;
+        openSnackbar({
+          variant: 'error',
+          title: 'Error in adding new device',
+          body: result.error.message,
+          isAutoCloseable: false,
+          isCloseable: true,
+        });
       }
-      console.log(result);
     }
   };
 

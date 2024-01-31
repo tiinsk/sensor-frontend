@@ -15,6 +15,7 @@ import { getDeviceTypeName } from '../../utils/device';
 import { Select } from '../styled/selects';
 
 const StyledTr = styled.tr<{ $isNewlyEdited?: boolean }>`
+  transition: background-color 500ms ease-out;
   background-color: ${({ theme, $isNewlyEdited }) =>
     $isNewlyEdited ? theme.colors.success.primary.background : undefined};
 `;
@@ -106,16 +107,14 @@ export interface EditableDevice {
   disabled: boolean;
   order: string;
   type: DeviceType;
-  errors?:
-    | string
-    | {
-        id?: string;
-        name?: string;
-        location?: string;
-        disabled?: string;
-        order?: string;
-        type?: string;
-      };
+  errors?: {
+    id?: string;
+    name?: string;
+    location?: string;
+    disabled?: string;
+    order?: string;
+    type?: string;
+  };
 }
 
 interface EditableAdminTableRowProps {
@@ -135,7 +134,6 @@ export const EditableAdminTableRow = ({
   onSave,
   isNew,
 }: EditableAdminTableRowProps) => {
-  const { spacings } = useTheme();
   return (
     <StyledTr>
       <EditableTd>
@@ -144,9 +142,7 @@ export const EditableAdminTableRow = ({
           value={device.order}
           onChange={newVal => onChange({ ...device, order: newVal })}
           style={{ padding: 0 }}
-          error={
-            typeof device.errors !== 'string' ? device.errors?.order : undefined
-          }
+          error={device.errors?.order}
         />
       </EditableTd>
       <EditableTd>
@@ -155,9 +151,7 @@ export const EditableAdminTableRow = ({
           value={device.name}
           onChange={newVal => onChange({ ...device, name: newVal })}
           style={{ padding: 0 }}
-          error={
-            typeof device.errors !== 'string' ? device.errors?.name : undefined
-          }
+          error={device.errors?.name}
         />
       </EditableTd>
       <EditableTd>
@@ -167,9 +161,7 @@ export const EditableAdminTableRow = ({
           value={device.id}
           onChange={newVal => onChange({ ...device, id: newVal })}
           style={{ padding: 0 }}
-          error={
-            typeof device.errors !== 'string' ? device.errors?.id : undefined
-          }
+          error={device.errors?.id}
         />
       </EditableTd>
       <EditableTd>
@@ -200,11 +192,7 @@ export const EditableAdminTableRow = ({
                 location: { y: device.location.y, x: newVal },
               })
             }
-            error={
-              typeof device.errors !== 'string'
-                ? device.errors?.location
-                : undefined
-            }
+            error={device.errors?.location}
           />
           <LocationInput
             label="Y:"

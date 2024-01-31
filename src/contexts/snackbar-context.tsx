@@ -18,7 +18,8 @@ const AUTO_CLOSE_TIMEOUT_MS = 5000;
 
 export interface Snackbar {
   variant: SnackbarVariant;
-  text: string;
+  title: string;
+  body?: string;
   isCloseable?: boolean;
   isAutoCloseable?: boolean;
 }
