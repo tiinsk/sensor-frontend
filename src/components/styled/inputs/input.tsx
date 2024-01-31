@@ -38,7 +38,7 @@ const StyledLabel = styled.label<{ $disabled: boolean }>`
 export const StyledError = styled.div`
   ${Caption2Style};
   line-height: ${({ theme }) => theme.spacings.s12};
-  color: ${({ theme }) => theme.colors.error.plain};
+  color: ${({ theme }) => theme.colors.error.plainTypography};
   min-height: ${({ theme }) => theme.spacings.s12};
   margin-top: ${({ theme }) => theme.spacings.s4};
   margin-bottom: ${({ theme }) => theme.spacings.s4};

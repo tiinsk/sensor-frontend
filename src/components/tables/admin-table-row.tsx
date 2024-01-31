@@ -7,7 +7,6 @@ import {
   DeviceResponse,
   DeviceType,
   LatestReadingResponse,
-  Location,
 } from '../../api/types';
 import { Input } from '../styled/inputs/input';
 import { Flex } from '../styled/flex';
@@ -17,7 +16,7 @@ import { Select } from '../styled/selects';
 
 const StyledTr = styled.tr<{ $isNewlyEdited?: boolean }>`
   background-color: ${({ theme, $isNewlyEdited }) =>
-    $isNewlyEdited ? theme.colors.success.background : undefined};
+    $isNewlyEdited ? theme.colors.success.primary.background : undefined};
 `;
 
 export const StyledTd = styled.td`

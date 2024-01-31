@@ -38,9 +38,11 @@ const variables = {
     s96: '9.6rem',
     s128: '12.8rem',
     s192: '19.2rem',
+    s640: '64.0rem',
   },
   zIndex: {
     menus: 1000,
+    snackbar: 1001,
   },
 };
 

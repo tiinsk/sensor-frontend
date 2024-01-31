@@ -17,6 +17,7 @@ import { TopNav } from './components/nav/top-nav';
 import { ThemeContextProvider, ThemeProvider } from './contexts/theme-context';
 import { Map } from './containers/map';
 import { Admin } from './containers/admin';
+import { SnackbarProvider } from './contexts/snackbar-context';
 
 WebFont.load({
   google: {
@@ -67,13 +68,15 @@ const LoggedInRoutes = () => {
 
   return (
     <StyledLoggedInRoutes>
-      <TopNav />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="devices/:id" Component={Device} />
-        <Route path="map" Component={Map} />
-        <Route path="admin" Component={Admin} />
-      </Routes>
+      <SnackbarProvider>
+        <TopNav />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="devices/:id" Component={Device} />
+          <Route path="map" Component={Map} />
+          <Route path="admin" Component={Admin} />
+        </Routes>
+      </SnackbarProvider>
     </StyledLoggedInRoutes>
   );
 };

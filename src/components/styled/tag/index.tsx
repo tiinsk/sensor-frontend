@@ -15,8 +15,8 @@ interface TagProps {
 }
 
 const ErrorStyle = ({ theme }: { theme: DefaultTheme }) => css`
-  background-color: ${theme.colors.error.background};
-  color: ${theme.colors.error.typography};
+  background-color: ${theme.colors.error.primary.background};
+  color: ${theme.colors.error.primary.typography};
   padding-left: ${({ theme }) => theme.spacings.s8};
   padding-right: ${({ theme }) => theme.spacings.s8};
 `;

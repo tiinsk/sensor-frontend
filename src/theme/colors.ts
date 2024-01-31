@@ -101,7 +101,7 @@ export const lightColors = {
     backgroundHover: {
       primary: primitiveColors.neutral.filled['100'],
       secondary: primitiveColors.neutral.filled['10'],
-      basic: primitiveColors.neutral.filled['08'],
+      basic: primitiveColors.neutral.dark['08'],
     },
     typography: {
       primary: primitiveColors.neutral.filled['00'],
@@ -121,14 +121,26 @@ export const lightColors = {
     secondaryHover: primitiveColors.neutral.dark['10'],
   },
   error: {
-    background: primitiveColors.error['10'],
-    typography: primitiveColors.error['130'],
-    plain: primitiveColors.error['100'],
+    plainTypography: primitiveColors.error['100'],
+    primary: {
+      background: primitiveColors.error['10'],
+      typography: primitiveColors.error['130'],
+    },
+    reversed: {
+      background: primitiveColors.error['100'],
+      typography: primitiveColors.error['10'],
+    },
   },
   success: {
-    background: primitiveColors.success['10'],
-    typography: primitiveColors.success['130'],
-    plain: primitiveColors.success['100'],
+    plainTypography: primitiveColors.success['100'],
+    primary: {
+      background: primitiveColors.success['10'],
+      typography: primitiveColors.success['130'],
+    },
+    reversed: {
+      background: primitiveColors.success['100'],
+      typography: primitiveColors.success['10'],
+    },
   },
   graphs: {
     background: {
@@ -208,7 +220,7 @@ export const darkColors: ColorTheme = {
     backgroundHover: {
       primary: primitiveColors.air['110'],
       secondary: primitiveColors.neutral.filled['70'],
-      basic: primitiveColors.neutral.filled['80'],
+      basic: primitiveColors.neutral.light['80'],
     },
     typography: {
       primary: primitiveColors.neutral.filled['00'],
@@ -228,14 +240,26 @@ export const darkColors: ColorTheme = {
     secondaryHover: primitiveColors.neutral.light['90'],
   },
   error: {
-    background: primitiveColors.error['130'],
-    typography: primitiveColors.error['10'],
-    plain: primitiveColors.error['100'],
+    plainTypography: primitiveColors.error['100'],
+    primary: {
+      background: primitiveColors.error['130'],
+      typography: primitiveColors.error['10'],
+    },
+    reversed: {
+      background: primitiveColors.error['100'],
+      typography: primitiveColors.error['10'],
+    },
   },
   success: {
-    background: primitiveColors.success['130'],
-    typography: primitiveColors.success['10'],
-    plain: primitiveColors.success['100'],
+    plainTypography: primitiveColors.success['100'],
+    primary: {
+      background: primitiveColors.success['130'],
+      typography: primitiveColors.success['10'],
+    },
+    reversed: {
+      background: primitiveColors.success['100'],
+      typography: primitiveColors.success['10'],
+    },
   },
   graphs: {
     background: {
