@@ -209,7 +209,17 @@ export const EditableAdminTableRow = ({
         </Flex>
       </EditableTd>
       <EditableTd>
-        <Toggle isSelected={!device.disabled} disabled={false} />
+        <Toggle
+          name={`device_${device.id}_enabled_toggle`}
+          isSelected={!device.disabled}
+          disabled={false}
+          onChange={newVal =>
+            onChange({
+              ...device,
+              disabled: !newVal,
+            })
+          }
+        />
       </EditableTd>
       <EditableTd>
         <Flex gap="s16" justifyContent="flex-end">

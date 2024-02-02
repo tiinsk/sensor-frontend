@@ -88,3 +88,44 @@ export const post = async <DataType>(
     };
   }
 };
+
+export const put = async <DataType>(
+  params: ApiParams
+): Promise<PostResponse<DataType>> => {
+  try {
+    const response = await instance.put<DataType>(
+      params.route,
+      params.payload,
+      {
+        headers: {
+          authorization: getJWTToken(),
+        },
+
+        params: params.params,
+        paramsSerializer: function (params: any) {
+          return Qs.stringify(params, { arrayFormat: 'repeat' });
+        },
+      }
+    );
+    return { data: response.data, error: undefined };
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const isUnauthorized = error.response?.data.statusCode === 401;
+      if (isUnauthorized) {
+        removeJWTToken();
+        FORCE_RERENDER();
+      }
+      return {
+        data: undefined,
+        error: {
+          statusCode: error.response?.data.statusCode,
+          message: error.response?.data.message,
+        },
+      };
+    }
+    return {
+      data: undefined,
+      error: { statusCode: 400, message: 'Unknown error' },
+    };
+  }
+};

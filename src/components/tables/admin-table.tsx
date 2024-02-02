@@ -61,17 +61,28 @@ export const AdminTable = ({
 
   const [newOrAddedIds, setNewOrAdded] = useState<string[]>([]);
 
-  const validateNewDevice = (i: number) => {
-    const device = newDevices[i];
+  const validateDevice = (device?: EditableDevice, isEditing?: boolean) => {
     const deviceErrors: EditableDevice['errors'] = {};
-    const otherDeviceWithSameOrder =
-      devices.findIndex(d => d.order?.toString() === device.order) !== -1;
-    const otherDeviceWithSameId =
-      devices.findIndex(d => d.id === device.id) !== -1;
+    if (!device) return deviceErrors;
+
+    const devicesWithSameOrder = devices
+      .filter(d => d.order?.toString() === device.order)
+      .map(d => d.id);
+    const devicesWithSameId = devices
+      .filter(d => d.id === device.id)
+      .map(d => d.id);
+
     if (device.order.length < 1) {
       deviceErrors.order = 'Order is required';
     }
-    if (otherDeviceWithSameOrder) {
+    if (
+      devicesWithSameOrder.length > 0 &&
+      !(
+        isEditing &&
+        devicesWithSameOrder.length === 1 &&
+        devicesWithSameOrder[0] === device.id
+      )
+    ) {
       deviceErrors.order = 'Order must be unique';
     }
     if (device.name.length < 1) {
@@ -80,12 +91,18 @@ export const AdminTable = ({
     if (device.id.length !== 12) {
       deviceErrors.id = 'Serial number must contain 12 characters';
     }
-    if (otherDeviceWithSameId) {
+    if (!isEditing && devicesWithSameId.length > 0) {
       deviceErrors.id = 'Serial number must be unique';
     }
     if (device.location.x.length < 1 || device.location.y.length < 1) {
       deviceErrors.location = 'Location is required';
     }
+    return deviceErrors;
+  };
+
+  const validateNewDevice = (i: number) => {
+    const device = newDevices[i];
+    const deviceErrors = validateDevice(device, false);
 
     setNewDevices([
       ...newDevices.slice(0, i),
@@ -138,7 +155,60 @@ export const AdminTable = ({
     }
   };
 
-  const onEditDevice = (deviceId: string) => {};
+  const validateEditedDevice = (deviceId: string) => {
+    const device = devicesUnderEdit[deviceId];
+    const deviceErrors = validateDevice(device, true);
+
+    if (device) {
+      setDevicesUnderEdit({
+        ...devicesUnderEdit,
+        [deviceId]: {
+          ...device,
+          errors: deviceErrors,
+        },
+      });
+    }
+    return Object.keys(deviceErrors).length === 0;
+  };
+
+  const onEditDevice = async (deviceId: string) => {
+    const device = devicesUnderEdit[deviceId];
+    const isValid = validateEditedDevice(deviceId);
+    if (isValid && device) {
+      const result = await api.editDevice(deviceId, {
+        name: device.name,
+        location: {
+          x: parseInt(device.location.x),
+          y: parseInt(device.location.y),
+        },
+        disabled: device.disabled,
+        order: parseInt(device.order),
+        type: device.type,
+      });
+      if (!result.error) {
+        setDevicesUnderEdit(old => ({ ...old, [deviceId]: undefined }));
+        setNewOrAdded(old => [...old, deviceId]);
+        setTimeout(() => {
+          setNewOrAdded(old => old.filter(id => id !== device.id));
+        }, NEW_ROW_FADE_OUT_MS);
+        fetchDevices();
+        openSnackbar({
+          variant: 'success',
+          title: 'Device edited successfully!',
+          isAutoCloseable: true,
+          isCloseable: true,
+        });
+      } else {
+        openSnackbar({
+          variant: 'error',
+          title: 'Error in editing the device',
+          body: result.error.message,
+          isAutoCloseable: false,
+          isCloseable: true,
+        });
+      }
+    }
+  };
 
   return (
     <>

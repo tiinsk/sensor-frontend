@@ -76,6 +76,11 @@ const routes = {
       { route: '/devices', payload },
       true
     ),
+  editDevice: (deviceId: string, payload: Omit<DeviceResponse, 'id'>) =>
+    api.put<PostResponse<DeviceResponse>>({
+      route: `/devices/${deviceId}`,
+      payload,
+    }),
 };
 
 export default routes;
