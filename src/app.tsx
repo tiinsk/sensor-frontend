@@ -11,7 +11,7 @@ import WebFont from 'webfontloader';
 import { Home } from './containers/home';
 import { Device } from './containers/device';
 import { Login } from './containers/login';
-import { isLoggedIn } from './utils/auth';
+import { isLoggedIn } from './storage/auth';
 import { GlobalStyle } from './theme/global-style';
 import { TopNav } from './components/nav/top-nav';
 import { ThemeContextProvider, ThemeProvider } from './contexts/theme-context';

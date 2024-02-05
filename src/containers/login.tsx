@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
 import api from '../api/routes';
-import { setJWTToken } from '../utils/auth';
+import { setJWTToken } from '../storage/auth';
 import { Button } from '../components/styled/buttons';
 import { LoginIcon } from '../assets/icons/login-icon';
 import { Input, StyledError } from '../components/styled/inputs/input';

@@ -2,7 +2,7 @@ import Qs from 'qs';
 import axios, { AxiosError } from 'axios';
 import { FORCE_RERENDER } from '../app';
 
-import { getJWTToken, removeJWTToken } from '../utils/auth';
+import { getJWTToken, removeJWTToken } from '../storage/auth';
 import { PostResponse } from './types';
 import config from '../config';
 

@@ -13,13 +13,13 @@ import {
   getDefaultTimeLevel,
   getTimeFrame,
 } from '../components/selectors/time-frames';
-import { getLocalstorageDevices, setLocalstorageDevices } from './home';
 import { MapSvg } from '../assets/map';
 import styled from 'styled-components';
 import { H3 } from '../components/styled/typography';
 import { Flex } from '../components/styled/flex';
 import { MapReading } from '../components/map/map-reading';
 import { GraphLoading } from '../assets/loading/graph-loading';
+import { getStorageDevices, saveStorageDevices } from '../storage/devices';
 
 const MapCard = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
@@ -88,9 +88,7 @@ export const Map = () => {
     showMinAndMax: true,
   }));
 
-  const [devices, setDevices] = useState<DeviceResponse[]>(
-    getLocalstorageDevices()
-  );
+  const [devices, setDevices] = useState<DeviceResponse[]>(getStorageDevices());
 
   const [isLoadingMainContent, setLoadingMainContent] = useState<
     boolean | undefined
@@ -106,8 +104,8 @@ export const Map = () => {
     [id: string]: StatisticsResponse | undefined;
   }>({});
 
-  const saveDevicesToLocalStorage = (devicesData: DeviceResponse[]) => {
-    setLocalstorageDevices(devicesData);
+  const saveDevicesToStorage = (devicesData: DeviceResponse[]) => {
+    saveStorageDevices(devicesData);
     setDevices(devicesData);
   };
 
@@ -147,7 +145,7 @@ export const Map = () => {
     }, {});
 
     setLatestData(latestByDevice || {});
-    saveDevicesToLocalStorage(devicesResult?.values || []);
+    saveDevicesToStorage(devicesResult?.values || []);
     setLoadingMainContent(false);
   };
 

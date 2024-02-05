@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { darkTheme, lightTheme } from '../theme';
+import { getThemeFromStorage, setThemeToStorage } from '../storage/theme';
 
 type Theme = 'light' | 'dark';
 
@@ -13,14 +14,6 @@ const ThemeContext = createContext<ThemeContextType>({
   theme: 'light',
   changeTheme: _val => {},
 });
-
-export const setThemeToStorage = (theme: Theme) => {
-  localStorage.setItem('theme', theme);
-};
-
-export const getThemeFromStorage = (): Theme | undefined => {
-  return localStorage.getItem('theme') as Theme;
-};
 
 export const ThemeContextProvider: React.FC<React.PropsWithChildren> = ({
   children,

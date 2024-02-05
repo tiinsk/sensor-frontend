@@ -19,6 +19,7 @@ import {
   getDefaultTimeLevel,
   getTimeFrame,
 } from '../components/selectors/time-frames';
+import { getStorageDevices, saveStorageDevices } from '../storage/devices';
 
 const CARD_MIN_WIDTH = '450px';
 
@@ -35,15 +36,6 @@ const CardGrid = styled.div`
   }
 `;
 
-export const getLocalstorageDevices = () => {
-  const savedDevices = localStorage.getItem('devices');
-  return savedDevices ? JSON.parse(savedDevices) : [];
-};
-
-export const setLocalstorageDevices = (devices: DeviceResponse[]) => {
-  localStorage.setItem('devices', JSON.stringify(devices));
-};
-
 export const Home = () => {
   const [options, setOptions] = useState<TimeFrameOptions>(() => ({
     offsetFromNow: 0,
@@ -53,9 +45,7 @@ export const Home = () => {
     showMinAndMax: true,
   }));
 
-  const [devices, setDevices] = useState<DeviceResponse[]>(
-    getLocalstorageDevices()
-  );
+  const [devices, setDevices] = useState<DeviceResponse[]>(getStorageDevices());
 
   const [isLoadingMainContent, setLoadingMainContent] = useState<
     boolean | undefined
@@ -74,9 +64,9 @@ export const Home = () => {
     [id: string]: ReadingsResponse | undefined;
   }>({});
 
-  const saveDevicesToLocalStorage = (deviceResponse: DeviceResponse[]) => {
-    setLocalstorageDevices(deviceResponse);
-    setDevices(devices);
+  const saveDevicesToStorage = (deviceResponse: DeviceResponse[]) => {
+    saveStorageDevices(deviceResponse);
+    setDevices(deviceResponse);
   };
 
   const fetchReadings = async () => {
@@ -129,7 +119,7 @@ export const Home = () => {
     }, {});
 
     setLatestData(latestByDevice || {});
-    saveDevicesToLocalStorage(devicesResult?.values || []);
+    saveDevicesToStorage(devicesResult?.values || []);
     setLoadingMainContent(false);
   };
 

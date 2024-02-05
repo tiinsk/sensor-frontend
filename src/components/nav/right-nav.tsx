@@ -6,7 +6,7 @@ import { Button } from '../styled/buttons';
 import { Toggle } from '../styled/inputs/toggle';
 import { useThemeContext } from '../../contexts/theme-context';
 import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
-import { removeJWTToken } from '../../utils/auth';
+import { removeJWTToken } from '../../storage/auth';
 import { useNavigate } from 'react-router-dom';
 import { LinkButton } from '../styled/buttons/link';
 import { Blueprint } from '../../assets/icons/blueprint';
