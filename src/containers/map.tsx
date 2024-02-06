@@ -9,10 +9,7 @@ import {
   TimeFrameOptions,
   TimeFrameSelector,
 } from '../components/selectors/time-frame-selector';
-import {
-  getDefaultTimeLevel,
-  getTimeFrame,
-} from '../components/selectors/time-frames';
+import { getTimeFrame } from '../components/selectors/time-frames';
 import { MapSvg } from '../assets/map';
 import styled from 'styled-components';
 import { H3 } from '../components/styled/typography';
@@ -20,6 +17,8 @@ import { Flex } from '../components/styled/flex';
 import { MapReading } from '../components/map/map-reading';
 import { GraphLoading } from '../assets/loading/graph-loading';
 import { getStorageDevices, saveStorageDevices } from '../storage/devices';
+import { getDefaultTimeFrameOptions } from '../storage/time-frame';
+import { getDefaultTimeLevel } from '../utils/time-frame';
 
 const MapCard = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
@@ -81,9 +80,8 @@ const LoadingWrapper = styled.div`
 
 export const Map = () => {
   const [options, setOptions] = useState<TimeFrameOptions>(() => ({
-    offsetFromNow: 0,
+    ...getDefaultTimeFrameOptions(),
     timePeriod: 'day',
-    valueType: 'temperature',
     level: getDefaultTimeLevel(),
     showMinAndMax: true,
   }));

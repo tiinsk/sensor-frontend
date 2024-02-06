@@ -6,12 +6,8 @@ import { LatestReadingResponse, Statistics } from '../api/types';
 import { Flex } from '../components/styled/flex';
 import { H2 } from '../components/styled/typography';
 import { Reading } from '../components/styled/readings';
-import { Tag } from '../components/styled/tag';
-import { DateTime } from 'luxon';
-import { getTimeAgoString } from '../utils/datetime';
 import { AverageCard } from '../components/cards/average-card';
 import {
-  DEFAULT_PERIOD,
   TimeFrameOptions,
   TimeFrameSelector,
 } from '../components/selectors/time-frame-selector';
@@ -21,13 +17,13 @@ import { Graph } from '../components/graphs/graph';
 import { GraphSizeWrapper } from '../components/graphs/graph-size-wrapper';
 import { GraphLoading } from '../assets/loading/graph-loading';
 import {
-  getDefaultTimeLevel,
   getEndTime,
   getStartTime,
   getTimeFrame,
 } from '../components/selectors/time-frames';
 import { TimeAgoTag } from '../components/tags/time-ago-tag';
 import { getDeviceSensors } from '../utils/device';
+import { getDefaultTimeFrameOptions } from '../storage/time-frame';
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -79,9 +75,7 @@ const StyledGraphContainer = styled.div`
 export const Device = () => {
   const [hoveredDate, setHoveredDate] = useState<string | undefined>(undefined);
   const [options, setOptions] = useState<TimeFrameOptions>(() => ({
-    offsetFromNow: 0,
-    timePeriod: DEFAULT_PERIOD,
-    level: getDefaultTimeLevel(),
+    ...getDefaultTimeFrameOptions(),
     showMinAndMax: true,
   }));
   const [device, setDevice] = useState<DeviceResponse | undefined>(undefined);

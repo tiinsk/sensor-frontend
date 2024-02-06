@@ -1,5 +1,6 @@
-import { getDefaultTimeLevel, getTimeFrame } from './time-frames';
+import { getTimeFrame } from './time-frames';
 import { TimeFrameOptions } from './time-frame-selector';
+import { getDefaultTimeLevel } from '../../utils/time-frame';
 
 describe('Time frame tests', () => {
   it('Should return previous time frame (timePeriod: month)', () => {

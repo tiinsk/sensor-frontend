@@ -9,17 +9,14 @@ import {
 } from '../api/types';
 import styled from 'styled-components';
 import {
-  DEFAULT_PERIOD,
   TimeFrameOptions,
   TimeFrameSelector,
 } from '../components/selectors/time-frame-selector';
 import { Flex } from '../components/styled/flex';
 import { GraphLoading } from '../assets/loading/graph-loading';
-import {
-  getDefaultTimeLevel,
-  getTimeFrame,
-} from '../components/selectors/time-frames';
+import { getTimeFrame } from '../components/selectors/time-frames';
 import { getStorageDevices, saveStorageDevices } from '../storage/devices';
+import { getDefaultTimeFrameOptions } from '../storage/time-frame';
 
 const CARD_MIN_WIDTH = '450px';
 
@@ -37,13 +34,9 @@ const CardGrid = styled.div`
 `;
 
 export const Home = () => {
-  const [options, setOptions] = useState<TimeFrameOptions>(() => ({
-    offsetFromNow: 0,
-    timePeriod: DEFAULT_PERIOD,
-    valueType: 'temperature',
-    level: getDefaultTimeLevel(),
-    showMinAndMax: true,
-  }));
+  const [options, setOptions] = useState<TimeFrameOptions>(() =>
+    getDefaultTimeFrameOptions()
+  );
 
   const [devices, setDevices] = useState<DeviceResponse[]>(getStorageDevices());
 

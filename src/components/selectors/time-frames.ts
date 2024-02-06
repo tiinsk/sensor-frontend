@@ -1,9 +1,4 @@
-import {
-  DEFAULT_PERIOD,
-  TimeFrameOptions,
-  TimeLevel,
-  TimePeriod,
-} from './time-frame-selector';
+import { TimeFrameOptions, TimePeriod } from './time-frame-selector';
 import { DateTime, DateTimeUnit } from 'luxon';
 
 interface TimeFrame {
@@ -12,21 +7,6 @@ interface TimeFrame {
   graphStartTime: string;
   graphEndTime: string;
 }
-
-export const getDefaultTimeLevel = (
-  timePeriod: TimePeriod = DEFAULT_PERIOD
-): TimeLevel => {
-  switch (timePeriod) {
-    case 'day':
-      return '30 minutes';
-    case 'week':
-      return 'day';
-    case 'month':
-      return 'day';
-    case 'year':
-      return 'month';
-  }
-};
 
 export const addTimePeriod = (
   date: string,

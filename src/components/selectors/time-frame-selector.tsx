@@ -8,9 +8,9 @@ import { DateTime, DateTimeUnit } from 'luxon';
 import React, { PropsWithChildren } from 'react';
 import { RightDrawer } from '../styled/menus/right-drawer';
 import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
-import { getDefaultTimeLevel, getTimeFrame } from './time-frames';
-
-export const DEFAULT_PERIOD = 'month';
+import { getTimeFrame } from './time-frames';
+import { saveStorageTimeFrame } from '../../storage/time-frame';
+import { getDefaultTimeLevel } from '../../utils/time-frame';
 
 export type TimePeriod = Extract<
   DateTimeUnit,
@@ -119,6 +119,12 @@ export const TimeFrameSelector = ({
       ...changedOptions,
       level: getDefaultTimeLevel(changedOptions.timePeriod),
     };
+
+    saveStorageTimeFrame({
+      timePeriod: changedOptions.timePeriod,
+      showMinAndMax: changedOptions.showMinAndMax,
+      valueType: changedOptions.valueType,
+    });
 
     onChange(changedOptions);
   };
