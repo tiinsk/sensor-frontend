@@ -29,6 +29,8 @@ WebFont.load({
 
 const StyledLoggedInRoutes = styled.div`
   padding: 0 ${({ theme }) => theme.spacings.s48};
+  max-width: ${({ theme }) => theme.pageWidth};
+  margin: 0 auto;
 
   ${({ theme }) => theme.mediaQueries.sm} {
     padding: 0 ${({ theme }) => theme.spacings.s8};
@@ -46,14 +48,12 @@ const App = () => {
     <ThemeContextProvider>
       <ThemeProvider>
         <GlobalStyle />
-        <div>
-          <Router>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/*" element={<LoggedInRoutes />} />
-            </Routes>
-          </Router>
-        </div>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/*" element={<LoggedInRoutes />} />
+          </Routes>
+        </Router>
       </ThemeProvider>
     </ThemeContextProvider>
   );

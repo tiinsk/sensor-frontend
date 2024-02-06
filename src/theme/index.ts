@@ -7,6 +7,7 @@ const breakpoints = {
 };
 
 const variables = {
+  pageWidth: '1800px',
   fonts: {
     fontBody: 'Roboto, sans-serif',
     fontHeader: 'Roboto, sans-serif',
