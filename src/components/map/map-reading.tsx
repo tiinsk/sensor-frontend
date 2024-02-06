@@ -121,7 +121,10 @@ export const MapReading = ({
           sizeVariant={variant === 'latest' ? 'default' : 'small'}
           variant={variant === 'latest' ? 'default' : 'avg'}
           isLoading={isLoading}
-          style={{ padding: variant === 'latest' ? spacings.s4 : undefined }}
+          style={{
+            padding: variant === 'latest' ? spacings.s4 : undefined,
+            width: 'fit-content',
+          }}
         />
         {variant === 'latest' && (
           <Tag

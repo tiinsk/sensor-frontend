@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/routes';
-import { Reading as ReadingType } from '../api/types';
+import { DeviceResponse, Reading as ReadingType } from '../api/types';
 import { useParams } from 'react-router-dom';
 import { LatestReadingResponse, Statistics } from '../api/types';
 import { Flex } from '../components/styled/flex';
@@ -27,6 +27,7 @@ import {
   getTimeFrame,
 } from '../components/selectors/time-frames';
 import { TimeAgoTag } from '../components/tags/time-ago-tag';
+import { getDeviceSensors } from '../utils/device';
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -83,6 +84,7 @@ export const Device = () => {
     level: getDefaultTimeLevel(),
     showMinAndMax: true,
   }));
+  const [device, setDevice] = useState<DeviceResponse | undefined>(undefined);
   const [latestData, setLatestData] = useState<
     LatestReadingResponse | undefined
   >(undefined);
@@ -104,27 +106,38 @@ export const Device = () => {
   const fetchData = async () => {
     if (id) {
       setLoadingMainContent(true);
-      const [latest, statisticsDay, statisticsWeek, statisticsMonth] =
-        await Promise.all([
-          api.getDeviceLatestReadings(id),
-          api.getAllDeviceStatistics({
-            startTime: getStartTime(0, 'day')!,
-            endTime: getEndTime(0, 'day')!,
-            deviceId: id,
-          }),
-          api.getAllDeviceStatistics({
-            startTime: getStartTime(0, 'week')!,
-            endTime: getEndTime(0, 'week')!,
-            deviceId: id,
-          }),
-          api.getAllDeviceStatistics({
-            startTime: getStartTime(0, 'month')!,
-            endTime: getEndTime(0, 'month')!,
-            deviceId: id,
-          }),
-        ]);
+      const [
+        deviceData,
+        latest,
+        statisticsDay,
+        statisticsWeek,
+        statisticsMonth,
+      ] = await Promise.all([
+        api.getDevice(id),
+        api.getDeviceLatestReadings(id),
+        api.getAllDeviceStatistics({
+          startTime: getStartTime(0, 'day')!,
+          endTime: getEndTime(0, 'day')!,
+          deviceId: id,
+        }),
+        api.getAllDeviceStatistics({
+          startTime: getStartTime(0, 'week')!,
+          endTime: getEndTime(0, 'week')!,
+          deviceId: id,
+        }),
+        api.getAllDeviceStatistics({
+          startTime: getStartTime(0, 'month')!,
+          endTime: getEndTime(0, 'month')!,
+          deviceId: id,
+        }),
+      ]);
+
       if (latest) {
         setLatestData(latest);
+      }
+
+      if (deviceData) {
+        setDevice(deviceData);
       }
 
       setStatisticsData({
@@ -169,6 +182,8 @@ export const Device = () => {
     fetchReadings();
   }, [id, options]);
 
+  const deviceSensors = device?.type ? getDeviceSensors(device?.type) : [];
+
   return (
     <div>
       <TitleWrapper>
@@ -180,22 +195,35 @@ export const Device = () => {
             date={latestData?.reading.created_at}
             isLoading={isLoadingMainContent}
           />
-          <Flex gap="s16" style={{ minWidth: '250px' }}>
-            <Reading
-              value={latestData?.reading.temperature}
-              unit="temperature"
-              isLoading={isLoadingMainContent}
-            />
-            <Reading
-              value={latestData?.reading.humidity}
-              unit="humidity"
-              isLoading={isLoadingMainContent}
-            />
-            <Reading
-              value={latestData?.reading.pressure}
-              unit="pressure"
-              isLoading={isLoadingMainContent}
-            />
+          <Flex
+            gap="s16"
+            style={{ minWidth: '250px' }}
+            justifyContent="flex-end"
+          >
+            {deviceSensors.includes('temperature') && (
+              <Reading
+                value={latestData?.reading.temperature}
+                unit="temperature"
+                isLoading={isLoadingMainContent}
+                style={{ width: 'fit-content' }}
+              />
+            )}
+            {deviceSensors.includes('humidity') && (
+              <Reading
+                value={latestData?.reading.humidity}
+                unit="humidity"
+                isLoading={isLoadingMainContent}
+                style={{ width: 'fit-content' }}
+              />
+            )}
+            {deviceSensors.includes('pressure') && (
+              <Reading
+                value={latestData?.reading.pressure}
+                unit="pressure"
+                isLoading={isLoadingMainContent}
+                style={{ width: 'fit-content' }}
+              />
+            )}
           </Flex>
         </LatestReadings>
       </TitleWrapper>
@@ -207,6 +235,7 @@ export const Device = () => {
           week={statisticsData.week?.temperature || {}}
           month={statisticsData.month?.temperature || {}}
           isLoading={isLoadingMainContent}
+          sensorDisabled={!deviceSensors.includes('temperature')}
         />
         <AverageCard
           title="Humidity"
@@ -215,6 +244,7 @@ export const Device = () => {
           week={statisticsData.week?.humidity || {}}
           month={statisticsData.month?.humidity || {}}
           isLoading={isLoadingMainContent}
+          sensorDisabled={!deviceSensors.includes('humidity')}
         />
         <AverageCard
           title="Pressure"
@@ -223,6 +253,7 @@ export const Device = () => {
           week={statisticsData.week?.pressure || {}}
           month={statisticsData.month?.pressure || {}}
           isLoading={isLoadingMainContent}
+          sensorDisabled={!deviceSensors.includes('pressure')}
         />
       </AverageWrapper>
       <Box mt="s16">
@@ -246,50 +277,56 @@ export const Device = () => {
           </Flex>
         ) : (
           <>
-            <StyledGraphContainer>
-              {id && readingData?.temperature && (
-                <GraphSizeWrapper>
-                  <Graph
-                    deviceId={id}
-                    data={readingData.temperature}
-                    options={options}
-                    valueType="temperature"
-                    showAxis={false}
-                    hoveredDate={hoveredDate}
-                    onHover={date => setHoveredDate(date)}
-                  />
-                </GraphSizeWrapper>
-              )}
-            </StyledGraphContainer>
-            <StyledGraphContainer>
-              {id && readingData?.humidity && (
-                <GraphSizeWrapper>
-                  <Graph
-                    deviceId={id}
-                    data={readingData.humidity}
-                    options={options}
-                    valueType="humidity"
-                    showAxis={false}
-                    hoveredDate={hoveredDate}
-                    onHover={date => setHoveredDate(date)}
-                  />
-                </GraphSizeWrapper>
-              )}
-            </StyledGraphContainer>
-            <StyledGraphContainer>
-              {id && readingData?.pressure && (
-                <GraphSizeWrapper>
-                  <Graph
-                    deviceId={id}
-                    data={readingData.pressure}
-                    options={options}
-                    valueType="pressure"
-                    hoveredDate={hoveredDate}
-                    onHover={date => setHoveredDate(date)}
-                  />
-                </GraphSizeWrapper>
-              )}
-            </StyledGraphContainer>
+            {deviceSensors.includes('temperature') && (
+              <StyledGraphContainer>
+                {id && readingData?.temperature && (
+                  <GraphSizeWrapper>
+                    <Graph
+                      deviceId={id}
+                      data={readingData.temperature}
+                      options={options}
+                      valueType="temperature"
+                      showAxis={deviceSensors.length === 1}
+                      hoveredDate={hoveredDate}
+                      onHover={date => setHoveredDate(date)}
+                    />
+                  </GraphSizeWrapper>
+                )}
+              </StyledGraphContainer>
+            )}
+            {deviceSensors.includes('humidity') && (
+              <StyledGraphContainer>
+                {id && readingData?.humidity && (
+                  <GraphSizeWrapper>
+                    <Graph
+                      deviceId={id}
+                      data={readingData.humidity}
+                      options={options}
+                      valueType="humidity"
+                      showAxis={!deviceSensors.includes('pressure')}
+                      hoveredDate={hoveredDate}
+                      onHover={date => setHoveredDate(date)}
+                    />
+                  </GraphSizeWrapper>
+                )}
+              </StyledGraphContainer>
+            )}
+            {deviceSensors.includes('pressure') && (
+              <StyledGraphContainer>
+                {id && readingData?.pressure && (
+                  <GraphSizeWrapper>
+                    <Graph
+                      deviceId={id}
+                      data={readingData.pressure}
+                      options={options}
+                      valueType="pressure"
+                      hoveredDate={hoveredDate}
+                      onHover={date => setHoveredDate(date)}
+                    />
+                  </GraphSizeWrapper>
+                )}
+              </StyledGraphContainer>
+            )}
           </>
         )}
       </StyledGraphCard>

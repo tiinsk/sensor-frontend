@@ -155,6 +155,7 @@ export const Home = () => {
               id={device.id}
               name={device.name}
               key={device.id}
+              type={device.type}
               options={options}
               latestData={latestData[device.id]}
               statisticsData={statisticsData[device.id]}
