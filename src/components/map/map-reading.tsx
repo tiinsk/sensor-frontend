@@ -113,7 +113,9 @@ export const MapReading = ({
           }}
         />
       </ColorCircle>
-      <H4 mt="s4">{title}</H4>
+      <H4 mt="s4" style={{ whiteSpace: 'nowrap' }}>
+        {title}
+      </H4>
       <Flex flexDirection="column" alignItems="center">
         <Reading
           value={reading.avg}

@@ -62,7 +62,7 @@ export const AverageCard = ({
     <StyledDeviceCard>
       <Body>{title}</Body>
       <Flex justifyContent="space-between" style={{ height: '100%' }}>
-        {!sensorDisabled ? (
+        {isLoading || !sensorDisabled ? (
           <>
             <TimeGroup>
               <Caption2 mb="s8">Day</Caption2>
