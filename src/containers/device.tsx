@@ -194,28 +194,29 @@ export const Device = () => {
             style={{ minWidth: '250px' }}
             justifyContent="flex-end"
           >
-            {deviceSensors.includes('temperature') && (
+            {(isLoadingMainContent ||
+              deviceSensors.includes('temperature')) && (
               <Reading
                 value={latestData?.reading.temperature}
                 unit="temperature"
                 isLoading={isLoadingMainContent}
-                style={{ width: 'fit-content' }}
+                style={{ width: isLoadingMainContent ? '100%' : 'fit-content' }}
               />
             )}
-            {deviceSensors.includes('humidity') && (
+            {(isLoadingMainContent || deviceSensors.includes('humidity')) && (
               <Reading
                 value={latestData?.reading.humidity}
                 unit="humidity"
                 isLoading={isLoadingMainContent}
-                style={{ width: 'fit-content' }}
+                style={{ width: isLoadingMainContent ? '100%' : 'fit-content' }}
               />
             )}
-            {deviceSensors.includes('pressure') && (
+            {(isLoadingMainContent || deviceSensors.includes('pressure')) && (
               <Reading
                 value={latestData?.reading.pressure}
                 unit="pressure"
                 isLoading={isLoadingMainContent}
-                style={{ width: 'fit-content' }}
+                style={{ width: isLoadingMainContent ? '100%' : 'fit-content' }}
               />
             )}
           </Flex>
