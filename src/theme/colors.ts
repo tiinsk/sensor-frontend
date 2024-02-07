@@ -196,8 +196,8 @@ export type ColorTheme = typeof lightColors;
 
 export const darkColors: ColorTheme = {
   background: {
-    primary: primitiveColors.neutral.filled['100'],
-    secondary: primitiveColors.neutral.filled['90'],
+    primary: primitiveColors.neutral.filled['90'],
+    secondary: primitiveColors.neutral.filled['100'],
     disabled: primitiveColors.neutral.light['80'],
     tertiary: primitiveColors.neutral.light['80'],
   },
