@@ -35,6 +35,7 @@ const StyledSnackbar = styled.div<{
   justify-content: space-between;
   align-items: center;
 
+  margin-top: ${({ theme }) => theme.spacings.s24};
   padding: ${({ theme }) => theme.spacings.s8}
     ${({ theme }) => theme.spacings.s16};
   border-radius: ${({ theme }) => theme.spacings.s4};

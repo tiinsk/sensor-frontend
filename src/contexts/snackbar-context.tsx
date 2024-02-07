@@ -104,9 +104,9 @@ const SnackbarWrapper = styled.div`
   position: fixed;
   left: 50%;
   transform: translate(-50%, 0);
-  margin-top: ${({ theme }) => theme.spacings.s24};
   width: ${({ theme }) => theme.spacings.s640};
   z-index: ${({ theme }) => theme.zIndex.snackbar};
+  height: 0;
 
   ${({ theme }) => theme.mediaQueries.sm} {
     max-width: 90%;
