@@ -53,13 +53,13 @@ export const AdminTable = ({
   fetchDevices,
 }: AdminTableProps) => {
   const { openSnackbar } = useSnackbarContext();
-  const [devicesUnderEdit, setDevicesUnderEdit] = useState<{
+  const [editedDevices, setEditedDevices] = useState<{
     [id: string]: EditableDevice | undefined;
   }>({});
 
   const [newDevices, setNewDevices] = useState<EditableDevice[]>([]);
 
-  const [newOrAddedIds, setNewOrAdded] = useState<string[]>([]);
+  const [newOrEditedIds, setNewOrEdited] = useState<string[]>([]);
 
   const validateDevice = (device?: EditableDevice, isEditing?: boolean) => {
     const deviceErrors: EditableDevice['errors'] = {};
@@ -132,9 +132,9 @@ export const AdminTable = ({
       });
       if (!result.error) {
         setNewDevices(old => [...old.slice(0, i), ...old.slice(i + 1)]);
-        setNewOrAdded(old => [...old, device.id]);
+        setNewOrEdited(old => [...old, device.id]);
         setTimeout(() => {
-          setNewOrAdded(old => old.filter(id => id !== device.id));
+          setNewOrEdited(old => old.filter(id => id !== device.id));
         }, NEW_ROW_FADE_OUT_MS);
         fetchDevices();
         openSnackbar({
@@ -156,12 +156,12 @@ export const AdminTable = ({
   };
 
   const validateEditedDevice = (deviceId: string) => {
-    const device = devicesUnderEdit[deviceId];
+    const device = editedDevices[deviceId];
     const deviceErrors = validateDevice(device, true);
 
     if (device) {
-      setDevicesUnderEdit({
-        ...devicesUnderEdit,
+      setEditedDevices({
+        ...editedDevices,
         [deviceId]: {
           ...device,
           errors: deviceErrors,
@@ -172,7 +172,7 @@ export const AdminTable = ({
   };
 
   const onEditDevice = async (deviceId: string) => {
-    const device = devicesUnderEdit[deviceId];
+    const device = editedDevices[deviceId];
     const isValid = validateEditedDevice(deviceId);
     if (isValid && device) {
       const result = await api.editDevice(deviceId, {
@@ -186,10 +186,10 @@ export const AdminTable = ({
         type: device.type,
       });
       if (!result.error) {
-        setDevicesUnderEdit(old => ({ ...old, [deviceId]: undefined }));
-        setNewOrAdded(old => [...old, deviceId]);
+        setEditedDevices(old => ({ ...old, [deviceId]: undefined }));
+        setNewOrEdited(old => [...old, deviceId]);
         setTimeout(() => {
-          setNewOrAdded(old => old.filter(id => id !== device.id));
+          setNewOrEdited(old => old.filter(id => id !== device.id));
         }, NEW_ROW_FADE_OUT_MS);
         fetchDevices();
         openSnackbar({
@@ -254,7 +254,7 @@ export const AdminTable = ({
               <SkeletonRows />
             ) : (
               devices.map(device => {
-                const editedDevice = devicesUnderEdit[device.id];
+                const editedDevice = editedDevices[device.id];
                 if (editedDevice) {
                   return (
                     <EditableAdminTableRow
@@ -263,13 +263,13 @@ export const AdminTable = ({
                       device={editedDevice}
                       latestReading={latestData?.[device.id]}
                       onChange={changed =>
-                        setDevicesUnderEdit(old => ({
+                        setEditedDevices(old => ({
                           ...old,
                           [device.id]: changed,
                         }))
                       }
                       onCancel={() =>
-                        setDevicesUnderEdit(old => ({
+                        setEditedDevices(old => ({
                           ...old,
                           [device.id]: undefined,
                         }))
@@ -281,11 +281,11 @@ export const AdminTable = ({
                 return (
                   <AdminTableRow
                     key={device.id}
-                    isNewlyEdited={newOrAddedIds.includes(device.id)}
+                    isNewlyEdited={newOrEditedIds.includes(device.id)}
                     device={device}
                     latestReading={latestData?.[device.id]}
                     onEdit={() =>
-                      setDevicesUnderEdit(old => ({
+                      setEditedDevices(old => ({
                         ...old,
                         [device.id]: {
                           id: device.id,
