@@ -39,15 +39,6 @@ export const getTimePeriodMaxUnitAmount = (timePeriod: DateTimeUnit) => {
   }
 };
 
-/*export const getEndTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
-  const endTime = addTimePeriod(
-    DateTime.now().toISO()!,
-    timePeriod,
-    offsetFromNow
-  )!;
-  return DateTime.fromISO(endTime).endOf(timePeriod).toISO();
-};*/
-
 export const getEndTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
   if (offsetFromNow === 0) {
     return DateTime.now().toUTC().toISO();
@@ -81,6 +72,16 @@ export const getGraphEndTime = (
     .toISO();
 };
 
+const roundToNext30Mins = (date: string) => {
+  const dateTime = DateTime.fromISO(date);
+  const minutes = 30 - (dateTime.minute % 30);
+  return dateTime
+    .plus({ minutes })
+    .set({ second: 0, millisecond: 0 })
+    .toUTC()
+    .toISO();
+};
+
 export const getStartTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
   const endTime = getEndTime(offsetFromNow, timePeriod)!;
   const endDateTime = DateTime.fromISO(endTime);
@@ -91,10 +92,12 @@ export const getStartTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
     .hasSame(endOfPeriod.toUTC(), 'minute');
 
   if (offsetFromNow === 0 && !isFullTimePeriod) {
-    return DateTime.now()
-      .minus(getTimePeriodMaxUnitAmount(timePeriod))
-      .toUTC()
-      .toISO();
+    return roundToNext30Mins(
+      DateTime.now()
+        .minus(getTimePeriodMaxUnitAmount(timePeriod))
+        .toUTC()
+        .toISO()!
+    );
   }
   return DateTime.fromISO(endTime).startOf(timePeriod).toUTC().toISO();
 };
