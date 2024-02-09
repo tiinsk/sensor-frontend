@@ -7,7 +7,7 @@ import {
 } from '../selectors/time-frame-selector';
 import { useGraphSizeContext } from './graph-size-context';
 import * as d3 from 'd3';
-import styled, { useTheme } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
 import { DateTime } from 'luxon';
 import { GraphTooltip } from '../styled/tooltips/graph-tooltip';
 import { getEndTime, getStartTime } from '../selectors/time-frames';
@@ -20,7 +20,7 @@ const formatAxes = (date: Date, timePeriod: TimePeriod) => {
   const dateTime = DateTime.fromJSDate(date);
   switch (timePeriod) {
     case 'day':
-      return dateTime.toFormat('HH:mm');
+      return dateTime.toFormat('HH');
     case 'week':
       return dateTime.toFormat('ccc');
     case 'month':
@@ -30,21 +30,7 @@ const formatAxes = (date: Date, timePeriod: TimePeriod) => {
   }
 };
 
-const getAxisTicks = (timePeriod: TimePeriod, width?: number) => {
-  const isSmallGraph = width && width < SMALL_GRAPH_LIMIT;
-  switch (timePeriod) {
-    case 'day':
-      return isSmallGraph ? d3.timeHour.every(2) : d3.timeHour.every(1);
-    case 'week':
-      return d3.timeDay.every(1);
-    case 'month':
-      return isSmallGraph ? d3.timeDay.every(2) : d3.timeDay.every(1);
-    case 'year':
-      return d3.timeMonth.every(1);
-  }
-};
-
-const getHoverBlocks = (timePeriod: TimePeriod) => {
+const getAxisTicks = (timePeriod: TimePeriod) => {
   switch (timePeriod) {
     case 'day':
       return d3.timeMinute.every(30);
@@ -67,7 +53,79 @@ interface GraphProps {
   showAxis?: boolean;
 }
 
-const PointG = styled.g<{ $valueType: ValueType; $isHovered: boolean }>`
+const Every2ndHourTick = ({
+  $startsFromHalfHour,
+}: {
+  $startsFromHalfHour: boolean;
+}) => css`
+  .tick {
+    display: none;
+  }
+
+  //As 24h graph contains data point in 30min intervals, every 2nd hour is every 4th value.
+  //Depending on current time, first value can be half an hour past, different value must be shown.
+  // for example: [14:30, 15:00, 15:30, 16:00, 16:30, 17:00, 17:30] => [15:00, 17:00]
+  // or: [14:00, 14:30, 15:00, 15:30, 16:00, 16:30, 17:00] => [15:00, 17:00]
+  .tick:nth-of-type(${$startsFromHalfHour ? '4n-2' : '4n-1'}) {
+    display: initial;
+  }
+`;
+
+const Every2ndTick = css`
+  .tick {
+    display: none;
+  }
+  .tick:nth-of-type(2n) {
+    display: initial;
+  }
+`;
+
+const TickG = styled.g<{
+  $width: number;
+  $timePeriod: TimePeriod;
+  $startsFromHalfHour: boolean;
+}>`
+  ${({ $timePeriod }) => $timePeriod === 'day' && Every2ndHourTick};
+
+  ${({ $width, $timePeriod }) =>
+    $width < SMALL_GRAPH_LIMIT && $timePeriod === 'month' && Every2ndTick};
+`;
+
+const Every2ndHourUnit = ({
+  $startsFromHalfHour,
+}: {
+  $startsFromHalfHour: boolean;
+}) => css`
+  .unit-text {
+    display: none;
+  }
+
+  //See Every2ndHourTick comment for more info
+  &:nth-of-type(${$startsFromHalfHour ? '4n-2' : '4n-1'}) {
+    .unit-text {
+      display: initial;
+    }
+  }
+`;
+
+const Every2ndUnit = () => css`
+  .unit-text {
+    display: none;
+  }
+  &:nth-of-type(2n) {
+    .unit-text {
+      display: initial;
+    }
+  }
+`;
+
+const PointG = styled.g<{
+  $valueType: ValueType;
+  $isHovered: boolean;
+  $width: number;
+  $timePeriod: TimePeriod;
+  $startsFromHalfHour: boolean;
+}>`
   cursor: pointer;
   rect {
     fill: ${({ theme, $valueType, $isHovered }) =>
@@ -75,6 +133,11 @@ const PointG = styled.g<{ $valueType: ValueType; $isHovered: boolean }>`
         ? theme.colors.graphs.background[$valueType].hover
         : theme.colors.graphs.background[$valueType].primary};
   }
+
+  ${({ $timePeriod }) => $timePeriod === 'day' && Every2ndHourUnit};
+
+  ${({ $width, $timePeriod }) =>
+    $width < SMALL_GRAPH_LIMIT && $timePeriod === 'month' && Every2ndUnit};
 `;
 
 const HoverableRect = styled.rect<{ $isHovered: boolean }>`
@@ -139,7 +202,7 @@ export const Graph = ({
     d => y(d.avg || 0)
   );
 
-  const hoverBlockInterval = getHoverBlocks(options.timePeriod);
+  const hoverBlockInterval = getAxisTicks(options.timePeriod);
 
   const hoverBlocks = hoverBlockInterval ? x.ticks(hoverBlockInterval) : [];
   const tickWidth = (width - margins.left - margins.right) / hoverBlocks.length;
@@ -149,7 +212,7 @@ export const Graph = ({
       void d3.select(gx.current).call(
         d3
           .axisBottom<Date>(x)
-          .tickArguments([getAxisTicks(options.timePeriod, width)])
+          .tickArguments([getAxisTicks(options.timePeriod)])
           .tickFormat((d, i) => formatAxes(d, options.timePeriod))
           .tickSize(0)
       );
@@ -166,6 +229,11 @@ export const Graph = ({
     },
   };
 
+  const startsFromHalfHour =
+    options.timePeriod === 'day' &&
+    data.length > 0 &&
+    DateTime.fromISO(data[0].time).minute !== 30;
+
   return (
     <>
       <svg
@@ -177,10 +245,13 @@ export const Graph = ({
         }}
       >
         {showAxis && (
-          <g
+          <TickG
+            $width={width}
+            $timePeriod={options.timePeriod}
             ref={gx}
             strokeWidth={0}
             transform={`translate(0,${height - margins.bottom})`}
+            $startsFromHalfHour={startsFromHalfHour}
           />
         )}
         <path
@@ -200,10 +271,6 @@ export const Graph = ({
               return null;
 
             const minMaxHeight = Math.abs(y(d.min || 0) - y(d.max || 0));
-            const showValue =
-              width >= SMALL_GRAPH_LIMIT ||
-              i % 2 === 0 ||
-              ['year', 'week'].includes(options.timePeriod);
             return (
               <PointG
                 key={i}
@@ -212,6 +279,9 @@ export const Graph = ({
                   d.avg || 0
                 )})`}
                 $isHovered={d.time === hoveredDate}
+                $width={width}
+                $timePeriod={options.timePeriod}
+                $startsFromHalfHour={startsFromHalfHour}
               >
                 {options.showMinAndMax && (
                   <rect
@@ -223,11 +293,9 @@ export const Graph = ({
                   />
                 )}
                 <circle r="3" fill={colorInterpolation(yColor(d.avg || 0))} />
-                {showValue && (
-                  <text className="unit-text" x={-10} y={-10}>
-                    {d.avg?.toFixed(1) || 0}
-                  </text>
-                )}
+                <text className="unit-text" x={-10} y={-10}>
+                  {d.avg?.toFixed(1) || 0}
+                </text>
               </PointG>
             );
           })}
