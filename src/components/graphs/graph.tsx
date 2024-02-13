@@ -167,6 +167,9 @@ export const Graph = ({
   const max = minMax?.max || Math.max(...data?.map(r => r.max || 0));
   const min = minMax?.min || Math.min(...data?.map(r => r.min || 0));
 
+  //Line max will be used when color steps for line and area are calculated. If the avg value max is smaller than the graph y-axel max value, this will prevent the graph from looking too opaque and light.
+  const lineMax = Math.max(...data?.map(r => r.avg || 0));
+
   const margins = {
     left: 10,
     bottom: 20,
@@ -186,7 +189,7 @@ export const Graph = ({
     colors.graphs.lines[valueType]
   );
 
-  const steps = d3.ticks(max, min, 10);
+  const steps = d3.ticks(lineMax, min, 10);
 
   const colorSteps = steps.map((s, i) => ({
     color: colorInterpolation(yColor(s)),
@@ -319,7 +322,7 @@ export const Graph = ({
           gradientUnits="userSpaceOnUse"
           x1={0}
           x2={0}
-          y1={y(max)}
+          y1={y(lineMax)}
           y2={y(min)}
         >
           {colorSteps.map((colorStep, i) => (
@@ -335,7 +338,7 @@ export const Graph = ({
           gradientUnits="userSpaceOnUse"
           x1={0}
           x2={0}
-          y1={y(max)}
+          y1={y(lineMax)}
           y2={y(min)}
         >
           {colorSteps.map((colorStep, i) => (
