@@ -3,7 +3,7 @@ import { StyledTd } from './admin-table-row';
 import { Skeleton } from '../../assets/loading/skeleton';
 
 const NUM_OF_ROWS = 5;
-const NUM_OF_COLS = 8;
+const NUM_OF_COLS = 9;
 
 export const SkeletonRows = () => {
   const rows = range(NUM_OF_ROWS);

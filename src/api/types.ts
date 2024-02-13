@@ -50,9 +50,12 @@ export interface StatisticsResponse {
   statistics: Statistics;
 }
 
+export type LocationType = 'inside' | 'outside' | null;
+
 export interface Location {
   x: number;
   y: number;
+  type: LocationType;
 }
 
 export type DeviceType = 'ruuvi' | 'sensorbug';

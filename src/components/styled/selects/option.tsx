@@ -6,7 +6,7 @@ import { Caption2Style } from '../../../theme/typography';
 
 interface OptionProps {
   label: string;
-  value: string;
+  value: string | null;
 }
 
 export const StyledOption = styled.button<{ $isActive: boolean }>`

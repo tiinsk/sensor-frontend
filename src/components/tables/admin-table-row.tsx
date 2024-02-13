@@ -7,11 +7,15 @@ import {
   DeviceResponse,
   DeviceType,
   LatestReadingResponse,
+  LocationType,
 } from '../../api/types';
 import { Input } from '../styled/inputs/input';
 import { Flex } from '../styled/flex';
 import { Caption2 } from '../styled/typography';
-import { getDeviceTypeName } from '../../utils/device';
+import {
+  getDeviceLocationTypeName,
+  getDeviceTypeName,
+} from '../../utils/device';
 import { Select } from '../styled/selects';
 
 const StyledTr = styled.tr<{ $isNewlyEdited?: boolean }>`
@@ -80,6 +84,7 @@ export const AdminTableRow = ({
           <div style={{ width: spacings.s48 }}>{device.location.y}</div>
         </Flex>
       </StyledTd>
+      <StyledTd>{getDeviceLocationTypeName(device.location.type)}</StyledTd>
       <StyledTd>
         <Toggle isSelected={!device.disabled} disabled={true} />
       </StyledTd>
@@ -103,6 +108,7 @@ export interface EditableDevice {
   location: {
     x: string;
     y: string;
+    type: LocationType;
   };
   disabled: boolean;
   order: string;
@@ -189,7 +195,11 @@ export const EditableAdminTableRow = ({
             onChange={newVal =>
               onChange({
                 ...device,
-                location: { y: device.location.y, x: newVal },
+                location: {
+                  type: device.location.type,
+                  y: device.location.y,
+                  x: newVal,
+                },
               })
             }
             error={device.errors?.location}
@@ -202,11 +212,35 @@ export const EditableAdminTableRow = ({
             onChange={newVal =>
               onChange({
                 ...device,
-                location: { x: device.location.x, y: newVal },
+                location: {
+                  type: device.location.type,
+                  x: device.location.x,
+                  y: newVal,
+                },
               })
             }
           />
         </Flex>
+      </EditableTd>
+      <EditableTd>
+        <Select
+          initialValue={device.location.type}
+          onSelect={newVal => {
+            onChange({
+              ...device,
+              location: {
+                x: device.location.x,
+                y: device.location.y,
+                type: newVal as LocationType,
+              },
+            });
+          }}
+          options={[
+            { value: 'inside', label: getDeviceLocationTypeName('inside') },
+            { value: 'outside', label: getDeviceLocationTypeName('outside') },
+            { value: null, label: getDeviceLocationTypeName(null) },
+          ]}
+        />
       </EditableTd>
       <EditableTd>
         <Toggle

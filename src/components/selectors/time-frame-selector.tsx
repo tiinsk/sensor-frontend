@@ -138,7 +138,7 @@ export const TimeFrameSelector = ({
       {selectors?.includes('timePeriod') && (
         <Select
           label="Time period"
-          onSelect={(value: string) =>
+          onSelect={value =>
             onOptionsChange({
               timePeriod: value as TimePeriod,
               offsetFromNow: 0,
@@ -156,9 +156,7 @@ export const TimeFrameSelector = ({
       {selectors?.includes('valueType') && (
         <Select
           label="Sensor type"
-          onSelect={(value: string) =>
-            onOptionsChange({ valueType: value as ValueType })
-          }
+          onSelect={value => onOptionsChange({ valueType: value as ValueType })}
           initialValue={options.valueType}
           options={[
             { value: 'temperature', label: 'Temperature' },
@@ -170,9 +168,7 @@ export const TimeFrameSelector = ({
       {selectors?.includes('timeLevel') && (
         <Select
           label="Graph level"
-          onSelect={(value: string) =>
-            onOptionsChange({ level: value as TimeLevel })
-          }
+          onSelect={value => onOptionsChange({ level: value as TimeLevel })}
           initialValue={options.level}
           options={[
             { value: 'hour', label: 'Hour' },

@@ -17,6 +17,7 @@ import { GraphLoading } from '../assets/loading/graph-loading';
 import { getTimeFrame } from '../components/selectors/time-frames';
 import { getStorageDevices, saveStorageDevices } from '../storage/devices';
 import { getDefaultTimeFrameOptions } from '../storage/time-frame';
+import { getMinAndMaxGroupedByDeviceLocationType } from '../utils/readings';
 
 const CARD_MIN_WIDTH = '450px';
 
@@ -124,6 +125,8 @@ export const Home = () => {
     fetchReadings();
   }, [options]);
 
+  const minMax = getMinAndMaxGroupedByDeviceLocationType(devices, readingsData);
+
   return (
     <>
       <TimeFrameSelector
@@ -153,6 +156,7 @@ export const Home = () => {
               latestData={latestData[device.id]}
               statisticsData={statisticsData[device.id]}
               readingsData={readingsData[device.id]?.values}
+              minMax={minMax[device.location.type || device.id]}
               isLoadingMainContent={
                 isLoadingMainContent || isLoadingMainContent === undefined
               }

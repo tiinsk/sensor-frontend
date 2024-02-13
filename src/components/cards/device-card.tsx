@@ -16,6 +16,7 @@ import { GraphSizeWrapper } from '../graphs/graph-size-wrapper';
 import { GraphLoading } from '../../assets/loading/graph-loading';
 import { TimeAgoTag } from '../tags/time-ago-tag';
 import { getDeviceSensors } from '../../utils/device';
+import { MinMax } from '../../utils/readings';
 
 const StyledDeviceCard = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
@@ -56,6 +57,7 @@ export const DeviceCard = ({
   options,
   isLoadingMainContent,
   isLoadingReadings,
+  minMax,
 }: {
   id: string;
   name: string;
@@ -66,6 +68,7 @@ export const DeviceCard = ({
   options: TimeFrameOptions;
   isLoadingMainContent?: boolean;
   isLoadingReadings?: boolean;
+  minMax?: MinMax;
 }) => {
   const { colors } = useTheme();
   const [hoveredDate, setHoveredDate] = useState<string | undefined>(undefined);
@@ -206,6 +209,7 @@ export const DeviceCard = ({
                 deviceId={id}
                 options={options}
                 data={readingsData || []}
+                minMax={minMax}
                 valueType={options.valueType || 'temperature'}
                 hoveredDate={hoveredDate}
                 onHover={date => setHoveredDate(date)}

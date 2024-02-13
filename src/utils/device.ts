@@ -1,4 +1,4 @@
-import { DeviceType } from '../api/types';
+import { DeviceType, LocationType } from '../api/types';
 import { ValueType } from '../components/selectors/time-frame-selector';
 
 export const getDeviceTypeName = (type: DeviceType) => {
@@ -9,6 +9,17 @@ export const getDeviceTypeName = (type: DeviceType) => {
       return 'SensorBug';
     default:
       return '';
+  }
+};
+
+export const getDeviceLocationTypeName = (type: LocationType) => {
+  switch (type) {
+    case 'inside':
+      return 'Inside';
+    case 'outside':
+      return 'Outside';
+    default:
+      return 'Custom';
   }
 };
 

@@ -125,6 +125,7 @@ export const AdminTable = ({
         location: {
           x: parseInt(device.location.x),
           y: parseInt(device.location.y),
+          type: device.location.type,
         },
         disabled: device.disabled,
         order: parseInt(device.order),
@@ -180,6 +181,7 @@ export const AdminTable = ({
         location: {
           x: parseInt(device.location.x),
           y: parseInt(device.location.y),
+          type: device.location.type,
         },
         disabled: device.disabled,
         order: parseInt(device.order),
@@ -224,7 +226,7 @@ export const AdminTable = ({
               {
                 id: '',
                 name: '',
-                location: { x: '0', y: '0' },
+                location: { x: '0', y: '0', type: 'inside' },
                 disabled: false,
                 order: '',
                 type: 'ruuvi',
@@ -243,6 +245,7 @@ export const AdminTable = ({
               <StyledTh style={{ width: '10%' }}>Type</StyledTh>
               <StyledTh style={{ width: '12%' }}>Last Connection</StyledTh>
               <StyledTh style={{ width: '250px' }}>Location</StyledTh>
+              <StyledTh style={{ width: '10%' }}>Location Type</StyledTh>
               <StyledTh style={{ width: '48px' }}>Enabled</StyledTh>
               <StyledTh style={{ width: '250px', textAlign: 'right' }}>
                 Actions
@@ -293,6 +296,7 @@ export const AdminTable = ({
                           location: {
                             x: device.location.x.toString(),
                             y: device.location.y.toString(),
+                            type: device.location.type,
                           },
                           disabled: device.disabled,
                           order: device.order.toString(),

@@ -23,9 +23,9 @@ import { Option } from './option';
 
 interface SelectProps {
   label?: string;
-  onSelect: (value: string) => void;
-  initialValue?: string;
-  options: { value: string; label: string }[];
+  onSelect: (value: string | null) => void;
+  initialValue?: string | null;
+  options: { value: string | null; label: string }[];
 }
 
 export const SelectWrapper = styled.div`
@@ -88,9 +88,7 @@ export const Select = ({
     (index: number | null, value: string | null) => {
       setSelectedIndex(index);
       setIsOpen(false);
-      if (value !== null) {
-        onSelect(value);
-      }
+      onSelect(value);
     },
     [onSelect]
   );

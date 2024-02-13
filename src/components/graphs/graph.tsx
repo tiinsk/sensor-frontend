@@ -11,6 +11,7 @@ import styled, { css, useTheme } from 'styled-components';
 import { DateTime } from 'luxon';
 import { GraphTooltip } from '../styled/tooltips/graph-tooltip';
 import { getEndTime, getStartTime } from '../selectors/time-frames';
+import { MinMax } from '../../utils/readings';
 
 export const MIN_TEMP = -30;
 export const MAX_TEMP = 90;
@@ -51,6 +52,7 @@ interface GraphProps {
   hoveredDate?: string;
   onHover: (date?: string) => void;
   showAxis?: boolean;
+  minMax?: MinMax;
 }
 
 const Every2ndHourTick = ({
@@ -152,6 +154,7 @@ export const Graph = ({
   valueType,
   hoveredDate,
   onHover,
+  minMax,
   showAxis = true,
 }: GraphProps) => {
   const { colors } = useTheme();
@@ -161,8 +164,8 @@ export const Graph = ({
   const endTime = getEndTime(options.offsetFromNow, options.timePeriod)!;
   const startTime = getStartTime(options.offsetFromNow, options.timePeriod)!;
 
-  const max = Math.max(...data?.map(r => r.max || 0));
-  const min = Math.min(...data?.map(r => r.min || 0));
+  const max = minMax?.max || Math.max(...data?.map(r => r.max || 0));
+  const min = minMax?.min || Math.min(...data?.map(r => r.min || 0));
 
   const margins = {
     left: 10,
