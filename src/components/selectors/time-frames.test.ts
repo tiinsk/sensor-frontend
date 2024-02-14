@@ -4,13 +4,13 @@ import { getDefaultTimeLevel } from '../../utils/time-frame';
 
 describe('Time frame tests', () => {
   it('Should return previous time frame (timePeriod: month)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30'));
+    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
     Date.prototype.getTimezoneOffset = jest.fn(() => 0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
       offsetFromNow: -1,
-      level: getDefaultTimeLevel('day'),
+      level: getDefaultTimeLevel('month'),
       showMinAndMax: true,
     };
     const timeFrame = getTimeFrame(timeFrameOptions);
@@ -23,26 +23,26 @@ describe('Time frame tests', () => {
   });
 
   it('Should return current time frame (timePeriod: month)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30'));
+    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
     Date.prototype.getTimezoneOffset = jest.fn(() => 0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
       offsetFromNow: 0,
-      level: getDefaultTimeLevel('day'),
+      level: getDefaultTimeLevel('month'),
       showMinAndMax: true,
     };
     const timeFrame = getTimeFrame(timeFrameOptions);
     return expect(timeFrame).toEqual({
-      startTime: '2023-11-21T13:30:00.000Z',
+      startTime: '2023-11-21T14:00:00.000Z',
       endTime: '2023-12-21T13:30:00.000Z',
-      graphStartTime: '2023-11-20T13:30:00.000Z',
+      graphStartTime: '2023-11-20T14:00:00.000Z',
       graphEndTime: '2023-12-21T13:30:00.000Z',
     });
   });
 
   it('Should return previous time frame when timezone is not UTC', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30'));
+    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
     Date.prototype.getTimezoneOffset = jest.fn(() => -120);
 
     const timeFrameOptions: TimeFrameOptions = {
@@ -61,26 +61,26 @@ describe('Time frame tests', () => {
   });
 
   it('Should return current time frame when timezone is not UTC', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30'));
+    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
     Date.prototype.getTimezoneOffset = jest.fn(() => -120);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
       offsetFromNow: 0,
-      level: getDefaultTimeLevel('day'),
+      level: getDefaultTimeLevel('month'),
       showMinAndMax: true,
     };
     const timeFrame = getTimeFrame(timeFrameOptions);
     return expect(timeFrame).toEqual({
-      startTime: '2023-11-21T13:30:00.000Z',
+      startTime: '2023-11-21T14:00:00.000Z',
       endTime: '2023-12-21T13:30:00.000Z',
-      graphStartTime: '2023-11-20T13:30:00.000Z',
+      graphStartTime: '2023-11-20T14:00:00.000Z',
       graphEndTime: '2023-12-21T13:30:00.000Z',
     });
   });
 
   it('Should return previous time frame (timePeriod: day)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30'));
+    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
     Date.prototype.getTimezoneOffset = jest.fn(() => 0);
 
     const timeFrameOptions: TimeFrameOptions = {
@@ -99,7 +99,7 @@ describe('Time frame tests', () => {
   });
 
   it('Should return current time frame (timePeriod: day)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30'));
+    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
     Date.prototype.getTimezoneOffset = jest.fn(() => 0);
 
     const timeFrameOptions: TimeFrameOptions = {
@@ -110,15 +110,15 @@ describe('Time frame tests', () => {
     };
     const timeFrame = getTimeFrame(timeFrameOptions);
     return expect(timeFrame).toEqual({
-      startTime: '2023-12-20T13:30:00.000Z',
+      startTime: '2023-12-20T14:00:00.000Z',
       endTime: '2023-12-21T13:30:00.000Z',
-      graphStartTime: '2023-12-20T13:00:00.000Z',
+      graphStartTime: '2023-12-20T13:30:00.000Z',
       graphEndTime: '2023-12-21T13:30:00.000Z',
     });
   });
 
   it('Should return previous time frame (timePeriod: week)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30'));
+    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
     Date.prototype.getTimezoneOffset = jest.fn(() => 0);
 
     const timeFrameOptions: TimeFrameOptions = {
@@ -137,7 +137,7 @@ describe('Time frame tests', () => {
   });
 
   it('Should return current time frame (timePeriod: week)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30'));
+    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
     Date.prototype.getTimezoneOffset = jest.fn(() => 0);
 
     const timeFrameOptions: TimeFrameOptions = {
@@ -148,15 +148,15 @@ describe('Time frame tests', () => {
     };
     const timeFrame = getTimeFrame(timeFrameOptions);
     return expect(timeFrame).toEqual({
-      startTime: '2023-12-14T13:30:00.000Z',
+      startTime: '2023-12-14T14:00:00.000Z',
       endTime: '2023-12-21T13:30:00.000Z',
-      graphStartTime: '2023-12-13T13:30:00.000Z',
+      graphStartTime: '2023-12-13T14:00:00.000Z',
       graphEndTime: '2023-12-21T13:30:00.000Z',
     });
   });
 
   it('Should return previous time frame (timePeriod: year)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30'));
+    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
     Date.prototype.getTimezoneOffset = jest.fn(() => 0);
 
     const timeFrameOptions: TimeFrameOptions = {
@@ -175,7 +175,7 @@ describe('Time frame tests', () => {
   });
 
   it('Should return current time frame (timePeriod: year)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30'));
+    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
     Date.prototype.getTimezoneOffset = jest.fn(() => 0);
 
     const timeFrameOptions: TimeFrameOptions = {
@@ -186,9 +186,9 @@ describe('Time frame tests', () => {
     };
     const timeFrame = getTimeFrame(timeFrameOptions);
     return expect(timeFrame).toEqual({
-      startTime: '2022-12-21T13:30:00.000Z',
+      startTime: '2022-12-21T14:00:00.000Z',
       endTime: '2023-12-21T13:30:00.000Z',
-      graphStartTime: '2022-11-21T13:30:00.000Z',
+      graphStartTime: '2022-11-21T14:00:00.000Z',
       graphEndTime: '2023-12-21T13:30:00.000Z',
     });
   });
