@@ -6,7 +6,7 @@ import {
   Reading as ReadingType,
   StatisticsResponse,
 } from '../../api/types';
-import { Body, Caption2Light, H4 } from '../styled/typography';
+import { Caption2Light, H4 } from '../styled/typography';
 import { Reading } from '../styled/readings';
 import { Flex } from '../styled/flex';
 import { Link } from 'react-router-dom';
@@ -44,7 +44,7 @@ const ReadingContainer = styled(Flex)`
 `;
 
 const BottomCard = styled.div`
-  height: 200px;
+  height: 175px;
 `;
 
 export const DeviceCard = ({

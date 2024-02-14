@@ -13,6 +13,7 @@ const StyledNav = styled.nav`
   justify-content: space-between;
   align-items: center;
   padding: ${({ theme }) => theme.spacings.s24} 0;
+  padding-bottom: ${({ theme }) => theme.spacings.s12};
 `;
 
 const MobileHiddenLinkButton = styled(LinkButton)`

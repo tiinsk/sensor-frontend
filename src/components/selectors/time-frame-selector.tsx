@@ -41,7 +41,7 @@ const StyledTimeFrameSelector = styled.div`
   display: flex;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacings.s16} 0;
-  margin-bottom: ${({ theme }) => theme.spacings.s16};
+  margin-bottom: 0;
 
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: column;
