@@ -10,7 +10,12 @@ import * as d3 from 'd3';
 import styled, { css, useTheme } from 'styled-components';
 import { DateTime } from 'luxon';
 import { GraphTooltip } from '../styled/tooltips/graph-tooltip';
-import { getEndTime, getStartTime } from '../selectors/time-frames';
+import {
+  getEndTime,
+  getGraphEndLimit,
+  getGraphStartLimit,
+  getStartTime,
+} from '../selectors/time-frames';
 import { MinMax } from '../../utils/readings';
 
 export const MIN_TEMP = -30;
@@ -164,6 +169,12 @@ export const Graph = ({
   const endTime = getEndTime(options.offsetFromNow, options.timePeriod)!;
   const startTime = getStartTime(options.offsetFromNow, options.timePeriod)!;
 
+  const endLimit = getGraphEndLimit(options.offsetFromNow, options.timePeriod)!;
+  const startLimit = getGraphStartLimit(
+    options.offsetFromNow,
+    options.timePeriod
+  )!;
+
   const max = minMax?.max || Math.max(...data?.map(r => r.max || 0));
   const min = minMax?.min || Math.min(...data?.map(r => r.min || 0));
 
@@ -171,14 +182,14 @@ export const Graph = ({
   const lineMax = Math.max(...data?.map(r => r.avg || 0));
 
   const margins = {
-    left: 10,
+    left: 0,
     bottom: 20,
     right: 0,
     top: 20,
   };
 
   const x = d3.scaleTime(
-    [new Date(startTime), new Date(endTime)],
+    [new Date(startLimit), new Date(endLimit)],
     [margins.left, width - margins.right]
   );
 

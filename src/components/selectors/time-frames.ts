@@ -6,6 +6,8 @@ interface TimeFrame {
   endTime: string;
   graphStartTime: string;
   graphEndTime: string;
+  graphStartLimit: string;
+  graphEndLimit: string;
 }
 
 export const addTimePeriod = (
@@ -29,19 +31,53 @@ export const getTimePeriodMaxUnitAmount = (timePeriod: DateTimeUnit) => {
     case 'day':
       return { days: 1 };
     case 'week':
-      return { weeks: 1 };
+      return { days: 6 };
     case 'month':
       return { months: 1 };
     case 'year':
-      return { months: 12 };
+      return { months: 11 };
     default:
       return { days: 0 };
   }
 };
 
+export const getTimePeriodHalfUnitAmount = (timePeriod: DateTimeUnit) => {
+  switch (timePeriod) {
+    case 'day':
+      return { minutes: 15 };
+    case 'week':
+      return { hours: 12 };
+    case 'month':
+      return { hours: 12 };
+    case 'year':
+      return { days: 15 };
+    default:
+      return { days: 0 };
+  }
+};
+
+const roundToNext30Mins = (date: string) => {
+  const dateTime = DateTime.fromISO(date);
+  const minutes = 30 - (dateTime.minute % 30);
+  return dateTime
+    .plus({ minutes })
+    .set({ second: 0, millisecond: 0 })
+    .toUTC()
+    .toISO();
+};
+
 export const getEndTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
   if (offsetFromNow === 0) {
-    return DateTime.now().toUTC().toISO();
+    switch (timePeriod) {
+      case 'day':
+        return roundToNext30Mins(DateTime.now().toUTC().toISO()!);
+      case 'week':
+        return DateTime.now().endOf('day').toUTC().toISO();
+      case 'month':
+        return DateTime.now().endOf('day').toUTC().toISO();
+      case 'year':
+        return DateTime.now().endOf('month').toUTC().toISO();
+    }
   }
 
   const reducedDate = addTimePeriod(
@@ -72,16 +108,6 @@ export const getGraphEndTime = (
     .toISO();
 };
 
-const roundToNext30Mins = (date: string) => {
-  const dateTime = DateTime.fromISO(date);
-  const minutes = 30 - (dateTime.minute % 30);
-  return dateTime
-    .plus({ minutes })
-    .set({ second: 0, millisecond: 0 })
-    .toUTC()
-    .toISO();
-};
-
 export const getStartTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
   const endTime = getEndTime(offsetFromNow, timePeriod)!;
   const endDateTime = DateTime.fromISO(endTime);
@@ -92,12 +118,33 @@ export const getStartTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
     .hasSame(endOfPeriod.toUTC(), 'minute');
 
   if (offsetFromNow === 0 && !isFullTimePeriod) {
-    return roundToNext30Mins(
-      DateTime.now()
-        .minus(getTimePeriodMaxUnitAmount(timePeriod))
-        .toUTC()
-        .toISO()!
-    );
+    switch (timePeriod) {
+      case 'day':
+        return roundToNext30Mins(
+          DateTime.now()
+            .minus(getTimePeriodMaxUnitAmount(timePeriod))
+            .toUTC()
+            .toISO()!
+        );
+      case 'week':
+        return DateTime.now()
+          .minus(getTimePeriodMaxUnitAmount(timePeriod))
+          .startOf('day')
+          .toUTC()
+          .toISO();
+      case 'month':
+        return DateTime.now()
+          .minus(getTimePeriodMaxUnitAmount(timePeriod))
+          .startOf('day')
+          .toUTC()
+          .toISO();
+      case 'year':
+        return DateTime.now()
+          .minus(getTimePeriodMaxUnitAmount(timePeriod))
+          .startOf('month')
+          .toUTC()
+          .toISO();
+    }
   }
   return DateTime.fromISO(endTime).startOf(timePeriod).toUTC().toISO();
 };
@@ -118,6 +165,37 @@ export const getGraphStartTime = (
     .toISO();
 };
 
+export const getGraphStartLimit = (
+  offsetFromNow: number,
+  timePeriod: TimePeriod
+) => {
+  const startTime = getStartTime(offsetFromNow, timePeriod)!;
+
+  return DateTime.fromISO(startTime)
+    .minus(getTimePeriodHalfUnitAmount(timePeriod))
+    .toUTC()
+    .toISO();
+};
+
+export const getGraphEndLimit = (
+  offsetFromNow: number,
+  timePeriod: TimePeriod
+) => {
+  const endTime = getEndTime(offsetFromNow, timePeriod)!;
+
+  return DateTime.fromISO(endTime)
+    .minus(getTimePeriodHalfUnitAmount(timePeriod))
+    .toUTC()
+    .toISO();
+};
+
+//Returns all graph related start and end times.
+// startTime: date time of the first data point visible in graph
+//endTime: date time of the last data point visible in graph
+//graphStartTime: date time of the first data point that will be outside the visible graph (so that it looks like that the graph will continue from all left to right without any gap).
+//graphEndTime: same as graphStartTime but for end time.
+//graphStartLimit: graph x-axis start point. Point where graph's first "hover block" starts, aka (startTime - graphStartTime) / 2.
+//graphEndLimit: same as graphStartLimit, but for end time.
 export const getTimeFrame = (timeframeOptions: TimeFrameOptions): TimeFrame => {
   const startTime = getStartTime(
     timeframeOptions.offsetFromNow,
@@ -139,10 +217,22 @@ export const getTimeFrame = (timeframeOptions: TimeFrameOptions): TimeFrame => {
     timeframeOptions.timePeriod
   );
 
+  const graphStartLimit = getGraphStartLimit(
+    timeframeOptions.offsetFromNow,
+    timeframeOptions.timePeriod
+  );
+
+  const graphEndLimit = getGraphEndLimit(
+    timeframeOptions.offsetFromNow,
+    timeframeOptions.timePeriod
+  );
+
   return {
     startTime: startTime!,
     endTime: endTime!,
     graphEndTime: graphEndTime!,
     graphStartTime: graphStartTime!,
+    graphStartLimit: graphStartLimit!,
+    graphEndLimit: graphEndLimit!,
   };
 };
