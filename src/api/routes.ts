@@ -30,20 +30,23 @@ interface ReadingParams extends TimeParams {
 
 const routes = {
   login: (payload: { username: string; password: string }) =>
-    api.post<string>({ route: '/login', payload }, false),
+    api.post<{ token: string }>({ route: '/login', payload }, false),
   getAllLatest: () =>
     api.get<ArrayResponse<LatestReadingResponse>>({
-      route: `/devices/latest-readings`,
+      route: `/latest`,
     }),
   getAllStatistics: (params: TimeParams) =>
     api.get<ArrayResponse<StatisticsResponse>>({
-      route: `/devices/statistics`,
+      route: `/statistics`,
       params,
     }),
   getAllReadings: (params: ReadingParams) =>
     api.get<ArrayResponse<ReadingsResponse>>({
-      route: `/devices/readings`,
-      params,
+      route: `/readings`,
+      params: {
+        timezone: 'Europe/Helsinki',
+        ...params,
+      },
     }),
   getDeviceReadings: ({
     deviceId,
@@ -51,7 +54,11 @@ const routes = {
   }: TimeParams & { deviceId: string; types: ValueType[]; level: TimeLevel }) =>
     api.get<DeviceReadingResponse>({
       route: `/devices/${deviceId}/readings`,
-      params,
+      params: {
+        //TODO change to detect users local timezone, hardcoded for now.
+        timezone: 'Europe/Helsinki',
+        ...params,
+      },
     }),
   getAllDevices: (params?: { includeDisabled?: boolean }) =>
     api.get<ArrayResponse<DeviceResponse>>({ route: '/devices', params }),
@@ -59,7 +66,7 @@ const routes = {
     api.get<DeviceResponse>({ route: `/devices/${deviceId}` }),
   getDeviceLatestReadings: (deviceId: string) =>
     api.get<LatestReadingResponse>({
-      route: `/devices/${deviceId}/latest-readings`,
+      route: `/devices/${deviceId}/latest`,
     }),
   getAllDeviceStatistics: ({
     deviceId,

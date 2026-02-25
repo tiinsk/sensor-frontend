@@ -23,7 +23,7 @@ export const get = async <DataType>(
     const response = await instance.get<DataType>(params.route, {
       url: params.route,
       headers: {
-        authorization: getJWTToken(),
+        Authorization: `Bearer ${getJWTToken()}`,
       },
       data: params.payload,
       params: params.params,

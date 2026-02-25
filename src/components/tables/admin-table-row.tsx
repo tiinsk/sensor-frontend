@@ -74,7 +74,7 @@ export const AdminTableRow = ({
       <StyledTd>{device.id}</StyledTd>
       <StyledTd>{getDeviceTypeName(device.type)}</StyledTd>
       <StyledTd>
-        <TimeAgoTag date={latestReading?.reading.created_at} />
+        <TimeAgoTag date={latestReading?.reading?.timestamp} />
       </StyledTd>
       <StyledTd>
         <Flex gap="s4" alignItems="center">
@@ -183,7 +183,7 @@ export const EditableAdminTableRow = ({
         />
       </EditableTd>
       <EditableTd>
-        <TimeAgoTag date={latestReading?.reading.created_at} />
+        <TimeAgoTag date={latestReading?.reading?.timestamp} />
       </EditableTd>
       <EditableTd>
         <Flex alignItems="center" gap="s8">

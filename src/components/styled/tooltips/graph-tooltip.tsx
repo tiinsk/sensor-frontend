@@ -134,7 +134,9 @@ export const GraphTooltip: React.FC<PropsWithChildren<TooltipProps>> = ({
             }}
           >
             <StyledTitle>
-              <Caption3>{formatDate(timePeriod, tooltipContent.time)}</Caption3>
+              <Caption3>
+                {formatDate(timePeriod, tooltipContent.timestamp)}
+              </Caption3>
             </StyledTitle>
             <StyledContent>
               <Reading

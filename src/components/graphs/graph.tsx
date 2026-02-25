@@ -209,12 +209,12 @@ export const Graph = ({
   }));
 
   const line = d3.line<Reading>(
-    d => x(new Date(d.time)),
+    d => x(new Date(d.timestamp)),
     d => y(d.avg || 0)
   );
 
   const area = d3.area<Reading>(
-    d => x(new Date(d.time)),
+    d => x(new Date(d.timestamp)),
     () => y(min) + margins.bottom,
     d => y(d.avg || 0)
   );
@@ -236,12 +236,12 @@ export const Graph = ({
     }
   }, [gx, x]);
 
-  const hoveredDatapoint = data.find(d => d.time === hoveredDate);
+  const hoveredDatapoint = data.find(d => d.timestamp === hoveredDate);
 
   const tooltipContent = hoveredDatapoint && {
     ...hoveredDatapoint,
     position: {
-      x: x(new Date(hoveredDatapoint.time)),
+      x: x(new Date(hoveredDatapoint.timestamp)),
       y: y(hoveredDatapoint.avg || 0),
     },
   };
@@ -249,7 +249,7 @@ export const Graph = ({
   const startsFromHalfHour =
     options.timePeriod === 'day' &&
     data.length > 0 &&
-    DateTime.fromISO(data[0].time).minute !== 30;
+    DateTime.fromISO(data[0].timestamp).minute !== 30;
 
   return (
     <>
@@ -283,7 +283,7 @@ export const Graph = ({
         />
         <g fill="currentColor">
           {data.map((d, i) => {
-            const date = new Date(d.time);
+            const date = new Date(d.timestamp);
             if (date < new Date(startTime) || date > new Date(endTime))
               return null;
 
@@ -292,10 +292,10 @@ export const Graph = ({
               <PointG
                 key={i}
                 $valueType={valueType}
-                transform={`translate(${x(new Date(d.time))}, ${y(
+                transform={`translate(${x(new Date(d.timestamp))}, ${y(
                   d.avg || 0
                 )})`}
-                $isHovered={d.time === hoveredDate}
+                $isHovered={d.timestamp === hoveredDate}
                 $width={width}
                 $timePeriod={options.timePeriod}
                 $startsFromHalfHour={startsFromHalfHour}

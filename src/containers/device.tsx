@@ -186,7 +186,7 @@ export const Device = () => {
         </H2>
         <LatestReadings>
           <TimeAgoTag
-            date={latestData?.reading.created_at}
+            date={latestData?.reading?.timestamp}
             isLoading={isLoadingMainContent}
           />
           <Flex
@@ -197,7 +197,7 @@ export const Device = () => {
             {(isLoadingMainContent ||
               deviceSensors.includes('temperature')) && (
               <Reading
-                value={latestData?.reading.temperature}
+                value={latestData?.reading?.temperature}
                 unit="temperature"
                 isLoading={isLoadingMainContent}
                 style={{ width: isLoadingMainContent ? '100%' : 'fit-content' }}
@@ -205,7 +205,7 @@ export const Device = () => {
             )}
             {(isLoadingMainContent || deviceSensors.includes('humidity')) && (
               <Reading
-                value={latestData?.reading.humidity}
+                value={latestData?.reading?.humidity}
                 unit="humidity"
                 isLoading={isLoadingMainContent}
                 style={{ width: isLoadingMainContent ? '100%' : 'fit-content' }}
@@ -213,7 +213,7 @@ export const Device = () => {
             )}
             {(isLoadingMainContent || deviceSensors.includes('pressure')) && (
               <Reading
-                value={latestData?.reading.pressure}
+                value={latestData?.reading?.pressure}
                 unit="pressure"
                 isLoading={isLoadingMainContent}
                 style={{ width: isLoadingMainContent ? '100%' : 'fit-content' }}

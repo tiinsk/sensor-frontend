@@ -188,7 +188,7 @@ export const Map = () => {
                   const reading =
                     options.offsetFromNow === 0
                       ? {
-                          avg: latestData[device.id]?.reading[
+                          avg: latestData[device.id]?.reading?.[
                             options.valueType || 'temperature'
                           ],
                           min: statisticsData[device.id]?.statistics[
@@ -197,7 +197,7 @@ export const Map = () => {
                           max: statisticsData[device.id]?.statistics[
                             options.valueType || 'temperature'
                           ].max,
-                          created_at: latestData[device.id]?.reading.created_at,
+                          timestamp: latestData[device.id]?.reading?.timestamp,
                         }
                       : {
                           avg: statisticsData[device.id]?.statistics[
@@ -209,7 +209,7 @@ export const Map = () => {
                           max: statisticsData[device.id]?.statistics[
                             options.valueType || 'temperature'
                           ].max,
-                          created_at: undefined,
+                          timestamp: undefined,
                         };
                   return (
                     <div

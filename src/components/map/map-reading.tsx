@@ -62,7 +62,7 @@ interface AverageMinMax {
   avg?: number | null;
   min?: number | null;
   max?: number | null;
-  created_at?: string;
+  timestamp?: string;
 }
 
 interface MapReadingProps {
@@ -92,8 +92,8 @@ export const MapReading = ({
     .split(', ')
     .map(value => parseInt(value));
 
-  const timeDiff = reading.created_at
-    ? Math.abs(DateTime.fromISO(reading.created_at).diffNow('minutes').minutes)
+  const timeDiff = reading.timestamp
+    ? Math.abs(DateTime.fromISO(reading.timestamp).diffNow('minutes').minutes)
     : 0;
   const tagVariant = timeDiff > 20 ? 'error' : 'default';
 
@@ -131,7 +131,7 @@ export const MapReading = ({
         {variant === 'latest' && (
           <Tag
             variant={tagVariant}
-            text={getTimeAgoString(reading.created_at)}
+            text={getTimeAgoString(reading.timestamp)}
             isLoading={isLoading}
           />
         )}

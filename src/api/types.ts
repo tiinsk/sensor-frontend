@@ -24,11 +24,11 @@ export interface LatestReadingResponse {
   name: string;
   location_type: DeviceLocation;
   sensor_info: Sensor[];
-  reading: {
+  reading?: {
     temperature: number | null;
     humidity: number | null;
     pressure: number | null;
-    created_at: string;
+    timestamp: string;
     battery: number;
   };
 }
@@ -70,7 +70,7 @@ export interface DeviceResponse {
 }
 
 export interface Reading extends ReadingValue {
-  time: string;
+  timestamp: string;
 }
 
 export interface ReadingsResponse {

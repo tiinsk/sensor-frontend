@@ -84,14 +84,14 @@ export const DeviceCard = ({
         <Flex alignItems="center" gap="s8">
           <Flex pl="s16" style={{ flexGrow: 1 }}>
             <TimeAgoTag
-              date={latestData?.reading.created_at}
+              date={latestData?.reading?.timestamp}
               isLoading={isLoadingMainContent}
             />
           </Flex>
           {deviceSensors.includes('humidity') && (
             <ReadingContainer style={{ flexBasis: '15%' }}>
               <Reading
-                value={latestData?.reading.humidity}
+                value={latestData?.reading?.humidity}
                 unit="humidity"
                 isLoading={isLoadingMainContent}
               />
@@ -100,7 +100,7 @@ export const DeviceCard = ({
           {deviceSensors.includes('pressure') && (
             <ReadingContainer style={{ flexBasis: '20%' }}>
               <Reading
-                value={latestData?.reading.pressure}
+                value={latestData?.reading?.pressure}
                 unit="pressure"
                 isLoading={isLoadingMainContent}
               />
@@ -109,7 +109,7 @@ export const DeviceCard = ({
           {deviceSensors.includes('temperature') && (
             <ReadingContainer pr="s16" style={{ flexBasis: '15%' }}>
               <Reading
-                value={latestData?.reading.temperature}
+                value={latestData?.reading?.temperature}
                 unit="temperature"
                 isLoading={isLoadingMainContent}
               />

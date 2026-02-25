@@ -72,7 +72,7 @@ export const Login = () => {
     if (response.error) {
       setError(response.error);
     } else {
-      setJWTToken(response.data);
+      setJWTToken(response.data.token);
       navigate('/', { replace: true });
     }
   };
