@@ -27,6 +27,8 @@ export const getDeviceSensors = (type: DeviceType): ValueType[] => {
   switch (type) {
     case 'ruuvi':
       return ['temperature', 'humidity', 'pressure'];
+    case 'ruuvi-air': //TODO change to contain all sensors
+      return ['temperature', 'humidity', 'pressure'];
     case 'sensorbug':
       return ['temperature'];
     default:

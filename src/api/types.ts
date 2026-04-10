@@ -58,7 +58,7 @@ export interface Location {
   type: LocationType;
 }
 
-export type DeviceType = 'ruuvi' | 'sensorbug';
+export type DeviceType = 'ruuvi' | 'sensorbug' | 'ruuvi-air';
 
 export interface DeviceResponse {
   id: string;
