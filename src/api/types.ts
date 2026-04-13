@@ -30,6 +30,11 @@ export interface LatestReadingResponse {
     pressure: number | null;
     timestamp: string;
     battery: number;
+    co2: number | null;
+    nox: number | null;
+    pm25: number | null;
+    voc: number | null;
+    airQuality: number | null;
   };
 }
 
@@ -43,6 +48,11 @@ export interface Statistics {
   temperature: ReadingValue;
   humidity: ReadingValue;
   pressure: ReadingValue;
+  co2: ReadingValue;
+  nox: ReadingValue;
+  pm25: ReadingValue;
+  voc: ReadingValue;
+  airQuality: ReadingValue;
 }
 
 export interface StatisticsResponse {

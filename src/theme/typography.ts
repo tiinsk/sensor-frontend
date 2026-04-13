@@ -49,6 +49,14 @@ export const BodyStyle = css`
   line-height: 2.4rem;
 `;
 
+export const BodyBoldStyle = css`
+  color: inherit;
+  font-family: ${({ theme }) => theme.fonts.fontBody};
+  font-weight: ${({ theme }) => theme.fontWeights.bold};
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+`;
+
 export const PageTitleStyle = css`
   color: inherit;
   font-family: ${({ theme }) => theme.fonts.fontBody};

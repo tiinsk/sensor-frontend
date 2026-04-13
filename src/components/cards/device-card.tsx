@@ -26,11 +26,21 @@ const StyledDeviceCard = styled.div`
 `;
 const TopCard = styled(Link)`
   display: block;
-  padding-top: ${({ theme }) => theme.spacings.s24};
+  padding-top: ${({ theme }) => theme.spacings.s12};
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.background.secondary};
   }
+`;
+
+const ReadingGrid = styled.div`
+  flex-grow: 1;
+  justify-content: center;
+
+  display: grid;
+  gap: 0 ${({ theme }) => theme.spacings.s12};
+  grid-template-rows: repeat(2, fit-content(100%));
+  grid-template-columns: fit-content(100%) fit-content(100%) fit-content(100%);
 `;
 
 const TimePeriodReadings = styled.div`
@@ -78,40 +88,93 @@ export const DeviceCard = ({
   return (
     <StyledDeviceCard>
       <TopCard to={`/devices/${id}`}>
-        <Flex justifyContent="flex-end" px="s16" mb="s8">
-          <H4 style={{ flexGrow: 1 }}>{name}</H4>
+        <Flex justifyContent="space-between" px="s16" mb="s8" gap="s16">
+          <H4>{name}</H4>
+          <TimeAgoTag
+            date={latestData?.reading?.timestamp}
+            isLoading={isLoadingMainContent}
+          />
         </Flex>
-        <Flex alignItems="center" gap="s8">
-          <Flex pl="s16" style={{ flexGrow: 1 }}>
-            <TimeAgoTag
-              date={latestData?.reading?.timestamp}
-              isLoading={isLoadingMainContent}
-            />
-          </Flex>
-          {deviceSensors.includes('humidity') && (
+        <Flex alignItems="center" px="s16" gap="s8">
+          {deviceSensors.includes('airQuality') && (
             <ReadingContainer style={{ flexBasis: '15%' }}>
               <Reading
-                value={latestData?.reading?.humidity}
-                unit="humidity"
+                value={latestData?.reading?.airQuality}
+                unit="airQuality"
                 isLoading={isLoadingMainContent}
+                showTitle={true}
               />
             </ReadingContainer>
           )}
-          {deviceSensors.includes('pressure') && (
-            <ReadingContainer style={{ flexBasis: '20%' }}>
-              <Reading
-                value={latestData?.reading?.pressure}
-                unit="pressure"
-                isLoading={isLoadingMainContent}
-              />
-            </ReadingContainer>
-          )}
+          <ReadingGrid>
+            {deviceSensors.includes('humidity') && (
+              <ReadingContainer style={{ flexBasis: '15%' }}>
+                <Reading
+                  value={latestData?.reading?.humidity}
+                  unit="humidity"
+                  isLoading={isLoadingMainContent}
+                  showTitle={true}
+                />
+              </ReadingContainer>
+            )}
+            {deviceSensors.includes('pressure') && (
+              <ReadingContainer style={{ flexBasis: '20%' }}>
+                <Reading
+                  value={latestData?.reading?.pressure}
+                  unit="pressure"
+                  isLoading={isLoadingMainContent}
+                  showTitle={true}
+                />
+              </ReadingContainer>
+            )}
+            {deviceSensors.includes('co2') && (
+              <ReadingContainer style={{ flexBasis: '15%' }}>
+                <Reading
+                  value={latestData?.reading?.co2}
+                  unit="co2"
+                  isLoading={isLoadingMainContent}
+                  showTitle={true}
+                />
+              </ReadingContainer>
+            )}
+            {deviceSensors.includes('nox') && (
+              <ReadingContainer style={{ flexBasis: '15%' }}>
+                <Reading
+                  value={latestData?.reading?.nox}
+                  unit="nox"
+                  isLoading={isLoadingMainContent}
+                  showTitle={true}
+                />
+              </ReadingContainer>
+            )}
+            {deviceSensors.includes('voc') && (
+              <ReadingContainer style={{ flexBasis: '15%' }}>
+                <Reading
+                  value={latestData?.reading?.voc}
+                  unit="voc"
+                  isLoading={isLoadingMainContent}
+                  showTitle={true}
+                />
+              </ReadingContainer>
+            )}
+            {deviceSensors.includes('pm25') && (
+              <ReadingContainer style={{ flexBasis: '15%' }}>
+                <Reading
+                  value={latestData?.reading?.pm25}
+                  unit="pm25"
+                  isLoading={isLoadingMainContent}
+                  showTitle={true}
+                />
+              </ReadingContainer>
+            )}
+          </ReadingGrid>
           {deviceSensors.includes('temperature') && (
             <ReadingContainer pr="s16" style={{ flexBasis: '15%' }}>
               <Reading
                 value={latestData?.reading?.temperature}
                 unit="temperature"
                 isLoading={isLoadingMainContent}
+                showTitle={true}
               />
             </ReadingContainer>
           )}

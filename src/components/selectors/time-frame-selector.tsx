@@ -21,7 +21,15 @@ export type TimeLevel = '10 minutes' | '30 minutes' | 'day' | 'week' | 'month';
 
 export type Selector = 'timeLevel' | 'timePeriod' | 'valueType' | 'minMax';
 
-export type ValueType = 'temperature' | 'humidity' | 'pressure';
+export type ValueType =
+  | 'temperature'
+  | 'humidity'
+  | 'pressure'
+  | 'co2'
+  | 'nox'
+  | 'pm25'
+  | 'voc'
+  | 'airQuality';
 
 export interface TimeFrameOptions {
   timePeriod: TimePeriod;

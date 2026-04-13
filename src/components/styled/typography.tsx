@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Box, BoxProps } from './box';
 import {
+  BodyBoldStyle,
   BodyLightStyle,
   BodyStyle,
   Caption2LightStyle,
@@ -146,6 +147,27 @@ export const Body = ({
     <StyledBody {...props} component="p">
       {children}
     </StyledBody>
+  );
+};
+
+const StyledBodyBold = styled(Box)`
+  ${BodyBoldStyle};
+`;
+
+export const BodyBold = ({
+  children,
+  isLoading,
+  loadingWidth,
+  ...props
+}: TypographyProps) => {
+  if (isLoading) {
+    return <Skeleton variant="Body" width={loadingWidth} />;
+  }
+
+  return (
+    <StyledBodyBold {...props} component="p">
+      {children}
+    </StyledBodyBold>
   );
 };
 

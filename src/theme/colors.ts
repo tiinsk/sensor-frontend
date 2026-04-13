@@ -157,6 +157,26 @@ export const lightColors = {
         primary: primitiveColors.water['20'],
         hover: primitiveColors.water['50'],
       },
+      co2: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
+      nox: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
+      pm25: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
+      voc: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
+      airQuality: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
     },
     line: {
       pressure: primitiveColors.air['10'],
@@ -184,6 +204,11 @@ export const lightColors = {
       ],
       humidity: [primitiveColors.water['100'], primitiveColors.water['100']],
       pressure: [primitiveColors.air['100'], primitiveColors.air['100']],
+      co2: [primitiveColors.air['100'], primitiveColors.air['100']],
+      nox: [primitiveColors.air['100'], primitiveColors.air['100']],
+      pm25: [primitiveColors.air['100'], primitiveColors.air['100']],
+      voc: [primitiveColors.air['100'], primitiveColors.air['100']],
+      airQuality: [primitiveColors.air['100'], primitiveColors.air['100']],
     },
   },
   shadows: {
@@ -276,6 +301,26 @@ export const darkColors: ColorTheme = {
         primary: primitiveColors.water['20'],
         hover: primitiveColors.water['50'],
       },
+      co2: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
+      nox: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
+      pm25: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
+      voc: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
+      airQuality: {
+        primary: primitiveColors.air['20'],
+        hover: primitiveColors.air['50'],
+      },
     },
     line: {
       pressure: primitiveColors.air['10'],
@@ -303,6 +348,11 @@ export const darkColors: ColorTheme = {
       ],
       humidity: [primitiveColors.water['100'], primitiveColors.water['100']],
       pressure: [primitiveColors.air['100'], primitiveColors.air['100']],
+      co2: [primitiveColors.air['100'], primitiveColors.air['100']],
+      nox: [primitiveColors.air['100'], primitiveColors.air['100']],
+      pm25: [primitiveColors.air['100'], primitiveColors.air['100']],
+      voc: [primitiveColors.air['100'], primitiveColors.air['100']],
+      airQuality: [primitiveColors.air['100'], primitiveColors.air['100']],
     },
   },
   shadows: {
