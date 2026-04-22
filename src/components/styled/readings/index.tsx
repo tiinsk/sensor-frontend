@@ -4,14 +4,11 @@ import { IconColor, IconType, MdiIcon } from '../mdi-icon';
 import { getUnit, getUnitTitle, Unit } from '../../../utils/unit';
 import {
   BodyBoldStyle,
-  BodyStyle,
   Caption2Style,
   Caption3Style,
-  H3Style,
 } from '../../../theme/typography';
 import { Skeleton } from '../../../assets/loading/skeleton';
 import { CustomIcon, CustomIconType } from '../custom-icon';
-import { Caption3 } from '../typography';
 
 type ReadingVariant = 'default' | 'min' | 'max' | 'avg';
 type ReadingSizeVariant = 'default' | 'small';
@@ -38,10 +35,6 @@ const StyledUnit = styled.p`
 const DefaultStyle = ({ theme }: { theme: DefaultTheme }) => css`
   ${StyledValue} {
     ${BodyBoldStyle};
-    ${({ theme }) => theme.mediaQueries.md} {
-      font-size: 2rem;
-      line-height: 2.4rem;
-    }
   }
 
   ${StyledUnit} {
@@ -62,6 +55,11 @@ const StyledReading = styled.div<{
   width: 100%;
 
   ${({ $sizeVariant }) => $sizeVariant === 'default' && DefaultStyle};
+`;
+
+const StyledTitle = styled.div`
+  ${Caption3Style};
+  color: ${({ theme }) => theme.colors.typography.secondary};
 `;
 
 const StyledReadingValue = styled.div`
@@ -124,7 +122,7 @@ export const Reading = ({
     value !== null && value !== undefined ? value.toFixed(1) : '--';
   return (
     <StyledReading {...props} $sizeVariant={sizeVariant}>
-      {unit && showTitle && <Caption3>{getUnitTitle(unit)}</Caption3>}
+      {unit && showTitle && <StyledTitle>{getUnitTitle(unit)}</StyledTitle>}
       <StyledReadingValue>
         {aggregateIconType && (
           <MdiIcon
@@ -135,13 +133,13 @@ export const Reading = ({
           />
         )}
         {customIconType && variant === 'default' && (
-          <CustomIcon type={customIconType} size="s16" />
+          <CustomIcon type={customIconType} size="s16" color="secondary" />
         )}
         {variant === 'avg' && <AvgText>Avg</AvgText>}
         {isLoading ? (
           <Skeleton
-            variant={sizeVariant === 'default' ? 'H3' : 'Caption3'}
-            width={sizeVariant === 'default' ? undefined : 's48'}
+            variant={sizeVariant === 'default' ? 'Body' : 'Caption3'}
+            width={sizeVariant === 'default' ? 's64' : 's48'}
           />
         ) : (
           <>

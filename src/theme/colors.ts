@@ -84,6 +84,7 @@ export const lightColors = {
   },
   icons: {
     primary: primitiveColors.neutral.filled['100'],
+    secondary: primitiveColors.neutral.filled['60'],
     background: primitiveColors.neutral.filled['00'],
     error: primitiveColors.error['100'],
     air: primitiveColors.air['100'],
@@ -211,6 +212,10 @@ export const lightColors = {
       airQuality: [primitiveColors.air['100'], primitiveColors.air['100']],
     },
   },
+  score: {
+    base: primitiveColors.neutral.filled['10'],
+    fill: ['#D2044D', '#E56700', '#FFED05', '#18A800'],
+  },
   shadows: {
     boxShadow: `0px 4px 30px 0px rgba(0, 0, 0, 0.05)`,
     boxShadowHover: `0px 4px 30px 0px rgba(0, 0, 0, 0.08)`,
@@ -228,6 +233,7 @@ export const darkColors: ColorTheme = {
   },
   icons: {
     primary: primitiveColors.neutral.filled['00'],
+    secondary: primitiveColors.neutral.filled['30'],
     background: primitiveColors.neutral.dark['90'],
     error: primitiveColors.error['100'],
     air: primitiveColors.air['100'],
@@ -354,6 +360,10 @@ export const darkColors: ColorTheme = {
       voc: [primitiveColors.air['100'], primitiveColors.air['100']],
       airQuality: [primitiveColors.air['100'], primitiveColors.air['100']],
     },
+  },
+  score: {
+    base: primitiveColors.neutral.filled['70'],
+    fill: ['#D2044D', '#E56700', '#FFED05', '#18A800'],
   },
   shadows: {
     boxShadow: `0px 4px 30px 0px rgba(255, 255, 255, 0.06)`,

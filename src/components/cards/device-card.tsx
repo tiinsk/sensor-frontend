@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
 import {
   DeviceType,
   LatestReadingResponse,
@@ -17,33 +17,56 @@ import { GraphLoading } from '../../assets/loading/graph-loading';
 import { TimeAgoTag } from '../tags/time-ago-tag';
 import { getDeviceSensors } from '../../utils/device';
 import { MinMax } from '../../utils/readings';
+import { ScoreReading } from '../styled/readings/score-reading';
 
 const StyledDeviceCard = styled.div`
+  display: flex;
+  flex-direction: column;
+
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
   background-color: ${({ theme }) => theme.colors.background.primary};
   border-radius: ${({ theme }) => theme.spacings.s4};
   box-shadow: ${({ theme }) => theme.colors.shadows.boxShadow};
 `;
 const TopCard = styled(Link)`
-  display: block;
+  display: flex;
   padding-top: ${({ theme }) => theme.spacings.s12};
+  min-height: ${({ theme }) => theme.spacings.s128};
+  flex-direction: column;
+  justify-content: space-around;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.background.secondary};
   }
 `;
 
-const ReadingGrid = styled.div`
-  flex-grow: 1;
-  justify-content: center;
+const SimpleSensorStyle = css`
+  display: flex;
+  justify-content: flex-end;
+  gap: ${({ theme }) => theme.spacings.s16};
+`;
 
+const MultiSensorStyle = css`
   display: grid;
+  justify-content: space-between;
   gap: 0 ${({ theme }) => theme.spacings.s12};
-  grid-template-rows: repeat(2, fit-content(100%));
-  grid-template-columns: fit-content(100%) fit-content(100%) fit-content(100%);
+  grid-template-columns: repeat(5, fit-content(100%));
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    grid-template-columns: repeat(3, fit-content(100%));
+  }
+`;
+
+const ReadingGrid = styled.div<{ $sensorCount: number }>`
+  flex-grow: 1;
+  ${({ $sensorCount }) =>
+    $sensorCount > 4 ? MultiSensorStyle : SimpleSensorStyle};
+  );
 `;
 
 const TimePeriodReadings = styled.div`
+  flex-grow: 1;
+
   display: flex;
   border-top: 1px solid ${({ theme }) => theme.colors.borders.secondary};
   gap: ${({ theme }) => theme.spacings.s8};
@@ -95,20 +118,20 @@ export const DeviceCard = ({
             isLoading={isLoadingMainContent}
           />
         </Flex>
-        <Flex alignItems="center" px="s16" gap="s8">
-          {deviceSensors.includes('airQuality') && (
-            <ReadingContainer style={{ flexBasis: '15%' }}>
-              <Reading
-                value={latestData?.reading?.airQuality}
-                unit="airQuality"
-                isLoading={isLoadingMainContent}
-                showTitle={true}
-              />
-            </ReadingContainer>
-          )}
-          <ReadingGrid>
+        <Flex px="s16" gap="s24" justifyContent="end">
+          <ReadingGrid $sensorCount={deviceSensors.length}>
+            {deviceSensors.includes('airQuality') && (
+              <ReadingContainer style={{ gridRowStart: 'span 2' }}>
+                <ScoreReading
+                  value={latestData?.reading?.airQuality}
+                  unit="airQuality"
+                  isLoading={isLoadingMainContent}
+                  showTitle={true}
+                />
+              </ReadingContainer>
+            )}
             {deviceSensors.includes('humidity') && (
-              <ReadingContainer style={{ flexBasis: '15%' }}>
+              <ReadingContainer>
                 <Reading
                   value={latestData?.reading?.humidity}
                   unit="humidity"
@@ -118,7 +141,7 @@ export const DeviceCard = ({
               </ReadingContainer>
             )}
             {deviceSensors.includes('pressure') && (
-              <ReadingContainer style={{ flexBasis: '20%' }}>
+              <ReadingContainer>
                 <Reading
                   value={latestData?.reading?.pressure}
                   unit="pressure"
@@ -128,7 +151,7 @@ export const DeviceCard = ({
               </ReadingContainer>
             )}
             {deviceSensors.includes('co2') && (
-              <ReadingContainer style={{ flexBasis: '15%' }}>
+              <ReadingContainer>
                 <Reading
                   value={latestData?.reading?.co2}
                   unit="co2"
@@ -137,8 +160,18 @@ export const DeviceCard = ({
                 />
               </ReadingContainer>
             )}
+            {deviceSensors.includes('temperature') && (
+              <ReadingContainer>
+                <Reading
+                  value={latestData?.reading?.temperature}
+                  unit="temperature"
+                  isLoading={isLoadingMainContent}
+                  showTitle={true}
+                />
+              </ReadingContainer>
+            )}
             {deviceSensors.includes('nox') && (
-              <ReadingContainer style={{ flexBasis: '15%' }}>
+              <ReadingContainer>
                 <Reading
                   value={latestData?.reading?.nox}
                   unit="nox"
@@ -148,7 +181,7 @@ export const DeviceCard = ({
               </ReadingContainer>
             )}
             {deviceSensors.includes('voc') && (
-              <ReadingContainer style={{ flexBasis: '15%' }}>
+              <ReadingContainer>
                 <Reading
                   value={latestData?.reading?.voc}
                   unit="voc"
@@ -158,7 +191,7 @@ export const DeviceCard = ({
               </ReadingContainer>
             )}
             {deviceSensors.includes('pm25') && (
-              <ReadingContainer style={{ flexBasis: '15%' }}>
+              <ReadingContainer>
                 <Reading
                   value={latestData?.reading?.pm25}
                   unit="pm25"
@@ -168,16 +201,6 @@ export const DeviceCard = ({
               </ReadingContainer>
             )}
           </ReadingGrid>
-          {deviceSensors.includes('temperature') && (
-            <ReadingContainer pr="s16" style={{ flexBasis: '15%' }}>
-              <Reading
-                value={latestData?.reading?.temperature}
-                unit="temperature"
-                isLoading={isLoadingMainContent}
-                showTitle={true}
-              />
-            </ReadingContainer>
-          )}
         </Flex>
       </TopCard>
       <TimePeriodReadings>
@@ -186,69 +209,18 @@ export const DeviceCard = ({
             {options.timePeriod}
           </Caption2Light>
         </Flex>
-        {deviceSensors.includes('humidity') && (
-          <ReadingContainer
-            flexDirection="column"
-            pt="s16"
-            style={{ flexBasis: '15%' }}
-          >
+        {options.valueType && deviceSensors.includes(options.valueType) && (
+          <ReadingContainer flexDirection="column" pt="s16" pr="s16">
             <Reading
-              value={statisticsData?.statistics.humidity.max}
-              unit="humidity"
+              value={statisticsData?.statistics[options.valueType].max}
+              unit={options.valueType}
               variant="max"
               sizeVariant="small"
               isLoading={isLoadingReadings}
             />
             <Reading
-              value={statisticsData?.statistics.humidity.min}
-              unit="humidity"
-              variant="min"
-              sizeVariant="small"
-              isLoading={isLoadingReadings}
-            />
-          </ReadingContainer>
-        )}
-        {deviceSensors.includes('pressure') && (
-          <ReadingContainer
-            flexDirection="column"
-            pt="s16"
-            style={{ flexBasis: '20%' }}
-          >
-            <Flex flexDirection="column">
-              <Reading
-                value={statisticsData?.statistics.pressure.max}
-                unit="pressure"
-                variant="max"
-                sizeVariant="small"
-                isLoading={isLoadingReadings}
-              />
-              <Reading
-                value={statisticsData?.statistics.pressure.min}
-                unit="pressure"
-                variant="min"
-                sizeVariant="small"
-                isLoading={isLoadingReadings}
-              />
-            </Flex>
-          </ReadingContainer>
-        )}
-        {deviceSensors.includes('temperature') && (
-          <ReadingContainer
-            flexDirection="column"
-            pt="s16"
-            pr="s16"
-            style={{ flexBasis: '15%' }}
-          >
-            <Reading
-              value={statisticsData?.statistics.temperature.max}
-              unit="temperature"
-              variant="max"
-              sizeVariant="small"
-              isLoading={isLoadingReadings}
-            />
-            <Reading
-              value={statisticsData?.statistics.temperature.min}
-              unit="temperature"
+              value={statisticsData?.statistics[options.valueType].min}
+              unit={options.valueType}
               variant="min"
               sizeVariant="small"
               isLoading={isLoadingReadings}
