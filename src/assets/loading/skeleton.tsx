@@ -10,12 +10,14 @@ type SkeletonVariant =
   | 'Body'
   | 'PageTitle'
   | 'Caption2'
-  | 'Caption3';
+  | 'Caption3'
+  | 'custom';
 
 interface SkeletonProps {
   variant: SkeletonVariant;
   width?: Space;
   style?: CSSProperties;
+  customHeight?: Space;
 }
 
 const StyledSkeleton = styled.div`
@@ -55,6 +57,8 @@ const getHeight = (variant: SkeletonVariant) => {
       return '1.4rem';
     case 'Caption3':
       return '1.2rem';
+    default:
+      return '2.4rem';
   }
 };
 
@@ -62,6 +66,7 @@ export const Skeleton = ({
   variant,
   width,
   style,
+  customHeight,
   ...props
 }: SkeletonProps) => {
   const { spacings } = useTheme();
@@ -69,7 +74,10 @@ export const Skeleton = ({
     <StyledSkeleton
       style={{
         width: width ? spacings[width] : '100%',
-        height: getHeight(variant),
+        height:
+          variant === 'custom' && customHeight
+            ? spacings[customHeight]
+            : getHeight(variant),
         ...style,
       }}
       {...props}

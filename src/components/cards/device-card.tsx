@@ -137,6 +137,7 @@ export const DeviceCard = ({
                   unit="humidity"
                   isLoading={isLoadingMainContent}
                   showTitle={true}
+                  skeletonWidth="s48"
                 />
               </ReadingContainer>
             )}
@@ -147,6 +148,7 @@ export const DeviceCard = ({
                   unit="pressure"
                   isLoading={isLoadingMainContent}
                   showTitle={true}
+                  skeletonWidth="s80"
                 />
               </ReadingContainer>
             )}
@@ -157,6 +159,7 @@ export const DeviceCard = ({
                   unit="co2"
                   isLoading={isLoadingMainContent}
                   showTitle={true}
+                  skeletonWidth="s64"
                 />
               </ReadingContainer>
             )}
@@ -167,6 +170,7 @@ export const DeviceCard = ({
                   unit="temperature"
                   isLoading={isLoadingMainContent}
                   showTitle={true}
+                  skeletonWidth="s48"
                 />
               </ReadingContainer>
             )}
@@ -177,6 +181,7 @@ export const DeviceCard = ({
                   unit="nox"
                   isLoading={isLoadingMainContent}
                   showTitle={true}
+                  skeletonWidth="s40"
                 />
               </ReadingContainer>
             )}
@@ -187,6 +192,7 @@ export const DeviceCard = ({
                   unit="voc"
                   isLoading={isLoadingMainContent}
                   showTitle={true}
+                  skeletonWidth="s48"
                 />
               </ReadingContainer>
             )}
@@ -197,6 +203,7 @@ export const DeviceCard = ({
                   unit="pm25"
                   isLoading={isLoadingMainContent}
                   showTitle={true}
+                  skeletonWidth="s64"
                 />
               </ReadingContainer>
             )}

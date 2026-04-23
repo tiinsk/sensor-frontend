@@ -4,14 +4,17 @@ import { IconColor, IconType, MdiIcon } from '../mdi-icon';
 import { getUnit, getUnitTitle, Unit } from '../../../utils/unit';
 import {
   BodyBoldStyle,
+  BodyStyle,
   Caption2Style,
   Caption3Style,
+  H3Style,
 } from '../../../theme/typography';
 import { Skeleton } from '../../../assets/loading/skeleton';
 import { CustomIcon, CustomIconType } from '../custom-icon';
+import { Space } from '../../../theme';
 
 type ReadingVariant = 'default' | 'min' | 'max' | 'avg';
-type ReadingSizeVariant = 'default' | 'small';
+type ReadingSizeVariant = 'default' | 'small' | 'large';
 
 interface ReadingProps {
   variant?: ReadingVariant;
@@ -21,24 +24,45 @@ interface ReadingProps {
   isLoading?: boolean;
   style?: CSSProperties;
   showTitle?: boolean;
+  skeletonWidth?: Space;
 }
 
 const StyledValue = styled.p`
-  ${Caption3Style};
   margin-right: ${({ theme }) => theme.spacings.s4};
 `;
 
 const StyledUnit = styled.p`
-  ${Caption3Style};
+  white-space: nowrap;
 `;
 
-const DefaultStyle = ({ theme }: { theme: DefaultTheme }) => css`
+const SmallStyle = css`
+  ${StyledValue} {
+    ${Caption3Style};
+  }
+
+  ${StyledUnit} {
+    ${Caption3Style};
+  }
+`;
+
+const DefaultStyle = css`
   ${StyledValue} {
     ${BodyBoldStyle};
   }
 
   ${StyledUnit} {
     ${Caption2Style};
+  }
+  padding: ${({ theme }) => theme.spacings.s8} 0;
+`;
+
+const LargeStyle = css`
+  ${StyledValue} {
+    ${H3Style};
+  }
+
+  ${StyledUnit} {
+    ${BodyStyle};
   }
   padding: ${({ theme }) => theme.spacings.s8} 0;
 `;
@@ -52,9 +76,10 @@ const StyledReading = styled.div<{
 
   padding: ${({ theme }) => theme.spacings.s2}
     ${({ theme }) => theme.spacings.s4};
-  width: 100%;
 
   ${({ $sizeVariant }) => $sizeVariant === 'default' && DefaultStyle};
+  ${({ $sizeVariant }) => $sizeVariant === 'small' && SmallStyle};
+  ${({ $sizeVariant }) => $sizeVariant === 'large' && LargeStyle};
 `;
 
 const StyledTitle = styled.div`
@@ -113,6 +138,7 @@ export const Reading = ({
   unit,
   isLoading,
   showTitle = false,
+  skeletonWidth = 's48',
   ...props
 }: ReadingProps) => {
   const aggregateIconType = getIconType(variant);
@@ -133,13 +159,17 @@ export const Reading = ({
           />
         )}
         {customIconType && variant === 'default' && (
-          <CustomIcon type={customIconType} size="s16" color="secondary" />
+          <CustomIcon
+            type={customIconType}
+            size={sizeVariant === 'large' ? 's24' : 's16'}
+            color="secondary"
+          />
         )}
         {variant === 'avg' && <AvgText>Avg</AvgText>}
         {isLoading ? (
           <Skeleton
             variant={sizeVariant === 'default' ? 'Body' : 'Caption3'}
-            width={sizeVariant === 'default' ? 's64' : 's48'}
+            width={skeletonWidth}
           />
         ) : (
           <>
