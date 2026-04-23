@@ -2,7 +2,6 @@ import React from 'react';
 import styled, { css, DefaultTheme } from 'styled-components';
 import { IconType, MdiIcon } from '../mdi-icon';
 import { Caption2 } from '../typography';
-import { Box } from '../box';
 import { Skeleton } from '../../../assets/loading/skeleton';
 
 type TagVariant = 'default' | 'error' | 'grey';

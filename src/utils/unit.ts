@@ -21,7 +21,7 @@ export const getUnit = (unit: Unit): string | undefined => {
     case 'nox':
       return undefined;
     case 'pm25':
-      return 'μg/m3';
+      return 'μg/㎥';
     case 'voc':
       return undefined;
     case 'airQuality':
