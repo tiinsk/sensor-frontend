@@ -21,15 +21,16 @@ function progressStroke(theme: DefaultTheme, value: number): string {
 
   const SEGMENT_SIZE = 33;
   const MAX_SEGMENT_INDEX = 2;
+  const normalizedValue = value - 1;
 
   const segment = Math.min(
     MAX_SEGMENT_INDEX,
-    Math.floor((value - 1) / SEGMENT_SIZE)
+    Math.floor(normalizedValue / SEGMENT_SIZE)
   );
   const segmentStart = segment * SEGMENT_SIZE;
   const segmentSpan =
     segment === MAX_SEGMENT_INDEX ? 100 - segmentStart : SEGMENT_SIZE;
-  const percentage = ((value - segmentStart) / segmentSpan) * 100;
+  const percentage = ((normalizedValue - segmentStart) / segmentSpan) * 100;
 
   const from = theme.colors.score.fill[segment];
   const to = theme.colors.score.fill[segment + 1];
