@@ -98,7 +98,7 @@ const StyledGraphCard = styled.div`
 `;
 
 const StyledGraphContainer = styled.div`
-  height: 200px;
+  height: 230px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.borders.secondary};
 `;
 
@@ -181,7 +181,16 @@ export const Device = () => {
         deviceId: id,
         startTime: graphStartTime,
         endTime: graphEndTime,
-        types: ['temperature', 'humidity', 'pressure'],
+        types: [
+          'temperature',
+          'humidity',
+          'pressure',
+          'co2',
+          'nox',
+          'pm25',
+          'voc',
+          'airQuality',
+        ],
         level: options.level,
       });
 
@@ -421,6 +430,7 @@ export const Device = () => {
                       showAxis={deviceSensors.length === 1}
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
+                      showTitle={true}
                     />
                   </GraphSizeWrapper>
                 )}
@@ -438,6 +448,7 @@ export const Device = () => {
                       showAxis={!deviceSensors.includes('pressure')}
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
+                      showTitle={true}
                     />
                   </GraphSizeWrapper>
                 )}
@@ -454,6 +465,92 @@ export const Device = () => {
                       valueType="pressure"
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
+                      showTitle={true}
+                    />
+                  </GraphSizeWrapper>
+                )}
+              </StyledGraphContainer>
+            )}
+            {deviceSensors.includes('airQuality') && (
+              <StyledGraphContainer>
+                {id && readingData?.airQuality && (
+                  <GraphSizeWrapper>
+                    <Graph
+                      deviceId={id}
+                      data={readingData.airQuality}
+                      options={options}
+                      valueType="airQuality"
+                      hoveredDate={hoveredDate}
+                      onHover={date => setHoveredDate(date)}
+                      showTitle={true}
+                    />
+                  </GraphSizeWrapper>
+                )}
+              </StyledGraphContainer>
+            )}
+            {deviceSensors.includes('co2') && (
+              <StyledGraphContainer>
+                {id && readingData?.co2 && (
+                  <GraphSizeWrapper>
+                    <Graph
+                      deviceId={id}
+                      data={readingData.co2}
+                      options={options}
+                      valueType="co2"
+                      hoveredDate={hoveredDate}
+                      onHover={date => setHoveredDate(date)}
+                      showTitle={true}
+                    />
+                  </GraphSizeWrapper>
+                )}
+              </StyledGraphContainer>
+            )}
+            {deviceSensors.includes('pm25') && (
+              <StyledGraphContainer>
+                {id && readingData?.pm25 && (
+                  <GraphSizeWrapper>
+                    <Graph
+                      deviceId={id}
+                      data={readingData.pm25}
+                      options={options}
+                      valueType="pm25"
+                      hoveredDate={hoveredDate}
+                      onHover={date => setHoveredDate(date)}
+                      showTitle={true}
+                    />
+                  </GraphSizeWrapper>
+                )}
+              </StyledGraphContainer>
+            )}
+            {deviceSensors.includes('voc') && (
+              <StyledGraphContainer>
+                {id && readingData?.voc && (
+                  <GraphSizeWrapper>
+                    <Graph
+                      deviceId={id}
+                      data={readingData.voc}
+                      options={options}
+                      valueType="voc"
+                      hoveredDate={hoveredDate}
+                      onHover={date => setHoveredDate(date)}
+                      showTitle={true}
+                    />
+                  </GraphSizeWrapper>
+                )}
+              </StyledGraphContainer>
+            )}
+            {deviceSensors.includes('nox') && (
+              <StyledGraphContainer>
+                {id && readingData?.nox && (
+                  <GraphSizeWrapper>
+                    <Graph
+                      deviceId={id}
+                      data={readingData.nox}
+                      options={options}
+                      valueType="nox"
+                      hoveredDate={hoveredDate}
+                      onHover={date => setHoveredDate(date)}
+                      showTitle={true}
                     />
                   </GraphSizeWrapper>
                 )}
