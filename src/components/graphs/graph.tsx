@@ -182,8 +182,8 @@ export const Graph = ({
   // If the graph is flat (all graph values are same, aka min === max), small 10% padding is added to the graph to prevent the area (linear gradient) from flattening to a line.
   const isFlatGraph = min === max;
   const yFlatPadding = isFlatGraph ? Math.abs(min) * FLAT_GRAPH_PADDING : 0;
-  const yGraphMin = isFlatGraph ? min - yFlatPadding : min;
-  const yGraphMax = isFlatGraph ? max + yFlatPadding : max;
+  const yGraphMin = min - yFlatPadding;
+  const yGraphMax = max + yFlatPadding;
 
   //Line max will be used when color steps for line and area are calculated. If the avg value max is smaller than the graph y-axel max value, this will prevent the graph from looking too opaque and light.
   const lineMax = Math.max(...data?.map(r => r.avg || 0));
