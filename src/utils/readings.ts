@@ -13,15 +13,27 @@ const getMinMax = (
   return devices.reduce(
     (acc: MinMax, curr: DeviceResponse) => {
       const deviceReadings = readings[curr.id]?.values;
-      const deviceMax = deviceReadings
-        ? Math.max(...deviceReadings?.map(r => r.max || 0))
+      const hasReadings = !!deviceReadings?.length;
+      const deviceMax = hasReadings
+        ? Math.max(...deviceReadings.map(r => r.max || 0))
         : undefined;
-      const deviceMin = deviceReadings
-        ? Math.min(...deviceReadings?.map(r => r.min || 0))
+      const deviceMin = hasReadings
+        ? Math.min(...deviceReadings.map(r => r.min || 0))
         : undefined;
+
       return {
-        max: acc.max && deviceMax && acc.max > deviceMax ? acc.max : deviceMax,
-        min: acc.min && deviceMin && acc.min < deviceMin ? acc.min : deviceMin,
+        max:
+          deviceMax === undefined
+            ? acc.max
+            : acc.max === undefined
+              ? deviceMax
+              : Math.max(acc.max, deviceMax),
+        min:
+          deviceMin === undefined
+            ? acc.min
+            : acc.min === undefined
+              ? deviceMin
+              : Math.min(acc.min, deviceMin),
       };
     },
     { max: undefined, min: undefined }
