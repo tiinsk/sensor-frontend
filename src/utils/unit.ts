@@ -8,6 +8,17 @@ export type Unit =
   | 'voc'
   | 'airQuality';
 
+export const units: Unit[] = [
+  'temperature',
+  'humidity',
+  'pressure',
+  'co2',
+  'nox',
+  'pm25',
+  'voc',
+  'airQuality',
+];
+
 export const getUnit = (unit: Unit): string | undefined => {
   switch (unit) {
     case 'temperature':

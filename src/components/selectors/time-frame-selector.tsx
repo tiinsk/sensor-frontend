@@ -11,6 +11,7 @@ import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
 import { getTimeFrame } from './time-frames';
 import { saveStorageTimeFrame } from '../../storage/time-frame';
 import { getDefaultTimeLevel } from '../../utils/time-frame';
+import { getUnitTitle, units } from '../../utils/unit';
 
 export type TimePeriod = Extract<
   DateTimeUnit,
@@ -141,6 +142,13 @@ export const TimeFrameSelector = ({
     onOptionsChange({ offsetFromNow: options.offsetFromNow + direction });
   };
 
+  const unitOptions = units.map(u => {
+    return {
+      value: u,
+      label: getUnitTitle(u) || '',
+    };
+  });
+
   const rightSide = (
     <>
       {selectors?.includes('timePeriod') && (
@@ -166,11 +174,7 @@ export const TimeFrameSelector = ({
           label="Sensor type"
           onSelect={value => onOptionsChange({ valueType: value as ValueType })}
           initialValue={options.valueType}
-          options={[
-            { value: 'temperature', label: 'Temperature' },
-            { value: 'humidity', label: 'Humidity' },
-            { value: 'pressure', label: 'Pressure' },
-          ]}
+          options={unitOptions}
         />
       )}
       {selectors?.includes('timeLevel') && (
