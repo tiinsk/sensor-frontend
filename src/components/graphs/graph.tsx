@@ -17,6 +17,8 @@ import {
   getStartTime,
 } from '../selectors/time-frames';
 import { MinMax } from '../../utils/readings';
+import { getUnitTitle } from '../../utils/unit';
+import { Caption2Style } from '../../theme/typography';
 
 export const MIN_TEMP = -30;
 export const MAX_TEMP = 90;
@@ -50,6 +52,27 @@ const getAxisTicks = (timePeriod: TimePeriod) => {
   }
 };
 
+const getGraphColorScale = (valueType: ValueType) => {
+  switch (valueType) {
+    case 'temperature':
+      return [MIN_TEMP, MAX_TEMP];
+    case 'humidity':
+      return [0, 1];
+    case 'pressure':
+      return [0, 1];
+    case 'co2':
+      return [600, 2100];
+    case 'nox':
+      return [0, 1];
+    case 'pm25':
+      return [5, 55];
+    case 'voc':
+      return [0, 1];
+    case 'airQuality':
+      return [0, 100];
+  }
+};
+
 interface GraphProps {
   deviceId: string;
   data: Reading[];
@@ -59,7 +82,17 @@ interface GraphProps {
   onHover: (date?: string) => void;
   showAxis?: boolean;
   minMax?: MinMax;
+  showTitle?: boolean;
 }
+
+const GraphTitle = styled.div`
+  ${Caption2Style};
+  padding: ${({ theme }) => theme.spacings.s8};
+  color: ${({ theme }) => theme.colors.typography.secondary};
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
 
 const Every2ndHourTick = ({
   $startsFromHalfHour,
@@ -162,6 +195,7 @@ export const Graph = ({
   onHover,
   minMax,
   showAxis = true,
+  showTitle = false,
 }: GraphProps) => {
   const { colors } = useTheme();
   const gx = useRef<SVGGElement>(null);
@@ -192,7 +226,7 @@ export const Graph = ({
     left: 0,
     bottom: 20,
     right: 0,
-    top: 20,
+    top: showTitle ? 50 : 20,
   };
 
   const x = d3.scaleTime(
@@ -205,7 +239,7 @@ export const Graph = ({
     [height - margins.bottom, margins.top]
   );
 
-  const yColor = d3.scaleLinear([MIN_TEMP, MAX_TEMP], [1, 0]);
+  const yColor = d3.scaleLinear(getGraphColorScale(valueType), [1, 0]);
   const colorInterpolation = d3.interpolateRgbBasis(
     colors.graphs.lines[valueType]
   );
@@ -263,6 +297,7 @@ export const Graph = ({
 
   return (
     <>
+      {showTitle && <GraphTitle>{getUnitTitle(valueType)}</GraphTitle>}
       <svg
         width={width}
         height={height}
