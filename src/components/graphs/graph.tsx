@@ -21,6 +21,7 @@ import { MinMax } from '../../utils/readings';
 export const MIN_TEMP = -30;
 export const MAX_TEMP = 90;
 const SMALL_GRAPH_LIMIT = 500;
+const FLAT_GRAPH_PADDING = 0.1;
 
 const formatAxes = (date: Date, timePeriod: TimePeriod) => {
   const dateTime = DateTime.fromJSDate(date);
@@ -178,6 +179,12 @@ export const Graph = ({
   const max = minMax?.max || Math.max(...data?.map(r => r.max || 0));
   const min = minMax?.min || Math.min(...data?.map(r => r.min || 0));
 
+  // If the graph is flat (all graph values are same, aka min === max), small 10% padding is added to the graph to prevent the area (linear gradient) from flattening to a line.
+  const isFlatGraph = min === max;
+  const yFlatPadding = isFlatGraph ? Math.abs(min) * FLAT_GRAPH_PADDING : 0;
+  const yGraphMin = isFlatGraph ? min - yFlatPadding : min;
+  const yGraphMax = isFlatGraph ? max + yFlatPadding : max;
+
   //Line max will be used when color steps for line and area are calculated. If the avg value max is smaller than the graph y-axel max value, this will prevent the graph from looking too opaque and light.
   const lineMax = Math.max(...data?.map(r => r.avg || 0));
 
@@ -193,14 +200,17 @@ export const Graph = ({
     [margins.left, width - margins.right]
   );
 
-  const y = d3.scaleLinear([min, max], [height - margins.bottom, margins.top]);
+  const y = d3.scaleLinear(
+    [yGraphMin, yGraphMax],
+    [height - margins.bottom, margins.top]
+  );
 
   const yColor = d3.scaleLinear([MIN_TEMP, MAX_TEMP], [1, 0]);
   const colorInterpolation = d3.interpolateRgbBasis(
     colors.graphs.lines[valueType]
   );
 
-  const steps = d3.ticks(lineMax, min, 10);
+  const steps = d3.ticks(lineMax, yGraphMin, 10);
 
   const colorSteps = steps.map((s, i) => ({
     color: colorInterpolation(yColor(s)),
@@ -215,7 +225,7 @@ export const Graph = ({
 
   const area = d3.area<Reading>(
     d => x(new Date(d.timestamp)),
-    () => y(min) + margins.bottom,
+    () => y(yGraphMin) + margins.bottom,
     d => y(d.avg || 0)
   );
 
@@ -320,7 +330,7 @@ export const Graph = ({
         {hoverBlocks.map((d, i) => (
           <HoverableRect
             key={i}
-            y={y(max) - margins.top}
+            y={y(yGraphMax) - margins.top}
             x={x(d) - tickWidth / 2}
             height={height}
             width={tickWidth > 0 ? tickWidth : 0}
@@ -334,7 +344,7 @@ export const Graph = ({
           x1={0}
           x2={0}
           y1={y(lineMax)}
-          y2={y(min)}
+          y2={y(yGraphMin)}
         >
           {colorSteps.map((colorStep, i) => (
             <stop
@@ -350,7 +360,7 @@ export const Graph = ({
           x1={0}
           x2={0}
           y1={y(lineMax)}
-          y2={y(min)}
+          y2={y(yGraphMin)}
         >
           {colorSteps.map((colorStep, i) => (
             <stop
