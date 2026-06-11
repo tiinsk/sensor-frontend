@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/routes';
 import { DeviceResponse, Reading as ReadingType } from '../api/types';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { LatestReadingResponse, Statistics } from '../api/types';
 import { Flex } from '../components/styled/flex';
 import { H2 } from '../components/styled/typography';

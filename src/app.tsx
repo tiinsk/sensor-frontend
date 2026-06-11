@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router';
 import WebFont from 'webfontloader';
 
 import { Home } from './containers/home';
@@ -48,12 +43,10 @@ const App = () => {
     <ThemeContextProvider>
       <ThemeProvider>
         <GlobalStyle />
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/*" element={<LoggedInRoutes />} />
-          </Routes>
-        </Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/*" element={<LoggedInRoutes />} />
+        </Routes>
       </ThemeProvider>
     </ThemeContextProvider>
   );
@@ -72,9 +65,9 @@ const LoggedInRoutes = () => {
         <TopNav />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="devices/:id" Component={Device} />
-          <Route path="map" Component={Map} />
-          <Route path="admin" Component={Admin} />
+          <Route path="devices/:id" element={<Device />} />
+          <Route path="map" element={<Map />} />
+          <Route path="admin" element={<Admin />} />
         </Routes>
       </SnackbarProvider>
     </StyledLoggedInRoutes>

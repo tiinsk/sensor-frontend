@@ -1,13 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { test } from 'vitest';
+import { render } from '@testing-library/react';
+import { BrowserRouter } from 'react-router';
+import { test, vi } from 'vitest';
 import App from './app';
 
+vi.mock('webfontloader', () => ({
+  default: { load: vi.fn() },
+}));
+
 test('renders without crashing', () => {
-  const root = ReactDOM.createRoot(document.createElement('div'));
-  root.render(
-    <React.StrictMode>
+  render(
+    <BrowserRouter>
       <App />
-    </React.StrictMode>
+    </BrowserRouter>
   );
 });

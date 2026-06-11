@@ -9,7 +9,7 @@ import {
 import { Caption2Light, H4 } from '../styled/typography';
 import { Reading } from '../styled/readings';
 import { Flex } from '../styled/flex';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { TimeFrameOptions } from '../selectors/time-frame-selector';
 import { Graph } from '../graphs/graph';
 import { GraphSizeWrapper } from '../graphs/graph-size-wrapper';

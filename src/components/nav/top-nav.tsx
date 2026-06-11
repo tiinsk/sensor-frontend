@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { PageTitle } from '../styled/typography';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Flex } from '../styled/flex';
 import { LinkButton } from '../styled/buttons/link';
 import { RightNav } from './right-nav';

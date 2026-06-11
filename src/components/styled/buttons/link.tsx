@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, type LinkProps } from 'react-router';
 
 import {
   ButtonContent,

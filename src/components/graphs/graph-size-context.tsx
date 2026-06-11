@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 export interface GraphSizeContextValue {
   width: number;
   height: number;
-  rootRef: React.RefObject<HTMLDivElement>;
+  rootRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const GraphSizeContext = React.createContext<GraphSizeContextValue>(
