@@ -1,6 +1,6 @@
-module.exports = {
+export default {
   api: {
-    route: process.env.REACT_APP_API_ROUTE,
-    proxyRoute: process.env.REACT_APP_API_PROXY_ROUTE,
+    route: import.meta.env.VITE_API_ROUTE ?? '',
+    proxyRoute: import.meta.env.VITE_API_PROXY_ROUTE,
   },
 };

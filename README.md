@@ -30,36 +30,35 @@ Raspberry PI runs [node.js app](https://github.com/tiinsk/sensor-data-sender) th
 
 2. **Environment variables**
 
-   Create a `.env` file in the project root (or copy from an example). For local development you need the API PROXY URL. The app can use either:
-   - **Local API URL**: Set `REACT_APP_API_PROXY_ROUTE` to your local API URL (e.g. `http://localhost:3000`). The dev server will proxy `/api` requests to that URL. Leave `REACT_APP_API_ROUTE` unset so the app uses the proxy.
-   - **Deployed API URL**: Set `REACT_APP_API_PROXY_ROUTE` to the full API URL (e.g. `https://xxxx.execute-api.<region>.amazonaws.com`). No trailing slash. Leave `REACT_APP_API_ROUTE` unset so the app uses the proxy.
+   Copy `.env.example` to `.env.local` (gitignored) and set your API target.
+
+   For local dev, leave `VITE_API_ROUTE` empty so the app calls `/api` on the dev server. Vite proxies those requests to `VITE_API_PROXY_ROUTE`.
+
+   Common setups:
+
+   - **AWS API** — set `VITE_API_PROXY_ROUTE` to your API Gateway URL (e.g. `https://xxxx.execute-api.<region>.amazonaws.com`). No trailing slash.
+   - **Local SAM API** — run `npm run sam:local` in sensor-api (default port 3001), then set `VITE_API_PROXY_ROUTE=http://localhost:3001`.
 
    See [Environment variables](#environment-variables) for the full list.
 
 3. **Run the app**
 
    ```bash
-   npm start
+   npm run dev
    ```
 
-   Opens [http://localhost:3000](http://localhost:3000). Ensure the [sensor-api](https://github.com/tiinsk/sensor-api) is running (e.g. locally or against a deployed API).
-
-   ```bash
-   PORT=3001 npm start
-   ```
-   Alternatively runs the app in a different port.
-
+   Opens [http://localhost:3000](http://localhost:3000) by default. Use another port with `PORT=3005 npm start` (or `npm run dev`). Restart the dev server after changing `.env.local`.
 
 ## Environment variables
 
-All are optional at build time, but the app needs an API URL to work.
+Vite only exposes variables prefixed with `VITE_` to the app.
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `REACT_APP_API_ROUTE` | For production | API base URL (e.g. `https://xxxx.execute-api.region.amazonaws.com`). Set in Amplify for production builds. No trailing slash. |
-| `REACT_APP_API_PROXY_ROUTE` | For local dev | URL the dev server proxies `/api` to (e.g. `http://localhost:3000`). Used when running `npm start`. |
+| Variable | Required | Description                                                                                                            |
+|----------|----------|------------------------------------------------------------------------------------------------------------------------|
+| `VITE_API_ROUTE` | Production builds | API base URL (e.g. `https://xxxx.execute-api.region.amazonaws.com`). Set in Amplify for production. No trailing slash. |
+| `VITE_API_PROXY_ROUTE` | Local dev | URL the dev server proxies `/api` to (e.g.  `http://localhost:3001`). Used when `VITE_API_ROUTE` is empty.             |
 
-Do not commit `.env` with secrets. Production uses Amplify environment variables only.
+Put local values in `.env.local`. Do not commit secrets. Production uses Amplify environment variables.
 
 ## Deployment (AWS Amplify)
 
@@ -70,25 +69,25 @@ The frontend is deployed with **AWS Amplify Hosting**. The backend (sensor-api) 
 From the sensor-api CDK deploy output, note **ApiUrl** (e.g. `https://xxxx.execute-api.<region>.amazonaws.com`). No trailing slash.
 
 
-### 3. Connect Amplify
+### 2. Connect Amplify
 
 1. In AWS Console go to **AWS Amplify** → **Create new app** → **Host web app**.
 2. Connect your GitHub and select this repository and branch.
 3. Amplify will use `amplify.yml`; you do not need to set build command or output in the Console.
 4. In **Environment variables**, add:
-   - **Key**: `REACT_APP_API_ROUTE`
+   - **Key**: `VITE_API_ROUTE`
    - **Value**: the API Gateway URL from step 1 (no trailing slash).
 5. Save and deploy. Amplify will build and host the app; the URL will look like `https://main.xxxxx.amplifyapp.com`.
 
-### 4. After deploy
+### 3. After deploy
 
-Every push to the connected branch triggers a new build and deploy. To change the API URL, update `REACT_APP_API_ROUTE` in Amplify Console → App settings → Environment variables and redeploy.
+Every push to the connected branch triggers a new build and deploy. To change the API URL, update `VITE_API_ROUTE` in Amplify Console → App settings → Environment variables and redeploy.
 
-## Available Scripts
+## Available scripts
 
 | Command | Description |
 |---------|-------------|
-| `npm start` | Runs the app in development mode at [http://localhost:3006](http://localhost:3006). |
-| `npm run build` | Builds the app for production into the `build` folder. |
-| `npm test` | Runs the test suite. |
-| `npm run eject` | Ejects from Create React App (one-way). |
+| `npm run dev` | Dev server (default port 3000; override with `PORT=3005`). |
+| `npm run build` | Typecheck and production build into `dist/`. |
+| `npm run preview` | Serve the production build locally. |
+| `npm test` | Run tests (Vitest). |

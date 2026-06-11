@@ -1,11 +1,18 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getTimeFrame } from './time-frames';
 import { TimeFrameOptions } from './time-frame-selector';
 import { getDefaultTimeLevel } from '../../utils/time-frame';
 
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
+
 describe('Time frame tests', () => {
   it('Should return previous time frame (timePeriod: month)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
-    Date.prototype.getTimezoneOffset = jest.fn(() => 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
@@ -25,8 +32,9 @@ describe('Time frame tests', () => {
   });
 
   it('Should return current time frame (timePeriod: month)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
-    Date.prototype.getTimezoneOffset = jest.fn(() => 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
@@ -46,8 +54,9 @@ describe('Time frame tests', () => {
   });
 
   it('Should return previous time frame when timezone is not UTC', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
-    Date.prototype.getTimezoneOffset = jest.fn(() => -120);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-120);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
@@ -67,8 +76,9 @@ describe('Time frame tests', () => {
   });
 
   it('Should return current time frame when timezone is not UTC', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
-    Date.prototype.getTimezoneOffset = jest.fn(() => -120);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-120);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
@@ -88,8 +98,9 @@ describe('Time frame tests', () => {
   });
 
   it('Should return previous time frame (timePeriod: day)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
-    Date.prototype.getTimezoneOffset = jest.fn(() => 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'day',
@@ -109,8 +120,9 @@ describe('Time frame tests', () => {
   });
 
   it('Should return current time frame (timePeriod: day)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
-    Date.prototype.getTimezoneOffset = jest.fn(() => 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'day',
@@ -130,8 +142,9 @@ describe('Time frame tests', () => {
   });
 
   it('Should return previous time frame (timePeriod: week)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
-    Date.prototype.getTimezoneOffset = jest.fn(() => 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'week',
@@ -151,8 +164,9 @@ describe('Time frame tests', () => {
   });
 
   it('Should return current time frame (timePeriod: week)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z')); // = THU
-    Date.prototype.getTimezoneOffset = jest.fn(() => 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z')); // = THU
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'week',
@@ -172,8 +186,9 @@ describe('Time frame tests', () => {
   });
 
   it('Should return previous time frame (timePeriod: year)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
-    Date.prototype.getTimezoneOffset = jest.fn(() => 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'year',
@@ -193,8 +208,9 @@ describe('Time frame tests', () => {
   });
 
   it('Should return current time frame (timePeriod: year)', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-12-21T13:30Z'));
-    Date.prototype.getTimezoneOffset = jest.fn(() => 0);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'year',

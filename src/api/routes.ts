@@ -12,7 +12,7 @@ import {
   TimeLevel,
   ValueType,
 } from '../components/selectors/time-frame-selector';
-const { DateTime } = require('luxon');
+import { DateTime } from 'luxon';
 
 const getTimeZone = () => {
   return DateTime.fromJSDate(new Date()).get('offset') / 60;
