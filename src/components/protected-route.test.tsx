@@ -3,7 +3,7 @@ import { MemoryRouter, Route, Routes } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { apiRequest } from '../api/client';
 import { authStore } from '../auth-store';
-import { futureExp, makeTestJwt, pastExp } from '../test/jwt-fixture';
+import { longLivedExp, makeTestJwt, pastExp } from '../test/jwt-fixture';
 import { ProtectedRoute } from './protected-route';
 
 const renderWithRoute = (initialPath: string) =>
@@ -32,7 +32,7 @@ describe('ProtectedRoute', () => {
   });
 
   it('renders children when authenticated', () => {
-    authStore.signIn(makeTestJwt({ exp: futureExp() }));
+    authStore.signIn(makeTestJwt({ exp: longLivedExp() }));
 
     renderWithRoute('/protected-route');
 
@@ -57,7 +57,7 @@ describe('ProtectedRoute', () => {
   });
 
   it('redirects to login after an authenticated API call returns 401', async () => {
-    authStore.signIn(makeTestJwt({ exp: futureExp() }));
+    authStore.signIn(makeTestJwt({ exp: longLivedExp() }));
 
     renderWithRoute('/protected-route');
 

@@ -9,4 +9,7 @@ export const makeTestJwt = (payload: Record<string, unknown>): string => {
 
 export const futureExp = (): number => Math.floor(Date.now() / 1000) + 3600;
 
+export const longLivedExp = (): number =>
+  Math.floor(Date.now() / 1000) + 45 * 24 * 60 * 60;
+
 export const pastExp = (): number => Math.floor(Date.now() / 1000) - 3600;

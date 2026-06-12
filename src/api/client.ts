@@ -2,6 +2,7 @@ import Qs from 'qs';
 
 import { authStore } from '../auth-store';
 import config from '../config';
+import { shouldExtendSession } from '../utils/jwt';
 
 export class ApiError extends Error {
   status: number;
@@ -44,11 +45,33 @@ const parseErrorMessage = (text: string): string => {
 const jsonBody = (payload?: unknown): string | undefined =>
   payload !== undefined ? JSON.stringify(payload) : undefined;
 
+const extendSessionIfNeeded = async (path: string): Promise<void> => {
+  if (path === '/session/extend') {
+    return;
+  }
+
+  const token = authStore.getToken();
+  if (!token || !shouldExtendSession(token)) {
+    return;
+  }
+
+  try {
+    await authStore.extendSession();
+  } catch {
+    // Continue with the current token if renewal fails.
+  }
+};
+
 export const apiRequest = async <T>(
   path: string,
   options: ApiRequestOptions = {}
 ): Promise<T> => {
   const { params, authenticated = true, ...fetchOptions } = options;
+
+  if (authenticated) {
+    await extendSessionIfNeeded(path);
+  }
+
   const token = authenticated ? authStore.getToken() : null;
 
   const headers: Record<string, string> = {

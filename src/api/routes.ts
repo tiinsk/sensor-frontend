@@ -6,7 +6,7 @@ import {
   ReadingsResponse,
   StatisticsResponse,
 } from './types';
-import { api } from './client';
+import { api } from './index';
 import {
   TimeLevel,
   ValueType,
@@ -25,6 +25,8 @@ interface ReadingParams extends TimeParams {
 const routes = {
   login: (payload: { username: string; password: string }) =>
     api.post<{ token: string }>({ route: '/login', payload }, false),
+  extendSession: () =>
+    api.post<{ token: string }>({ route: '/session/extend' }),
   getAllLatest: () =>
     api.get<ArrayResponse<LatestReadingResponse>>({
       route: `/latest`,

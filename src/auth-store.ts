@@ -1,3 +1,5 @@
+import api from './api/routes';
+
 const STORAGE_TOKEN = 'auth';
 
 export interface AuthSnapshot {
@@ -17,6 +19,7 @@ const emit = () => {
 };
 
 let cachedSnapshot: AuthSnapshot = readSnapshot();
+let extendPromise: Promise<void> | null = null;
 
 export const authStore = {
   subscribe: (listener: Listener): (() => void) => {
@@ -36,5 +39,18 @@ export const authStore = {
   signOut: (): void => {
     localStorage.removeItem(STORAGE_TOKEN);
     emit();
+  },
+
+  extendSession: (): Promise<void> => {
+    if (!extendPromise) {
+      extendPromise = (async () => {
+        const { token } = await api.extendSession();
+        authStore.signIn(token);
+      })().finally(() => {
+        extendPromise = null;
+      });
+    }
+
+    return extendPromise;
   },
 };

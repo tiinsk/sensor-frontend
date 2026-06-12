@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import api from './api/routes';
 import { authStore } from './auth-store';
 
 describe('authStore', () => {
@@ -36,5 +37,39 @@ describe('authStore', () => {
     unsubscribe();
 
     expect(listener).toHaveBeenCalledTimes(2);
+  });
+
+  describe('extendSession', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('saves the renewed token', async () => {
+      vi.spyOn(api, 'extendSession').mockResolvedValueOnce({
+        token: 'renewed-token',
+      });
+
+      await authStore.extendSession();
+
+      expect(api.extendSession).toHaveBeenCalledTimes(1);
+      expect(authStore.getToken()).toBe('renewed-token');
+    });
+
+    it('deduplicates concurrent calls', async () => {
+      vi.spyOn(api, 'extendSession').mockImplementation(
+        () =>
+          new Promise(resolve =>
+            setTimeout(() => resolve({ token: 'renewed-token' }), 50)
+          )
+      );
+
+      await Promise.all([
+        authStore.extendSession(),
+        authStore.extendSession(),
+      ]);
+
+      expect(api.extendSession).toHaveBeenCalledTimes(1);
+      expect(authStore.getToken()).toBe('renewed-token');
+    });
   });
 });
