@@ -1,9 +1,9 @@
 import React, { FormEvent, useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 import api from '../api/routes';
-import { setJWTToken } from '../storage/auth';
+import { useAuth } from '../contexts/auth-context';
 import { Button } from '../components/styled/buttons';
 import { LoginIcon } from '../assets/icons/login-icon';
 import { Input, StyledError } from '../components/styled/inputs/input';
@@ -62,6 +62,8 @@ export const Login = () => {
     message: string;
   } | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { signIn } = useAuth();
 
   const onLogin = async (event: FormEvent) => {
     event.preventDefault();
@@ -71,9 +73,12 @@ export const Login = () => {
     });
     if (response.error) {
       setError(response.error);
-    } else {
-      setJWTToken(response.data.token);
-      navigate('/', { replace: true });
+    } else if (response.data?.token) {
+      signIn(response.data.token);
+      const from =
+        (location.state as { from?: { pathname?: string } } | null)?.from
+          ?.pathname ?? '/';
+      navigate(from, { replace: true });
     }
   };
 

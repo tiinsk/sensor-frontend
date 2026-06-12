@@ -6,8 +6,8 @@ import { Button } from '../styled/buttons';
 import { Toggle } from '../styled/inputs/toggle';
 import { useThemeContext } from '../../contexts/theme-context';
 import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
-import { removeJWTToken } from '../../storage/auth';
 import { useNavigate } from 'react-router';
+import { useAuth } from '../../contexts/auth-context';
 import { LinkButton } from '../styled/buttons/link';
 import { Blueprint } from '../../assets/icons/blueprint';
 
@@ -32,11 +32,12 @@ const ThemeSection = styled.div`
 
 export const RightNav = ({ isMobile }: { isMobile: boolean }) => {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const { theme, changeTheme } = useThemeContext();
   const { setOpen } = useRightDrawerContext();
 
   const onLogout = () => {
-    removeJWTToken();
+    signOut();
     navigate('/login', { replace: true });
   };
 

@@ -1,8 +1,7 @@
 import Qs from 'qs';
 import axios, { AxiosError } from 'axios';
-import { FORCE_RERENDER } from '../app';
 
-import { getJWTToken, removeJWTToken } from '../storage/auth';
+import { authStore } from '../auth-store';
 import { PostResponse } from './types';
 import config from '../config';
 
@@ -23,7 +22,7 @@ export const get = async <DataType>(
     const response = await instance.get<DataType>(params.route, {
       url: params.route,
       headers: {
-        Authorization: `Bearer ${getJWTToken()}`,
+        Authorization: `Bearer ${authStore.getToken() ?? ''}`,
       },
       data: params.payload,
       params: params.params,
@@ -34,10 +33,9 @@ export const get = async <DataType>(
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      const isUnauthorized = error.response?.data.statusCode === 401;
+      const isUnauthorized = error.response?.status === 401;
       if (isUnauthorized) {
-        removeJWTToken();
-        FORCE_RERENDER();
+        authStore.signOut();
       }
     }
     console.error(error);
@@ -56,7 +54,7 @@ export const post = async <DataType>(
         ...(authenticated
           ? {
               headers: {
-                authorization: getJWTToken(),
+                authorization: authStore.getToken() ?? '',
               },
             }
           : {}),
@@ -69,10 +67,9 @@ export const post = async <DataType>(
     return { data: response.data, error: undefined };
   } catch (error) {
     if (error instanceof AxiosError) {
-      const isUnauthorized = error.response?.data.statusCode === 401;
+      const isUnauthorized = error.response?.status === 401;
       if (isUnauthorized) {
-        removeJWTToken();
-        FORCE_RERENDER();
+        authStore.signOut();
       }
       return {
         data: undefined,
@@ -98,7 +95,7 @@ export const put = async <DataType>(
       params.payload,
       {
         headers: {
-          authorization: getJWTToken(),
+          authorization: authStore.getToken() ?? '',
         },
 
         params: params.params,
@@ -110,10 +107,9 @@ export const put = async <DataType>(
     return { data: response.data, error: undefined };
   } catch (error) {
     if (error instanceof AxiosError) {
-      const isUnauthorized = error.response?.data.statusCode === 401;
+      const isUnauthorized = error.response?.status === 401;
       if (isUnauthorized) {
-        removeJWTToken();
-        FORCE_RERENDER();
+        authStore.signOut();
       }
       return {
         data: undefined,
