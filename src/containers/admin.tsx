@@ -27,21 +27,26 @@ export const Admin = () => {
 
   const fetchMainContent = async () => {
     setLoadingMainContent(true);
-    const [devicesResult, latestResult] = await Promise.all([
-      api.getAllDevices({ includeDisabled: true }),
-      api.getAllLatest(),
-    ]);
+    try {
+      const [devicesResult, latestResult] = await Promise.all([
+        api.getAllDevices({ includeDisabled: true }),
+        api.getAllLatest(),
+      ]);
 
-    const latestByDevice = latestResult?.values.reduce<{
-      [id: string]: LatestReadingResponse | undefined;
-    }>((acc, cur) => {
-      acc[cur.id] = cur;
-      return acc;
-    }, {});
+      const latestByDevice = latestResult.values.reduce<{
+        [id: string]: LatestReadingResponse | undefined;
+      }>((acc, cur) => {
+        acc[cur.id] = cur;
+        return acc;
+      }, {});
 
-    setDevices(devicesResult?.values || []);
-    setLatestData(latestByDevice || {});
-    setLoadingMainContent(false);
+      setDevices(devicesResult.values);
+      setLatestData(latestByDevice);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingMainContent(false);
+    }
   };
 
   useEffect(() => {

@@ -6,16 +6,6 @@ export interface ArrayResponse<DataType> {
   values: DataType[];
 }
 
-export type PostResponse<DataType> =
-  | {
-      data: DataType;
-      error: undefined;
-    }
-  | {
-      data: undefined;
-      error: { statusCode: number; message: string };
-    };
-
 export type DeviceLocation = 'inside' | 'outside';
 export type Sensor = 'humidity' | 'temperature' | 'pressure';
 

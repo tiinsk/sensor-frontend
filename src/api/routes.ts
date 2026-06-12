@@ -3,20 +3,14 @@ import {
   DeviceReadingResponse,
   DeviceResponse,
   LatestReadingResponse,
-  PostResponse,
   ReadingsResponse,
   StatisticsResponse,
 } from './types';
-import * as api from './index';
+import { api } from './client';
 import {
   TimeLevel,
   ValueType,
 } from '../components/selectors/time-frame-selector';
-import { DateTime } from 'luxon';
-
-const getTimeZone = () => {
-  return DateTime.fromJSDate(new Date()).get('offset') / 60;
-};
 
 interface TimeParams {
   startTime: string;
@@ -81,12 +75,9 @@ const routes = {
       params,
     }),
   addDevice: (payload: DeviceResponse) =>
-    api.post<PostResponse<DeviceResponse>>(
-      { route: '/devices', payload },
-      true
-    ),
+    api.post<DeviceResponse>({ route: '/devices', payload }),
   editDevice: (deviceId: string, payload: Omit<DeviceResponse, 'id'>) =>
-    api.put<PostResponse<DeviceResponse>>({
+    api.put<DeviceResponse>({
       route: `/devices/${deviceId}`,
       payload,
     }),

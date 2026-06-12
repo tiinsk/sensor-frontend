@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import styled from 'styled-components';
 import { useLocation, useNavigate } from 'react-router';
 
+import { ApiError } from '../api/client';
 import api from '../api/routes';
 import { useAuth } from '../contexts/auth-context';
 import { Button } from '../components/styled/buttons';
@@ -67,18 +68,18 @@ export const Login = () => {
 
   const onLogin = async (event: FormEvent) => {
     event.preventDefault();
-    const response = await api.login({
-      username,
-      password,
-    });
-    if (response.error) {
-      setError(response.error);
-    } else if (response.data?.token) {
-      signIn(response.data.token);
+    setError(null);
+    try {
+      const { token } = await api.login({ username, password });
+      signIn(token);
       const from =
         (location.state as { from?: { pathname?: string } } | null)?.from
           ?.pathname ?? '/';
       navigate(from, { replace: true });
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError({ statusCode: err.status, message: err.message });
+      }
     }
   };
 

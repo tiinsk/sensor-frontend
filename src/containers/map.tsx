@@ -110,41 +110,51 @@ export const Map = () => {
   const fetchReadings = async () => {
     const { graphStartTime, graphEndTime } = getTimeFrame(options);
     setLoadingReadings(true);
-    const [statisticsResult] = await Promise.all([
-      api.getAllStatistics({
-        startTime: graphStartTime,
-        endTime: graphEndTime,
-      }),
-    ]);
+    try {
+      const [statisticsResult] = await Promise.all([
+        api.getAllStatistics({
+          startTime: graphStartTime,
+          endTime: graphEndTime,
+        }),
+      ]);
 
-    const statisticsByDevice = statisticsResult?.values.reduce<{
-      [id: string]: StatisticsResponse | undefined;
-    }>((acc, cur) => {
-      acc[cur.id] = cur;
-      return acc;
-    }, {});
+      const statisticsByDevice = statisticsResult.values.reduce<{
+        [id: string]: StatisticsResponse | undefined;
+      }>((acc, cur) => {
+        acc[cur.id] = cur;
+        return acc;
+      }, {});
 
-    setStatisticsData(statisticsByDevice || {});
-    setLoadingReadings(false);
+      setStatisticsData(statisticsByDevice);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingReadings(false);
+    }
   };
 
   const fetchMainContent = async () => {
     setLoadingMainContent(true);
-    const [devicesResult, latestResult] = await Promise.all([
-      api.getAllDevices(),
-      api.getAllLatest(),
-    ]);
+    try {
+      const [devicesResult, latestResult] = await Promise.all([
+        api.getAllDevices(),
+        api.getAllLatest(),
+      ]);
 
-    const latestByDevice = latestResult?.values.reduce<{
-      [id: string]: LatestReadingResponse | undefined;
-    }>((acc, cur) => {
-      acc[cur.id] = cur;
-      return acc;
-    }, {});
+      const latestByDevice = latestResult.values.reduce<{
+        [id: string]: LatestReadingResponse | undefined;
+      }>((acc, cur) => {
+        acc[cur.id] = cur;
+        return acc;
+      }, {});
 
-    setLatestData(latestByDevice || {});
-    saveDevicesToStorage(devicesResult?.values || []);
-    setLoadingMainContent(false);
+      setLatestData(latestByDevice);
+      saveDevicesToStorage(devicesResult.values);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingMainContent(false);
+    }
   };
 
   useEffect(() => {

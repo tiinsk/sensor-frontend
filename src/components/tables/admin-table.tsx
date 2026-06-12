@@ -11,6 +11,7 @@ import { H3 } from '../styled/typography';
 import { Button } from '../styled/buttons';
 import { Flex } from '../styled/flex';
 import { SkeletonRows } from './skeleton-rows';
+import { ApiError } from '../../api/client';
 import api from '../../api/routes';
 import { useSnackbarContext } from '../../contexts/snackbar-context';
 
@@ -119,19 +120,19 @@ export const AdminTable = ({
     const device = newDevices[i];
     const isValid = validateNewDevice(i);
     if (isValid) {
-      const result = await api.addDevice({
-        id: device.id,
-        name: device.name,
-        location: {
-          x: parseInt(device.location.x),
-          y: parseInt(device.location.y),
-          type: device.location.type,
-        },
-        disabled: device.disabled,
-        order: parseInt(device.order),
-        type: device.type,
-      });
-      if (!result.error) {
+      try {
+        await api.addDevice({
+          id: device.id,
+          name: device.name,
+          location: {
+            x: parseInt(device.location.x),
+            y: parseInt(device.location.y),
+            type: device.location.type,
+          },
+          disabled: device.disabled,
+          order: parseInt(device.order),
+          type: device.type,
+        });
         setNewDevices(old => [...old.slice(0, i), ...old.slice(i + 1)]);
         setNewOrEdited(old => [...old, device.id]);
         setTimeout(() => {
@@ -144,11 +145,11 @@ export const AdminTable = ({
           isAutoCloseable: true,
           isCloseable: true,
         });
-      } else {
+      } catch (err) {
         openSnackbar({
           variant: 'error',
           title: 'Error in adding new device',
-          body: result.error.message,
+          body: err instanceof ApiError ? err.message : 'Unknown error',
           isAutoCloseable: false,
           isCloseable: true,
         });
@@ -176,18 +177,18 @@ export const AdminTable = ({
     const device = editedDevices[deviceId];
     const isValid = validateEditedDevice(deviceId);
     if (isValid && device) {
-      const result = await api.editDevice(deviceId, {
-        name: device.name,
-        location: {
-          x: parseInt(device.location.x),
-          y: parseInt(device.location.y),
-          type: device.location.type,
-        },
-        disabled: device.disabled,
-        order: parseInt(device.order),
-        type: device.type,
-      });
-      if (!result.error) {
+      try {
+        await api.editDevice(deviceId, {
+          name: device.name,
+          location: {
+            x: parseInt(device.location.x),
+            y: parseInt(device.location.y),
+            type: device.location.type,
+          },
+          disabled: device.disabled,
+          order: parseInt(device.order),
+          type: device.type,
+        });
         setEditedDevices(old => ({ ...old, [deviceId]: undefined }));
         setNewOrEdited(old => [...old, deviceId]);
         setTimeout(() => {
@@ -200,11 +201,11 @@ export const AdminTable = ({
           isAutoCloseable: true,
           isCloseable: true,
         });
-      } else {
+      } catch (err) {
         openSnackbar({
           variant: 'error',
           title: 'Error in editing the device',
-          body: result.error.message,
+          body: err instanceof ApiError ? err.message : 'Unknown error',
           isAutoCloseable: false,
           isCloseable: true,
         });

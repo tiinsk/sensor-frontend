@@ -128,8 +128,12 @@ export const Device = () => {
 
   const { id } = useParams();
   const fetchData = async () => {
-    if (id) {
-      setLoadingMainContent(true);
+    if (!id) {
+      return;
+    }
+
+    setLoadingMainContent(true);
+    try {
       const [
         deviceData,
         latest,
@@ -156,25 +160,27 @@ export const Device = () => {
         }),
       ]);
 
-      if (latest) {
-        setLatestData(latest);
-      }
-
-      if (deviceData) {
-        setDevice(deviceData);
-      }
-
+      setLatestData(latest);
+      setDevice(deviceData);
       setStatisticsData({
-        day: statisticsDay?.statistics,
-        week: statisticsWeek?.statistics,
-        month: statisticsMonth?.statistics,
+        day: statisticsDay.statistics,
+        week: statisticsWeek.statistics,
+        month: statisticsMonth.statistics,
       });
+    } catch (error) {
+      console.error(error);
+    } finally {
       setLoadingMainContent(false);
     }
   };
 
   const fetchReadings = async () => {
-    if (id) {
+    if (!id) {
+      return;
+    }
+
+    setLoadingReadings(true);
+    try {
       const { graphStartTime, graphEndTime } = getTimeFrame(options);
 
       const readings = await api.getDeviceReadings({
@@ -194,13 +200,16 @@ export const Device = () => {
         level: options.level,
       });
 
-      const readingsByType = readings?.values.reduce<{
+      const readingsByType = readings.values.reduce<{
         [type: string]: ReadingType[] | undefined;
       }>((acc, cur) => {
         acc[cur.type] = cur.values;
         return acc;
       }, {});
       setReadingData(readingsByType);
+    } catch (error) {
+      console.error(error);
+    } finally {
       setLoadingReadings(false);
     }
   };
