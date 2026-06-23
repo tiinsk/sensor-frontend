@@ -21,6 +21,7 @@ import { GraphSizeWrapper } from '../components/graphs/graph-size-wrapper';
 import { GraphLoading } from '../assets/loading/graph-loading';
 import {
   getEndTime,
+  getReadingsTimeFrame,
   getStartTime,
   getTimeFrame,
 } from '../components/selectors/time-frames';
@@ -181,12 +182,11 @@ export const Device = () => {
 
     setLoadingReadings(true);
     try {
-      const { graphStartTime, graphEndTime } = getTimeFrame(options);
+      const readingsTimeFrame = getReadingsTimeFrame(options);
 
       const readings = await api.getDeviceReadings({
         deviceId: id,
-        startTime: graphStartTime,
-        endTime: graphEndTime,
+        ...readingsTimeFrame,
         types: [
           'temperature',
           'humidity',
@@ -197,7 +197,6 @@ export const Device = () => {
           'voc',
           'airQuality',
         ],
-        level: options.level,
       });
 
       const readingsByType = readings.values.reduce<{

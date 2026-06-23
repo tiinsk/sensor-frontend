@@ -14,7 +14,10 @@ import {
 } from '../components/selectors/time-frame-selector';
 import { Flex } from '../components/styled/flex';
 import { GraphLoading } from '../assets/loading/graph-loading';
-import { getTimeFrame } from '../components/selectors/time-frames';
+import {
+  getReadingsTimeFrame,
+  getTimeFrame,
+} from '../components/selectors/time-frames';
 import { getStorageDevices, saveStorageDevices } from '../storage/devices';
 import { getDefaultTimeFrameOptions } from '../storage/time-frame';
 import { getMinAndMaxGroupedByDeviceLocationType } from '../utils/readings';
@@ -65,6 +68,7 @@ export const Home = () => {
 
   const fetchReadings = async () => {
     const { graphStartTime, graphEndTime } = getTimeFrame(options);
+    const readingsTimeFrame = getReadingsTimeFrame(options);
     setLoadingReadings(true);
     try {
       const [statisticsResult, readingsResult] = await Promise.all([
@@ -73,10 +77,8 @@ export const Home = () => {
           endTime: graphEndTime,
         }),
         api.getAllReadings({
-          startTime: graphStartTime,
-          endTime: graphEndTime,
+          ...readingsTimeFrame,
           type: options.valueType || 'temperature',
-          level: options.level,
         }),
       ]);
 

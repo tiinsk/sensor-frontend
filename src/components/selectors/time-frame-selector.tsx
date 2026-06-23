@@ -18,7 +18,7 @@ export type TimePeriod = Extract<
   'year' | 'month' | 'week' | 'day'
 >;
 
-export type TimeLevel = '10 minutes' | '30 minutes' | 'day' | 'week' | 'month';
+export type TimeLevel = '30 minutes' | 'day' | 'week' | 'month';
 
 export type Selector = 'timeLevel' | 'timePeriod' | 'valueType' | 'minMax';
 

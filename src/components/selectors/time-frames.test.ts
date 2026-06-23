@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getTimeFrame } from './time-frames';
+import { getReadingsTimeFrame, getTimeFrame } from './time-frames';
 import { TimeFrameOptions } from './time-frame-selector';
 import { getDefaultTimeLevel } from '../../utils/time-frame';
 
@@ -226,6 +226,44 @@ describe('Time frame tests', () => {
       graphEndTime: '2023-12-31T23:59:59.999Z',
       graphStartLimit: '2022-12-17T00:00:00.000Z',
       graphEndLimit: '2023-12-16T23:59:59.999Z',
+    });
+  });
+
+  it('Should return timestamp range for 30-minute reading queries', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
+
+    const timeFrameOptions: TimeFrameOptions = {
+      timePeriod: 'day',
+      offsetFromNow: 0,
+      level: '30 minutes',
+      showMinAndMax: true,
+    };
+
+    return expect(getReadingsTimeFrame(timeFrameOptions)).toEqual({
+      level: '30 minutes',
+      startTime: '2023-12-20T13:30:00.000Z',
+      endTime: '2023-12-21T14:00:00.000Z',
+    });
+  });
+
+  it('Should return date range for day, week and month reading queries', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
+
+    const timeFrameOptions: TimeFrameOptions = {
+      timePeriod: 'month',
+      offsetFromNow: -1,
+      level: 'day',
+      showMinAndMax: true,
+    };
+
+    return expect(getReadingsTimeFrame(timeFrameOptions)).toEqual({
+      level: 'day',
+      startDate: '2023-10-31',
+      endDate: '2023-12-01',
     });
   });
 });

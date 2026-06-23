@@ -1,4 +1,4 @@
-import { TimeFrameOptions, TimePeriod } from './time-frame-selector';
+import { TimeFrameOptions, TimeLevel, TimePeriod } from './time-frame-selector';
 import { DateTime, DateTimeUnit } from 'luxon';
 
 interface TimeFrame {
@@ -9,6 +9,18 @@ interface TimeFrame {
   graphStartLimit: string;
   graphEndLimit: string;
 }
+
+export type ReadingsTimeFrame =
+  | {
+      level: '30 minutes';
+      startTime: string;
+      endTime: string;
+    }
+  | {
+      level: Exclude<TimeLevel, '30 minutes'>;
+      startDate: string;
+      endDate: string;
+    };
 
 export const addTimePeriod = (
   date: string,
@@ -234,5 +246,25 @@ export const getTimeFrame = (timeframeOptions: TimeFrameOptions): TimeFrame => {
     graphStartTime: graphStartTime!,
     graphStartLimit: graphStartLimit!,
     graphEndLimit: graphEndLimit!,
+  };
+};
+
+export const getReadingsTimeFrame = (
+  timeframeOptions: TimeFrameOptions
+): ReadingsTimeFrame => {
+  const { graphStartTime, graphEndTime } = getTimeFrame(timeframeOptions);
+
+  if (timeframeOptions.level === '30 minutes') {
+    return {
+      level: timeframeOptions.level,
+      startTime: graphStartTime,
+      endTime: graphEndTime,
+    };
+  }
+
+  return {
+    level: timeframeOptions.level,
+    startDate: DateTime.fromISO(graphStartTime).toISODate()!,
+    endDate: DateTime.fromISO(graphEndTime).toISODate()!,
   };
 };

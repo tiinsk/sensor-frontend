@@ -8,19 +8,20 @@ import {
 } from './types';
 import { api } from './index';
 import {
-  TimeLevel,
   ValueType,
 } from '../components/selectors/time-frame-selector';
+import { ReadingsTimeFrame } from '../components/selectors/time-frames';
 
 interface TimeParams {
   startTime: string;
   endTime: string;
 }
 
-interface ReadingParams extends TimeParams {
-  type: ValueType;
-  level: TimeLevel;
-}
+type ReadingParams = ReadingsTimeFrame & { type: ValueType };
+type DeviceReadingParams = ReadingsTimeFrame & {
+  deviceId: string;
+  types: ValueType[];
+};
 
 const routes = {
   login: (payload: { username: string; password: string }) =>
@@ -39,22 +40,15 @@ const routes = {
   getAllReadings: (params: ReadingParams) =>
     api.get<ArrayResponse<ReadingsResponse>>({
       route: `/readings`,
-      params: {
-        timezone: 'Europe/Helsinki',
-        ...params,
-      },
+      params,
     }),
   getDeviceReadings: ({
     deviceId,
     ...params
-  }: TimeParams & { deviceId: string; types: ValueType[]; level: TimeLevel }) =>
+  }: DeviceReadingParams) =>
     api.get<DeviceReadingResponse>({
       route: `/devices/${deviceId}/readings`,
-      params: {
-        //TODO change to detect users local timezone, hardcoded for now.
-        timezone: 'Europe/Helsinki',
-        ...params,
-      },
+      params,
     }),
   getAllDevices: (params?: { includeDisabled?: boolean }) =>
     api.get<ArrayResponse<DeviceResponse>>({ route: '/devices', params }),
