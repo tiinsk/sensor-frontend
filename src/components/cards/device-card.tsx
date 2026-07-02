@@ -90,6 +90,7 @@ export const DeviceCard = ({
   options,
   isLoadingMainContent,
   isLoadingReadings,
+  isLoadingStatistics,
   minMax,
 }: {
   id: string;
@@ -101,6 +102,7 @@ export const DeviceCard = ({
   options: TimeFrameOptions;
   isLoadingMainContent?: boolean;
   isLoadingReadings?: boolean;
+  isLoadingStatistics?: boolean;
   minMax?: MinMax;
 }) => {
   const { colors } = useTheme();
@@ -223,14 +225,14 @@ export const DeviceCard = ({
               unit={options.valueType}
               variant="max"
               sizeVariant="small"
-              isLoading={isLoadingReadings}
+              isLoading={isLoadingStatistics}
             />
             <Reading
               value={statisticsData?.statistics[options.valueType].min}
               unit={options.valueType}
               variant="min"
               sizeVariant="small"
-              isLoading={isLoadingReadings}
+              isLoading={isLoadingStatistics}
             />
           </ReadingContainer>
         )}

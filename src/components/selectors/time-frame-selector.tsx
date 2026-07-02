@@ -37,7 +37,7 @@ export interface TimeFrameOptions {
   offsetFromNow: number;
   valueType?: ValueType;
   level: TimeLevel;
-  showMinAndMax: boolean;
+  showMinAndMax?: boolean;
 }
 
 interface TimeFrameSelectorProps {

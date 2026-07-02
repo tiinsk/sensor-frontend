@@ -9,7 +9,7 @@ import {
   TimeFrameOptions,
   TimeFrameSelector,
 } from '../components/selectors/time-frame-selector';
-import { getTimeFrame } from '../components/selectors/time-frames';
+import { getStatisticsTimeFrame } from '../components/selectors/time-frames';
 import { MapSvg } from '../assets/map';
 import styled from 'styled-components';
 import { H3 } from '../components/styled/typography';
@@ -29,7 +29,8 @@ const MapCard = styled.div`
   padding: ${({ theme }) => theme.spacings.s24};
   padding-bottom: ${({ theme }) => theme.spacings.s48};
 
-  background-image: repeating-linear-gradient(
+  background-image:
+    repeating-linear-gradient(
       ${({ theme }) => theme.colors.background.secondary} 0 1px,
       transparent 1px 100%
     ),
@@ -108,15 +109,10 @@ export const Map = () => {
   };
 
   const fetchReadings = async () => {
-    const { graphStartTime, graphEndTime } = getTimeFrame(options);
+    const statisticsTimeFrame = getStatisticsTimeFrame(options);
     setLoadingReadings(true);
     try {
-      const [statisticsResult] = await Promise.all([
-        api.getAllStatistics({
-          startTime: graphStartTime,
-          endTime: graphEndTime,
-        }),
-      ]);
+      const statisticsResult = await api.getAllStatistics(statisticsTimeFrame);
 
       const statisticsByDevice = statisticsResult.values.reduce<{
         [id: string]: StatisticsResponse | undefined;

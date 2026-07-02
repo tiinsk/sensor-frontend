@@ -38,6 +38,7 @@ export interface Statistics {
   temperature: ReadingValue;
   humidity: ReadingValue;
   pressure: ReadingValue;
+  battery: ReadingValue;
   co2: ReadingValue;
   nox: ReadingValue;
   pm25: ReadingValue;

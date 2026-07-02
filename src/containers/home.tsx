@@ -16,7 +16,7 @@ import { Flex } from '../components/styled/flex';
 import { GraphLoading } from '../assets/loading/graph-loading';
 import {
   getReadingsTimeFrame,
-  getTimeFrame,
+  getStatisticsTimeFrame,
 } from '../components/selectors/time-frames';
 import { getStorageDevices, saveStorageDevices } from '../storage/devices';
 import { getDefaultTimeFrameOptions } from '../storage/time-frame';
@@ -50,6 +50,9 @@ export const Home = () => {
   const [isLoadingReadings, setLoadingReadings] = useState<boolean | undefined>(
     undefined
   );
+  const [isLoadingStatistics, setLoadingStatistics] = useState<
+    boolean | undefined
+  >(undefined);
 
   const [latestData, setLatestData] = useState<{
     [id: string]: LatestReadingResponse | undefined;
@@ -66,21 +69,11 @@ export const Home = () => {
     setDevices(deviceResponse);
   };
 
-  const fetchReadings = async () => {
-    const { graphStartTime, graphEndTime } = getTimeFrame(options);
-    const readingsTimeFrame = getReadingsTimeFrame(options);
-    setLoadingReadings(true);
+  const fetchStatistics = async () => {
+    const statisticsTimeFrame = getStatisticsTimeFrame(options);
+    setLoadingStatistics(true);
     try {
-      const [statisticsResult, readingsResult] = await Promise.all([
-        api.getAllStatistics({
-          startTime: graphStartTime,
-          endTime: graphEndTime,
-        }),
-        api.getAllReadings({
-          ...readingsTimeFrame,
-          type: options.valueType || 'temperature',
-        }),
-      ]);
+      const statisticsResult = await api.getAllStatistics(statisticsTimeFrame);
 
       const statisticsByDevice = statisticsResult.values.reduce<{
         [id: string]: StatisticsResponse | undefined;
@@ -89,6 +82,23 @@ export const Home = () => {
         return acc;
       }, {});
 
+      setStatisticsData(statisticsByDevice);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingStatistics(false);
+    }
+  };
+
+  const fetchReadings = async () => {
+    const readingsTimeFrame = getReadingsTimeFrame(options);
+    setLoadingReadings(true);
+    try {
+      const readingsResult = await api.getAllReadings({
+        ...readingsTimeFrame,
+        type: options.valueType || 'temperature',
+      });
+
       const readingsByDevice = readingsResult.values.reduce<{
         [id: string]: ReadingsResponse | undefined;
       }>((acc, cur) => {
@@ -96,7 +106,6 @@ export const Home = () => {
         return acc;
       }, {});
 
-      setStatisticsData(statisticsByDevice);
       setReadingsData(readingsByDevice);
     } catch (error) {
       console.error(error);
@@ -135,6 +144,7 @@ export const Home = () => {
 
   useEffect(() => {
     fetchReadings();
+    fetchStatistics();
   }, [options]);
 
   const minMax = getMinAndMaxGroupedByDeviceLocationType(devices, readingsData);
@@ -174,6 +184,9 @@ export const Home = () => {
               }
               isLoadingReadings={
                 isLoadingReadings || isLoadingReadings === undefined
+              }
+              isLoadingStatistics={
+                isLoadingStatistics || isLoadingStatistics === undefined
               }
             />
           ))}

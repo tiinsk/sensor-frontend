@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getReadingsTimeFrame, getTimeFrame } from './time-frames';
+import {
+  getReadingsTimeFrame,
+  getStatisticsTimeFrame,
+  getTimeFrame,
+} from './time-frames';
 import { TimeFrameOptions } from './time-frame-selector';
 import { getDefaultTimeLevel } from '../../utils/time-frame';
 
@@ -264,6 +268,40 @@ describe('Time frame tests', () => {
       level: 'day',
       startDate: '2023-10-31',
       endDate: '2023-12-01',
+    });
+  });
+
+  it('Should return period bounds for 30-minute statistics queries', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
+
+    const timeFrameOptions: TimeFrameOptions = {
+      timePeriod: 'day',
+      offsetFromNow: 0,
+      level: '30 minutes',
+    };
+
+    return expect(getStatisticsTimeFrame(timeFrameOptions)).toEqual({
+      startTime: '2023-12-20T14:00:00.000Z',
+      endTime: '2023-12-21T14:00:00.000Z',
+    });
+  });
+
+  it('Should return period date bounds for statistics', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2023-12-21T13:30Z'));
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
+
+    const timeFrameOptions: TimeFrameOptions = {
+      timePeriod: 'month',
+      offsetFromNow: -1,
+      level: 'day',
+    };
+
+    return expect(getStatisticsTimeFrame(timeFrameOptions)).toEqual({
+      startDate: '2023-11-01',
+      endDate: '2023-11-30',
     });
   });
 });

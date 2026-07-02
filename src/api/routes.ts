@@ -10,12 +10,7 @@ import { api } from './index';
 import {
   ValueType,
 } from '../components/selectors/time-frame-selector';
-import { ReadingsTimeFrame } from '../components/selectors/time-frames';
-
-interface TimeParams {
-  startTime: string;
-  endTime: string;
-}
+import { ReadingsTimeFrame, StatisticsTimeFrame } from '../components/selectors/time-frames';
 
 type ReadingParams = ReadingsTimeFrame & { type: ValueType };
 type DeviceReadingParams = ReadingsTimeFrame & {
@@ -32,7 +27,7 @@ const routes = {
     api.get<ArrayResponse<LatestReadingResponse>>({
       route: `/latest`,
     }),
-  getAllStatistics: (params: TimeParams) =>
+  getAllStatistics: (params: StatisticsTimeFrame) =>
     api.get<ArrayResponse<StatisticsResponse>>({
       route: `/statistics`,
       params,
@@ -61,9 +56,7 @@ const routes = {
   getAllDeviceStatistics: ({
     deviceId,
     ...params
-  }: {
-    startTime: string;
-    endTime: string;
+  }: StatisticsTimeFrame & {
     deviceId: string;
   }) =>
     api.get<StatisticsResponse>({

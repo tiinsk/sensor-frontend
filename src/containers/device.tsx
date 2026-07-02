@@ -20,11 +20,11 @@ import { Graph } from '../components/graphs/graph';
 import { GraphSizeWrapper } from '../components/graphs/graph-size-wrapper';
 import { GraphLoading } from '../assets/loading/graph-loading';
 import {
-  getEndTime,
   getReadingsTimeFrame,
-  getStartTime,
+  getStatisticsTimeFrame,
   getTimeFrame,
 } from '../components/selectors/time-frames';
+import { getDefaultTimeLevel } from '../utils/time-frame';
 import { TimeAgoTag } from '../components/tags/time-ago-tag';
 import { getDeviceSensors } from '../utils/device';
 import { getDefaultTimeFrameOptions } from '../storage/time-frame';
@@ -145,19 +145,28 @@ export const Device = () => {
         api.getDevice(id),
         api.getDeviceLatestReadings(id),
         api.getAllDeviceStatistics({
-          startTime: getStartTime(0, 'day')!,
-          endTime: getEndTime(0, 'day')!,
           deviceId: id,
+          ...getStatisticsTimeFrame({
+            timePeriod: 'day',
+            offsetFromNow: 0,
+            level: getDefaultTimeLevel('day'),
+          }),
         }),
         api.getAllDeviceStatistics({
-          startTime: getStartTime(0, 'week')!,
-          endTime: getEndTime(0, 'week')!,
           deviceId: id,
+          ...getStatisticsTimeFrame({
+            timePeriod: 'week',
+            offsetFromNow: 0,
+            level: getDefaultTimeLevel('week'),
+          }),
         }),
         api.getAllDeviceStatistics({
-          startTime: getStartTime(0, 'month')!,
-          endTime: getEndTime(0, 'month')!,
           deviceId: id,
+          ...getStatisticsTimeFrame({
+            timePeriod: 'month',
+            offsetFromNow: 0,
+            level: getDefaultTimeLevel('month'),
+          }),
         }),
       ]);
 

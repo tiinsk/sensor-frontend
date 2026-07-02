@@ -1,4 +1,8 @@
-import { TimeFrameOptions, TimeLevel, TimePeriod } from './time-frame-selector';
+import {
+  TimeFrameOptions,
+  TimeLevel,
+  TimePeriod,
+} from './time-frame-selector';
 import { DateTime, DateTimeUnit } from 'luxon';
 
 interface TimeFrame {
@@ -249,6 +253,16 @@ export const getTimeFrame = (timeframeOptions: TimeFrameOptions): TimeFrame => {
   };
 };
 
+export type StatisticsTimeFrame =
+  | {
+      startTime: string;
+      endTime: string;
+    }
+  | {
+      startDate: string;
+      endDate: string;
+    };
+
 export const getReadingsTimeFrame = (
   timeframeOptions: TimeFrameOptions
 ): ReadingsTimeFrame => {
@@ -266,5 +280,23 @@ export const getReadingsTimeFrame = (
     level: timeframeOptions.level,
     startDate: DateTime.fromISO(graphStartTime).toISODate()!,
     endDate: DateTime.fromISO(graphEndTime).toISODate()!,
+  };
+};
+
+// Statistics use period bounds, not graph padding. Readings fetch extra buckets
+// on each side so the line chart does not look cut off at the edges; min/max on
+// the card should reflect the selected period only.
+export const getStatisticsTimeFrame = (
+  timeframeOptions: TimeFrameOptions
+): StatisticsTimeFrame => {
+  const { startTime, endTime } = getTimeFrame(timeframeOptions);
+
+  if (timeframeOptions.level === '30 minutes') {
+    return { startTime, endTime };
+  }
+
+  return {
+    startDate: DateTime.fromISO(startTime).toISODate()!,
+    endDate: DateTime.fromISO(endTime).toISODate()!,
   };
 };
