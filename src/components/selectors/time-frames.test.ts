@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   getReadingsTimeFrame,
   getStatisticsTimeFrame,
@@ -8,17 +8,21 @@ import {
 } from './time-frames';
 import { TimeFrameOptions } from './time-frame-selector';
 import { getDefaultTimeLevel } from '../../utils/time-frame';
+import { DateTime, Settings } from 'luxon';
 
 afterEach(() => {
   vi.useRealTimers();
   vi.restoreAllMocks();
+  Settings.defaultZone = 'system';
 });
 
 describe('Time frame tests', () => {
+  beforeEach(() => {
+    Settings.defaultZone = 'UTC';
+  });
   it('Should return previous time frame (timePeriod: month)', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
@@ -40,7 +44,6 @@ describe('Time frame tests', () => {
   it('Should return current time frame (timePeriod: month)', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
@@ -59,10 +62,10 @@ describe('Time frame tests', () => {
     });
   });
 
-  it('Should return previous time frame when timezone is not UTC', () => {
+  it('Should return previous time frame in local timezone', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-120);
+    Settings.defaultZone = 'Europe/Helsinki';
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
@@ -81,10 +84,10 @@ describe('Time frame tests', () => {
     });
   });
 
-  it('Should return current time frame when timezone is not UTC', () => {
+  it('Should return current time frame in local timezone', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-120);
+    Settings.defaultZone = 'Europe/Helsinki';
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
@@ -106,7 +109,6 @@ describe('Time frame tests', () => {
   it('Should return previous time frame (timePeriod: day)', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'day',
@@ -128,7 +130,6 @@ describe('Time frame tests', () => {
   it('Should return current time frame (timePeriod: day)', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'day',
@@ -150,7 +151,6 @@ describe('Time frame tests', () => {
   it('Should return previous time frame (timePeriod: week)', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'week',
@@ -172,7 +172,6 @@ describe('Time frame tests', () => {
   it('Should return current time frame (timePeriod: week)', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z')); // = THU
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'week',
@@ -194,7 +193,6 @@ describe('Time frame tests', () => {
   it('Should return previous time frame (timePeriod: year)', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'year',
@@ -216,7 +214,6 @@ describe('Time frame tests', () => {
   it('Should return current time frame (timePeriod: year)', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'year',
@@ -238,7 +235,6 @@ describe('Time frame tests', () => {
   it('Should return timestamp range for 30-minute reading queries', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'day',
@@ -257,7 +253,6 @@ describe('Time frame tests', () => {
   it('Should return date range for day, week and month reading queries', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
@@ -276,7 +271,6 @@ describe('Time frame tests', () => {
   it('Should return period bounds for 30-minute statistics queries', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'day',
@@ -293,7 +287,6 @@ describe('Time frame tests', () => {
   it('Should return period date bounds for statistics', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
 
     const timeFrameOptions: TimeFrameOptions = {
       timePeriod: 'month',
@@ -309,27 +302,27 @@ describe('Time frame tests', () => {
 
   it('Should format graph hover keys to match API reading timestamps', () => {
     expect(
-      toGraphHoverKey(new Date('2023-12-21T14:30:00.000Z'), '30 minutes')
+      toGraphHoverKey(new Date('2023-12-21T14:30:00.000Z'), '30 minutes', 'UTC')
     ).toBe('2023-12-21T14:30:00.000Z');
 
-    expect(toGraphHoverKey(new Date('2023-12-21T15:00:00.000Z'), 'day')).toBe(
-      '2023-12-21'
-    );
+    expect(
+      toGraphHoverKey(new Date('2023-12-21T15:00:00.000Z'), 'day', 'UTC')
+    ).toBe('2023-12-21');
 
-    expect(toGraphHoverKey(new Date('2023-12-21T15:00:00.000Z'), 'month')).toBe(
-      '2023-12-01'
-    );
+    expect(
+      toGraphHoverKey(new Date('2023-12-21T15:00:00.000Z'), 'month', 'UTC')
+    ).toBe('2023-12-01');
   });
 
-  it('Should use local calendar dates for hover keys east of UTC', () => {
-    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-180);
+  it('Should use device timezone for graph hover keys and positions', () => {
+    const helsinki = 'Europe/Helsinki';
+    const june13Helsinki = DateTime.fromISO('2026-06-13T00:00:00', {
+      zone: helsinki,
+    }).toJSDate()!;
 
-    // Local 13 Jun 2026 00:00 in UTC+3 is still 12 Jun in UTC.
-    const localJune13Midnight = new Date(2026, 5, 13);
-
-    expect(toGraphHoverKey(localJune13Midnight, 'day')).toBe('2026-06-13');
-    expect(parseGraphTimestamp('2026-06-13', 'day').getTime()).toBe(
-      localJune13Midnight.getTime()
-    );
+    expect(toGraphHoverKey(june13Helsinki, 'day', helsinki)).toBe('2026-06-13');
+    expect(
+      parseGraphTimestamp('2026-06-13', 'day', helsinki).toISOString()
+    ).toBe('2026-06-12T21:00:00.000Z');
   });
 });

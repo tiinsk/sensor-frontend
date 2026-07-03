@@ -92,6 +92,7 @@ export const DeviceCard = ({
   isLoadingReadings,
   isLoadingStatistics,
   minMax,
+  timezone,
 }: {
   id: string;
   name: string;
@@ -104,6 +105,7 @@ export const DeviceCard = ({
   isLoadingReadings?: boolean;
   isLoadingStatistics?: boolean;
   minMax?: MinMax;
+  timezone: string;
 }) => {
   const { colors } = useTheme();
   const [hoveredDate, setHoveredDate] = useState<string | undefined>(undefined);
@@ -255,6 +257,7 @@ export const DeviceCard = ({
                 data={readingsData || []}
                 minMax={minMax}
                 valueType={options.valueType || 'temperature'}
+                timezone={timezone}
                 hoveredDate={hoveredDate}
                 onHover={date => setHoveredDate(date)}
               />

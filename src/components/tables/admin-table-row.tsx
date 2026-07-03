@@ -113,6 +113,7 @@ export interface EditableDevice {
   disabled: boolean;
   order: string;
   type: DeviceType;
+  timezone: string;
   errors?: {
     id?: string;
     name?: string;

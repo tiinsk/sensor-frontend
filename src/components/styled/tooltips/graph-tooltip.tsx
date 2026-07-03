@@ -17,6 +17,7 @@ interface TooltipProps {
   tooltipContent?: TooltipContent;
   timePeriod: TimePeriod;
   valueType: ValueType;
+  timezone: string;
 }
 
 const StyledTooltip = styled.div`
@@ -41,9 +42,15 @@ const StyledContent = styled.div`
   padding-left: ${({ theme }) => theme.spacings.s4};
 `;
 
-const formatDate = (timePeriod: TimePeriod, date?: string) => {
+const formatDate = (
+  timePeriod: TimePeriod,
+  date?: string,
+  timezone: string = 'UTC'
+) => {
   if (!date) return '';
-  const dateTime = DateTime.fromISO(date);
+  const dateTime = date.includes('T')
+    ? DateTime.fromISO(date, { zone: 'utc' }).setZone(timezone)
+    : DateTime.fromISO(date, { zone: timezone });
   switch (timePeriod) {
     case 'day':
       return dateTime.toFormat('dd.LL.yyyy HH:mm');
@@ -64,6 +71,7 @@ export const GraphTooltip: React.FC<PropsWithChildren<TooltipProps>> = ({
   tooltipContent,
   timePeriod,
   valueType,
+  timezone,
 }) => {
   const [position, setPosition] = useState<
     | {
@@ -135,7 +143,7 @@ export const GraphTooltip: React.FC<PropsWithChildren<TooltipProps>> = ({
           >
             <StyledTitle>
               <Caption3>
-                {formatDate(timePeriod, tooltipContent.timestamp)}
+                {formatDate(timePeriod, tooltipContent.timestamp, timezone)}
               </Caption3>
             </StyledTitle>
             <StyledContent>

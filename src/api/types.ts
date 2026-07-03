@@ -68,6 +68,7 @@ export interface DeviceResponse {
   disabled: boolean;
   order: number;
   type: DeviceType;
+  timezone: string;
 }
 
 export interface Reading extends ReadingValue {

@@ -188,6 +188,7 @@ export const Home = () => {
               isLoadingStatistics={
                 isLoadingStatistics || isLoadingStatistics === undefined
               }
+              timezone={device.timezone}
             />
           ))}
         </CardGrid>

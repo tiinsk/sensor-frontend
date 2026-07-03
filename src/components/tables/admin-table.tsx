@@ -132,6 +132,7 @@ export const AdminTable = ({
           disabled: device.disabled,
           order: parseInt(device.order),
           type: device.type,
+          timezone: device.timezone,
         });
         setNewDevices(old => [...old.slice(0, i), ...old.slice(i + 1)]);
         setNewOrEdited(old => [...old, device.id]);
@@ -188,6 +189,7 @@ export const AdminTable = ({
           disabled: device.disabled,
           order: parseInt(device.order),
           type: device.type,
+          timezone: device.timezone,
         });
         setEditedDevices(old => ({ ...old, [deviceId]: undefined }));
         setNewOrEdited(old => [...old, deviceId]);
@@ -231,6 +233,8 @@ export const AdminTable = ({
                 disabled: false,
                 order: '',
                 type: 'ruuvi',
+                //TODO remove hard coded value, and add separate field to table
+                timezone: 'Europe/Helsinki',
               },
             ])
           }
@@ -302,6 +306,7 @@ export const AdminTable = ({
                           disabled: device.disabled,
                           order: device.order.toString(),
                           type: device.type,
+                          timezone: device.timezone,
                         },
                       }))
                     }

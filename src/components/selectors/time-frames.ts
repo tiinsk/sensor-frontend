@@ -5,31 +5,53 @@ import {
 } from './time-frame-selector';
 import { DateTime, DateTimeUnit } from 'luxon';
 
-// d3 time ticks are generated in local time, while date-only API timestamps are
-// calendar dates. Parse and format both in local time so hover hits line up.
+const toUtcIso = (dateTime: DateTime): string => dateTime.toUTC().toISO()!;
+
+// Day queries use UTC timestamps. Week/month/year use the viewer's local calendar.
+export const getQueryTimezone = (timePeriod: TimePeriod): string =>
+  timePeriod === 'day' ? 'UTC' : DateTime.local().zoneName;
+
+const now = (timezone: string): DateTime =>
+  DateTime.now().setZone(timezone);
+
+const fromUtcIso = (iso: string, timezone: string): DateTime =>
+  DateTime.fromISO(iso, { zone: 'utc' }).setZone(timezone);
+
+const toCalendarDate = (iso: string, timezone: string): string =>
+  fromUtcIso(iso, timezone).toISODate()!;
+
+// d3 ticks are instants; map them to the device calendar date used by the API.
 export const parseGraphTimestamp = (
   timestamp: string,
-  level: TimeLevel
+  level: TimeLevel,
+  timezone: string
 ): Date => {
   if (level === '30 minutes') {
     return new Date(timestamp);
   }
 
-  return DateTime.fromISO(timestamp, { zone: 'local' }).startOf('day').toJSDate()!;
+  return DateTime.fromISO(timestamp, { zone: timezone })
+    .startOf('day')
+    .toUTC()
+    .toJSDate()!;
 };
 
-export const toGraphHoverKey = (date: Date, level: TimeLevel): string => {
+export const toGraphHoverKey = (
+  date: Date,
+  level: TimeLevel,
+  timezone: string
+): string => {
   if (level === '30 minutes') {
     return date.toISOString();
   }
 
-  const local = DateTime.fromJSDate(date);
+  const zoned = DateTime.fromJSDate(date).setZone(timezone);
 
   if (level === 'month') {
-    return local.startOf('month').toISODate()!;
+    return zoned.startOf('month').toISODate()!;
   }
 
-  return local.toISODate()!;
+  return zoned.toISODate()!;
 };
 
 interface TimeFrame {
@@ -56,17 +78,17 @@ export type ReadingsTimeFrame =
 export const addTimePeriod = (
   date: string,
   timePeriod: TimePeriod,
-  addValue: number
+  addValue: number,
+  timezone: string
 ) => {
-  return DateTime.fromISO(date)
-    .plus({
+  return toUtcIso(
+    fromUtcIso(date, timezone).plus({
       year: timePeriod === 'year' ? addValue : 0,
       month: timePeriod === 'month' ? addValue : 0,
       week: timePeriod === 'week' ? addValue : 0,
       day: timePeriod === 'day' ? addValue : 0,
     })
-    .toUTC()
-    .toISO();
+  );
 };
 
 export const getTimePeriodMaxUnitAmount = (timePeriod: DateTimeUnit) => {
@@ -99,137 +121,132 @@ export const getTimePeriodHalfUnitAmount = (timePeriod: DateTimeUnit) => {
   }
 };
 
-const roundToNext30Mins = (date: string) => {
-  const dateTime = DateTime.fromISO(date);
+const roundToNext30Mins = (dateTime: DateTime) => {
   const minutes = 30 - (dateTime.minute % 30);
-  return dateTime
-    .plus({ minutes })
-    .set({ second: 0, millisecond: 0 })
-    .toUTC()
-    .toISO();
+  return toUtcIso(
+    dateTime.plus({ minutes }).set({ second: 0, millisecond: 0 })
+  );
 };
 
-export const getEndTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
+export const getEndTime = (
+  offsetFromNow: number,
+  timePeriod: TimePeriod,
+  timezone: string
+) => {
   if (offsetFromNow === 0) {
+    const current = now(timezone);
     switch (timePeriod) {
       case 'day':
-        return roundToNext30Mins(DateTime.now().toUTC().toISO()!);
+        return roundToNext30Mins(current);
       case 'week':
-        return DateTime.now().endOf('day').toUTC().toISO();
       case 'month':
-        return DateTime.now().endOf('day').toUTC().toISO();
+        return toUtcIso(current.endOf('day'));
       case 'year':
-        return DateTime.now().endOf('month').toUTC().toISO();
+        return toUtcIso(current.endOf('month'));
     }
   }
 
   const reducedDate = addTimePeriod(
-    DateTime.now().toUTC().toISO()!,
+    toUtcIso(now(timezone)),
     timePeriod,
-    offsetFromNow
-  )!;
-  return DateTime.fromISO(reducedDate).endOf(timePeriod).toUTC().toISO();
+    offsetFromNow,
+    timezone
+  );
+  return toUtcIso(fromUtcIso(reducedDate, timezone).endOf(timePeriod));
 };
 
 export const getGraphEndTime = (
   offsetFromNow: number,
-  timePeriod: TimePeriod
+  timePeriod: TimePeriod,
+  timezone: string
 ) => {
-  const endOfPeriod = getEndTime(offsetFromNow, timePeriod)!;
+  const endOfPeriod = getEndTime(offsetFromNow, timePeriod, timezone)!;
 
   if (offsetFromNow === 0) {
     return endOfPeriod;
   }
 
-  return DateTime.fromISO(endOfPeriod)
-    .plus({
+  return toUtcIso(
+    fromUtcIso(endOfPeriod, timezone).plus({
       months: timePeriod === 'year' ? 1 : 0,
       days: ['month', 'week'].includes(timePeriod) ? 1 : 0,
       minutes: timePeriod === 'day' ? 30 : 0,
     })
-    .toUTC()
-    .toISO();
+  );
 };
 
-export const getStartTime = (offsetFromNow: number, timePeriod: TimePeriod) => {
-  const endTime = getEndTime(offsetFromNow, timePeriod)!;
-  const endDateTime = DateTime.fromISO(endTime);
+export const getStartTime = (
+  offsetFromNow: number,
+  timePeriod: TimePeriod,
+  timezone: string
+) => {
+  const endTime = getEndTime(offsetFromNow, timePeriod, timezone)!;
+  const endDateTime = fromUtcIso(endTime, timezone);
   const endOfPeriod = endDateTime.endOf(timePeriod);
-
-  const isFullTimePeriod = endDateTime
-    .toUTC()
-    .hasSame(endOfPeriod.toUTC(), 'minute');
+  const isFullTimePeriod = endDateTime.hasSame(endOfPeriod, 'minute');
 
   if (offsetFromNow === 0 && !isFullTimePeriod) {
+    const current = now(timezone);
     switch (timePeriod) {
       case 'day':
         return roundToNext30Mins(
-          DateTime.now()
-            .minus(getTimePeriodMaxUnitAmount(timePeriod))
-            .toUTC()
-            .toISO()!
+          current.minus(getTimePeriodMaxUnitAmount(timePeriod))
         );
       case 'week':
-        return DateTime.now()
-          .minus(getTimePeriodMaxUnitAmount(timePeriod))
-          .startOf('day')
-          .toUTC()
-          .toISO();
       case 'month':
-        return DateTime.now()
-          .minus(getTimePeriodMaxUnitAmount(timePeriod))
-          .startOf('day')
-          .toUTC()
-          .toISO();
+        return toUtcIso(
+          current.minus(getTimePeriodMaxUnitAmount(timePeriod)).startOf('day')
+        );
       case 'year':
-        return DateTime.now()
-          .minus(getTimePeriodMaxUnitAmount(timePeriod))
-          .startOf('month')
-          .toUTC()
-          .toISO();
+        return toUtcIso(
+          current.minus(getTimePeriodMaxUnitAmount(timePeriod)).startOf('month')
+        );
     }
   }
-  return DateTime.fromISO(endTime).startOf(timePeriod).toUTC().toISO();
+
+  return toUtcIso(endDateTime.startOf(timePeriod));
 };
 
 export const getGraphStartTime = (
   offsetFromNow: number,
-  timePeriod: TimePeriod
+  timePeriod: TimePeriod,
+  timezone: string
 ) => {
-  const startTime = getStartTime(offsetFromNow, timePeriod)!;
+  const startTime = getStartTime(offsetFromNow, timePeriod, timezone)!;
 
-  return DateTime.fromISO(startTime)
-    .minus({
+  return toUtcIso(
+    fromUtcIso(startTime, timezone).minus({
       months: timePeriod === 'year' ? 1 : 0,
       days: ['month', 'week'].includes(timePeriod) ? 1 : 0,
       minutes: timePeriod === 'day' ? 30 : 0,
     })
-    .toUTC()
-    .toISO();
+  );
 };
 
 export const getGraphStartLimit = (
   offsetFromNow: number,
-  timePeriod: TimePeriod
+  timePeriod: TimePeriod,
+  timezone: string
 ) => {
-  const startTime = getStartTime(offsetFromNow, timePeriod)!;
+  const startTime = getStartTime(offsetFromNow, timePeriod, timezone)!;
 
-  return DateTime.fromISO(startTime)
-    .minus(getTimePeriodHalfUnitAmount(timePeriod))
-    .toUTC()
-    .toISO();
+  return toUtcIso(
+    fromUtcIso(startTime, timezone).minus(
+      getTimePeriodHalfUnitAmount(timePeriod)
+    )
+  );
 };
 
 export const getGraphEndLimit = (
   offsetFromNow: number,
-  timePeriod: TimePeriod
+  timePeriod: TimePeriod,
+  timezone: string
 ) => {
-  const endTime = getEndTime(offsetFromNow, timePeriod)!;
+  const endTime = getEndTime(offsetFromNow, timePeriod, timezone)!;
 
-  return DateTime.fromISO(endTime)
-    .minus(getTimePeriodHalfUnitAmount(timePeriod))
-    .toUTC()
-    .toISO();
+  return toUtcIso(
+    fromUtcIso(endTime, timezone).minus(getTimePeriodHalfUnitAmount(timePeriod))
+  );
 };
 
 //Returns all graph related start and end times.
@@ -240,34 +257,42 @@ export const getGraphEndLimit = (
 //graphStartLimit: graph x-axis start point. Point where graph's first "hover block" starts, aka (startTime - graphStartTime) / 2.
 //graphEndLimit: same as graphStartLimit, but for end time.
 export const getTimeFrame = (timeframeOptions: TimeFrameOptions): TimeFrame => {
+  const timezone = getQueryTimezone(timeframeOptions.timePeriod);
+
   const startTime = getStartTime(
     timeframeOptions.offsetFromNow,
-    timeframeOptions.timePeriod
+    timeframeOptions.timePeriod,
+    timezone
   );
 
   const endTime = getEndTime(
     timeframeOptions.offsetFromNow,
-    timeframeOptions.timePeriod
+    timeframeOptions.timePeriod,
+    timezone
   );
 
   const graphStartTime = getGraphStartTime(
     timeframeOptions.offsetFromNow,
-    timeframeOptions.timePeriod
+    timeframeOptions.timePeriod,
+    timezone
   );
 
   const graphEndTime = getGraphEndTime(
     timeframeOptions.offsetFromNow,
-    timeframeOptions.timePeriod
+    timeframeOptions.timePeriod,
+    timezone
   );
 
   const graphStartLimit = getGraphStartLimit(
     timeframeOptions.offsetFromNow,
-    timeframeOptions.timePeriod
+    timeframeOptions.timePeriod,
+    timezone
   );
 
   const graphEndLimit = getGraphEndLimit(
     timeframeOptions.offsetFromNow,
-    timeframeOptions.timePeriod
+    timeframeOptions.timePeriod,
+    timezone
   );
 
   return {
@@ -293,6 +318,7 @@ export type StatisticsTimeFrame =
 export const getReadingsTimeFrame = (
   timeframeOptions: TimeFrameOptions
 ): ReadingsTimeFrame => {
+  const timezone = getQueryTimezone(timeframeOptions.timePeriod);
   const { graphStartTime, graphEndTime } = getTimeFrame(timeframeOptions);
 
   if (timeframeOptions.level === '30 minutes') {
@@ -305,8 +331,8 @@ export const getReadingsTimeFrame = (
 
   return {
     level: timeframeOptions.level,
-    startDate: DateTime.fromISO(graphStartTime).toISODate()!,
-    endDate: DateTime.fromISO(graphEndTime).toISODate()!,
+    startDate: toCalendarDate(graphStartTime, timezone),
+    endDate: toCalendarDate(graphEndTime, timezone),
   };
 };
 
@@ -316,6 +342,7 @@ export const getReadingsTimeFrame = (
 export const getStatisticsTimeFrame = (
   timeframeOptions: TimeFrameOptions
 ): StatisticsTimeFrame => {
+  const timezone = getQueryTimezone(timeframeOptions.timePeriod);
   const { startTime, endTime } = getTimeFrame(timeframeOptions);
 
   if (timeframeOptions.level === '30 minutes') {
@@ -323,7 +350,7 @@ export const getStatisticsTimeFrame = (
   }
 
   return {
-    startDate: DateTime.fromISO(startTime).toISODate()!,
-    endDate: DateTime.fromISO(endTime).toISODate()!,
+    startDate: toCalendarDate(startTime, timezone),
+    endDate: toCalendarDate(endTime, timezone),
   };
 };

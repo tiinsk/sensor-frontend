@@ -8,7 +8,7 @@ import { DateTime, DateTimeUnit } from 'luxon';
 import React, { PropsWithChildren } from 'react';
 import { RightDrawer } from '../styled/menus/right-drawer';
 import { useRightDrawerContext } from '../styled/menus/right-drawer-context';
-import { getTimeFrame } from './time-frames';
+import { getTimeFrame, getQueryTimezone } from './time-frames';
 import { saveStorageTimeFrame } from '../../storage/time-frame';
 import { getDefaultTimeLevel } from '../../utils/time-frame';
 import { getUnitTitle, units } from '../../utils/unit';
@@ -101,18 +101,29 @@ const MobileRightDrawer = styled(RightDrawer)`
 `;
 
 const getFormattedDateString = (options: TimeFrameOptions) => {
+  const timezone = getQueryTimezone(options.timePeriod);
   const { endTime, startTime } = getTimeFrame(options);
   switch (options.timePeriod) {
     case 'day':
-      return DateTime.fromISO(endTime).toFormat('ccc dd.LL.yy');
+      return DateTime.fromISO(endTime, { zone: 'utc' })
+        .setZone(timezone)
+        .toFormat('ccc dd.LL.yy');
     case 'week':
-      const start = DateTime.fromISO(startTime).toFormat('ccc dd.LL.');
-      const end = DateTime.fromISO(endTime).toFormat('dd.LL.yy');
+      const start = DateTime.fromISO(startTime, { zone: 'utc' })
+        .setZone(timezone)
+        .toFormat('ccc dd.LL.');
+      const end = DateTime.fromISO(endTime, { zone: 'utc' })
+        .setZone(timezone)
+        .toFormat('dd.LL.yy');
       return `${start} - ${end}`;
     case 'month':
-      return DateTime.fromISO(endTime).toFormat('LLLL yyyy');
+      return DateTime.fromISO(endTime, { zone: 'utc' })
+        .setZone(timezone)
+        .toFormat('LLLL yyyy');
     case 'year':
-      return DateTime.fromISO(endTime).toFormat('yyyy');
+      return DateTime.fromISO(endTime, { zone: 'utc' })
+        .setZone(timezone)
+        .toFormat('yyyy');
   }
 };
 

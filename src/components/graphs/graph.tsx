@@ -27,8 +27,8 @@ export const MAX_TEMP = 90;
 const SMALL_GRAPH_LIMIT = 500;
 const FLAT_GRAPH_PADDING = 0.1;
 
-const formatAxes = (date: Date, timePeriod: TimePeriod) => {
-  const dateTime = DateTime.fromJSDate(date);
+const formatAxes = (date: Date, timePeriod: TimePeriod, timezone: string) => {
+  const dateTime = DateTime.fromJSDate(date).setZone(timezone);
   switch (timePeriod) {
     case 'day':
       return dateTime.toFormat('HH');
@@ -80,6 +80,7 @@ interface GraphProps {
   data: Reading[];
   options: TimeFrameOptions;
   valueType: ValueType;
+  timezone: string;
   hoveredDate?: string;
   onHover: (date?: string) => void;
   showAxis?: boolean;
@@ -193,6 +194,7 @@ export const Graph = ({
   data,
   options,
   valueType,
+  timezone,
   hoveredDate,
   onHover,
   minMax,
@@ -203,13 +205,18 @@ export const Graph = ({
   const gx = useRef<SVGGElement>(null);
   const { width, height } = useGraphSizeContext();
 
-  const endTime = getEndTime(options.offsetFromNow, options.timePeriod)!;
-  const startTime = getStartTime(options.offsetFromNow, options.timePeriod)!;
+  const endTime = getEndTime(options.offsetFromNow, options.timePeriod, timezone)!;
+  const startTime = getStartTime(options.offsetFromNow, options.timePeriod, timezone)!;
 
-  const endLimit = getGraphEndLimit(options.offsetFromNow, options.timePeriod)!;
+  const endLimit = getGraphEndLimit(
+    options.offsetFromNow,
+    options.timePeriod,
+    timezone
+  )!;
   const startLimit = getGraphStartLimit(
     options.offsetFromNow,
-    options.timePeriod
+    options.timePeriod,
+    timezone
   )!;
 
   const max = minMax?.max || Math.max(...data?.map(r => r.max || 0));
@@ -255,12 +262,12 @@ export const Graph = ({
   }));
 
   const line = d3.line<Reading>(
-    d => x(parseGraphTimestamp(d.timestamp, options.level)),
+    d => x(parseGraphTimestamp(d.timestamp, options.level, timezone)),
     d => y(d.avg || 0)
   );
 
   const area = d3.area<Reading>(
-    d => x(parseGraphTimestamp(d.timestamp, options.level)),
+    d => x(parseGraphTimestamp(d.timestamp, options.level, timezone)),
     () => y(yGraphMin) + margins.bottom,
     d => y(d.avg || 0)
   );
@@ -276,7 +283,7 @@ export const Graph = ({
         d3
           .axisBottom<Date>(x)
           .tickArguments([getAxisTicks(options.timePeriod)])
-          .tickFormat((d, i) => formatAxes(d, options.timePeriod))
+          .tickFormat((d, i) => formatAxes(d, options.timePeriod, timezone))
           .tickSize(0)
       );
     }
@@ -289,7 +296,7 @@ export const Graph = ({
   const tooltipContent = hoveredDatapoint && {
     ...hoveredDatapoint,
     position: {
-      x: x(parseGraphTimestamp(hoveredDatapoint.timestamp, options.level)),
+      x: x(parseGraphTimestamp(hoveredDatapoint.timestamp, options.level, timezone)),
       y: y(hoveredDatapoint.avg || 0),
     },
   };
@@ -332,7 +339,7 @@ export const Graph = ({
         />
         <g fill="currentColor">
           {data.map((d, i) => {
-            const date = parseGraphTimestamp(d.timestamp, options.level);
+            const date = parseGraphTimestamp(d.timestamp, options.level, timezone);
             if (date < new Date(startTime) || date > new Date(endTime))
               return null;
 
@@ -341,7 +348,7 @@ export const Graph = ({
               <PointG
                 key={i}
                 $valueType={valueType}
-                transform={`translate(${x(parseGraphTimestamp(d.timestamp, options.level))}, ${y(
+                transform={`translate(${x(parseGraphTimestamp(d.timestamp, options.level, timezone))}, ${y(
                   d.avg || 0
                 )})`}
                 $isHovered={d.timestamp === hoveredDate}
@@ -367,7 +374,7 @@ export const Graph = ({
           })}
         </g>
         {hoverBlocks.map((d, i) => {
-          const hoverKey = toGraphHoverKey(d, options.level);
+          const hoverKey = toGraphHoverKey(d, options.level, timezone);
 
           return (
           <HoverableRect
@@ -419,6 +426,7 @@ export const Graph = ({
         tooltipContent={tooltipContent}
         timePeriod={options.timePeriod}
         valueType={valueType}
+        timezone={timezone}
       />
     </>
   );

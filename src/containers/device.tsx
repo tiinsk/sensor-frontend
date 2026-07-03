@@ -22,7 +22,6 @@ import { GraphLoading } from '../assets/loading/graph-loading';
 import {
   getReadingsTimeFrame,
   getStatisticsTimeFrame,
-  getTimeFrame,
 } from '../components/selectors/time-frames';
 import { getDefaultTimeLevel } from '../utils/time-frame';
 import { TimeAgoTag } from '../components/tags/time-ago-tag';
@@ -425,7 +424,7 @@ export const Device = () => {
         />
       </Box>
       <StyledGraphCard>
-        {isLoadingReadings || readingData === undefined ? (
+        {isLoadingReadings || readingData === undefined || !device ? (
           <Flex
             style={{ height: '600px' }}
             justifyContent="center"
@@ -444,6 +443,7 @@ export const Device = () => {
                       data={readingData.temperature}
                       options={options}
                       valueType="temperature"
+                      timezone={device.timezone}
                       showAxis={deviceSensors.length === 1}
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
@@ -462,6 +462,7 @@ export const Device = () => {
                       data={readingData.humidity}
                       options={options}
                       valueType="humidity"
+                      timezone={device.timezone}
                       showAxis={!deviceSensors.includes('pressure')}
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
@@ -480,6 +481,7 @@ export const Device = () => {
                       data={readingData.pressure}
                       options={options}
                       valueType="pressure"
+                      timezone={device.timezone}
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
                       showTitle={true}
@@ -497,6 +499,7 @@ export const Device = () => {
                       data={readingData.airQuality}
                       options={options}
                       valueType="airQuality"
+                      timezone={device.timezone}
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
                       showTitle={true}
@@ -514,6 +517,7 @@ export const Device = () => {
                       data={readingData.co2}
                       options={options}
                       valueType="co2"
+                      timezone={device.timezone}
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
                       showTitle={true}
@@ -531,6 +535,7 @@ export const Device = () => {
                       data={readingData.pm25}
                       options={options}
                       valueType="pm25"
+                      timezone={device.timezone}
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
                       showTitle={true}
@@ -548,6 +553,7 @@ export const Device = () => {
                       data={readingData.voc}
                       options={options}
                       valueType="voc"
+                      timezone={device.timezone}
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
                       showTitle={true}
@@ -565,6 +571,7 @@ export const Device = () => {
                       data={readingData.nox}
                       options={options}
                       valueType="nox"
+                      timezone={device.timezone}
                       hoveredDate={hoveredDate}
                       onHover={date => setHoveredDate(date)}
                       showTitle={true}
