@@ -5,6 +5,33 @@ import {
 } from './time-frame-selector';
 import { DateTime, DateTimeUnit } from 'luxon';
 
+// d3 time ticks are generated in local time, while date-only API timestamps are
+// calendar dates. Parse and format both in local time so hover hits line up.
+export const parseGraphTimestamp = (
+  timestamp: string,
+  level: TimeLevel
+): Date => {
+  if (level === '30 minutes') {
+    return new Date(timestamp);
+  }
+
+  return DateTime.fromISO(timestamp, { zone: 'local' }).startOf('day').toJSDate()!;
+};
+
+export const toGraphHoverKey = (date: Date, level: TimeLevel): string => {
+  if (level === '30 minutes') {
+    return date.toISOString();
+  }
+
+  const local = DateTime.fromJSDate(date);
+
+  if (level === 'month') {
+    return local.startOf('month').toISODate()!;
+  }
+
+  return local.toISODate()!;
+};
+
 interface TimeFrame {
   startTime: string;
   endTime: string;

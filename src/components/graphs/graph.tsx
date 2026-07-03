@@ -15,6 +15,8 @@ import {
   getGraphEndLimit,
   getGraphStartLimit,
   getStartTime,
+  parseGraphTimestamp,
+  toGraphHoverKey,
 } from '../selectors/time-frames';
 import { MinMax } from '../../utils/readings';
 import { getUnitTitle } from '../../utils/unit';
@@ -253,12 +255,12 @@ export const Graph = ({
   }));
 
   const line = d3.line<Reading>(
-    d => x(new Date(d.timestamp)),
+    d => x(parseGraphTimestamp(d.timestamp, options.level)),
     d => y(d.avg || 0)
   );
 
   const area = d3.area<Reading>(
-    d => x(new Date(d.timestamp)),
+    d => x(parseGraphTimestamp(d.timestamp, options.level)),
     () => y(yGraphMin) + margins.bottom,
     d => y(d.avg || 0)
   );
@@ -280,12 +282,14 @@ export const Graph = ({
     }
   }, [gx, x]);
 
-  const hoveredDatapoint = data.find(d => d.timestamp === hoveredDate);
+  const hoveredDatapoint = hoveredDate
+    ? data.find(d => d.timestamp === hoveredDate)
+    : undefined;
 
   const tooltipContent = hoveredDatapoint && {
     ...hoveredDatapoint,
     position: {
-      x: x(new Date(hoveredDatapoint.timestamp)),
+      x: x(parseGraphTimestamp(hoveredDatapoint.timestamp, options.level)),
       y: y(hoveredDatapoint.avg || 0),
     },
   };
@@ -328,7 +332,7 @@ export const Graph = ({
         />
         <g fill="currentColor">
           {data.map((d, i) => {
-            const date = new Date(d.timestamp);
+            const date = parseGraphTimestamp(d.timestamp, options.level);
             if (date < new Date(startTime) || date > new Date(endTime))
               return null;
 
@@ -337,7 +341,7 @@ export const Graph = ({
               <PointG
                 key={i}
                 $valueType={valueType}
-                transform={`translate(${x(new Date(d.timestamp))}, ${y(
+                transform={`translate(${x(parseGraphTimestamp(d.timestamp, options.level))}, ${y(
                   d.avg || 0
                 )})`}
                 $isHovered={d.timestamp === hoveredDate}
@@ -362,17 +366,21 @@ export const Graph = ({
             );
           })}
         </g>
-        {hoverBlocks.map((d, i) => (
+        {hoverBlocks.map((d, i) => {
+          const hoverKey = toGraphHoverKey(d, options.level);
+
+          return (
           <HoverableRect
             key={i}
             y={y(yGraphMax) - margins.top}
             x={x(d) - tickWidth / 2}
             height={height}
             width={tickWidth > 0 ? tickWidth : 0}
-            $isHovered={hoveredDate === d.toISOString()}
-            onMouseEnter={e => onHover(d.toISOString())}
+            $isHovered={hoveredDate === hoverKey}
+            onMouseEnter={e => onHover(hoverKey)}
           />
-        ))}
+          );
+        })}
         <linearGradient
           id={`line-gradient-${deviceId}-${valueType}`}
           gradientUnits="userSpaceOnUse"

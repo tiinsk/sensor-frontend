@@ -3,6 +3,8 @@ import {
   getReadingsTimeFrame,
   getStatisticsTimeFrame,
   getTimeFrame,
+  parseGraphTimestamp,
+  toGraphHoverKey,
 } from './time-frames';
 import { TimeFrameOptions } from './time-frame-selector';
 import { getDefaultTimeLevel } from '../../utils/time-frame';
@@ -303,5 +305,31 @@ describe('Time frame tests', () => {
       startDate: '2023-11-01',
       endDate: '2023-11-30',
     });
+  });
+
+  it('Should format graph hover keys to match API reading timestamps', () => {
+    expect(
+      toGraphHoverKey(new Date('2023-12-21T14:30:00.000Z'), '30 minutes')
+    ).toBe('2023-12-21T14:30:00.000Z');
+
+    expect(toGraphHoverKey(new Date('2023-12-21T15:00:00.000Z'), 'day')).toBe(
+      '2023-12-21'
+    );
+
+    expect(toGraphHoverKey(new Date('2023-12-21T15:00:00.000Z'), 'month')).toBe(
+      '2023-12-01'
+    );
+  });
+
+  it('Should use local calendar dates for hover keys east of UTC', () => {
+    vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-180);
+
+    // Local 13 Jun 2026 00:00 in UTC+3 is still 12 Jun in UTC.
+    const localJune13Midnight = new Date(2026, 5, 13);
+
+    expect(toGraphHoverKey(localJune13Midnight, 'day')).toBe('2026-06-13');
+    expect(parseGraphTimestamp('2026-06-13', 'day').getTime()).toBe(
+      localJune13Midnight.getTime()
+    );
   });
 });
