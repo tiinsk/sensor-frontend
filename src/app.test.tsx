@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router';
 import { test, vi } from 'vitest';
 import App from './app';
+import { TestQueryProvider } from './test/test-query-provider';
 
 vi.mock('webfontloader', () => ({
   default: { load: vi.fn() },
@@ -9,8 +10,10 @@ vi.mock('webfontloader', () => ({
 
 test('renders without crashing', () => {
   render(
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <TestQueryProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </TestQueryProvider>
   );
 });
