@@ -7,15 +7,19 @@ import {
   StatisticsResponse,
 } from './types';
 import { api } from './index';
+import { ValueType } from '../components/selectors/time-frame-selector';
 import {
-  ValueType,
-} from '../components/selectors/time-frame-selector';
-import { ReadingsTimeFrame, StatisticsTimeFrame } from '../components/selectors/time-frames';
+  ReadingsTimeFrame,
+  StatisticsTimeFrame,
+} from '../components/selectors/time-frames';
 
-type ReadingParams = ReadingsTimeFrame & { type: ValueType };
-type DeviceReadingParams = ReadingsTimeFrame & {
+export type ReadingParams = ReadingsTimeFrame & { type: ValueType };
+export type DeviceReadingParams = ReadingsTimeFrame & {
   deviceId: string;
   types: ValueType[];
+};
+export type DeviceStatisticsParams = StatisticsTimeFrame & {
+  deviceId: string;
 };
 
 const routes = {
@@ -37,10 +41,7 @@ const routes = {
       route: `/readings`,
       params,
     }),
-  getDeviceReadings: ({
-    deviceId,
-    ...params
-  }: DeviceReadingParams) =>
+  getDeviceReadings: ({ deviceId, ...params }: DeviceReadingParams) =>
     api.get<DeviceReadingResponse>({
       route: `/devices/${deviceId}/readings`,
       params,
@@ -53,12 +54,7 @@ const routes = {
     api.get<LatestReadingResponse>({
       route: `/devices/${deviceId}/latest`,
     }),
-  getAllDeviceStatistics: ({
-    deviceId,
-    ...params
-  }: StatisticsTimeFrame & {
-    deviceId: string;
-  }) =>
+  getAllDeviceStatistics: ({ deviceId, ...params }: DeviceStatisticsParams) =>
     api.get<StatisticsResponse>({
       route: `/devices/${deviceId}/statistics`,
       params,
