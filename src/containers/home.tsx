@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
-import api from '../api/routes';
+import { useState } from 'react';
 import { DeviceCard } from '../components/cards/device-card';
-import { ReadingsResponse, StatisticsResponse } from '../api/types';
 import { useDevices } from '../hooks/use-devices';
 import { useLatestReadings } from '../hooks/use-latest-readings';
+import { useTimeFrameData } from '../hooks/use-time-frame-data';
 import styled from 'styled-components';
 import {
   TimeFrameOptions,
@@ -11,10 +10,6 @@ import {
 } from '../components/selectors/time-frame-selector';
 import { Flex } from '../components/styled/flex';
 import { GraphLoading } from '../assets/loading/graph-loading';
-import {
-  getReadingsTimeFrame,
-  getStatisticsTimeFrame,
-} from '../components/selectors/time-frames';
 import { getDefaultTimeFrameOptions } from '../storage/time-frame';
 import { getMinAndMaxGroupedByDeviceLocationType } from '../utils/readings';
 
@@ -40,84 +35,26 @@ export const Home = () => {
 
   const { data: devices = [], isPending: isPendingDevices } = useDevices();
   const { data: latestData, isPending: isPendingLatest } = useLatestReadings();
-
-  const [isLoadingReadings, setLoadingReadings] = useState<boolean | undefined>(
-    undefined
-  );
-  const [isLoadingStatistics, setLoadingStatistics] = useState<
-    boolean | undefined
-  >(undefined);
-
-  const [statisticsData, setStatisticsData] = useState<{
-    [id: string]: StatisticsResponse | undefined;
-  }>({});
-  const [readingsData, setReadingsData] = useState<{
-    [id: string]: ReadingsResponse | undefined;
-  }>({});
-
-  const fetchStatistics = async () => {
-    const statisticsTimeFrame = getStatisticsTimeFrame(options);
-    setLoadingStatistics(true);
-    try {
-      const statisticsResult = await api.getAllStatistics(statisticsTimeFrame);
-
-      const statisticsByDevice = statisticsResult.values.reduce<{
-        [id: string]: StatisticsResponse | undefined;
-      }>((acc, cur) => {
-        acc[cur.id] = cur;
-        return acc;
-      }, {});
-
-      setStatisticsData(statisticsByDevice);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingStatistics(false);
-    }
-  };
-
-  const fetchReadings = async () => {
-    const readingsTimeFrame = getReadingsTimeFrame(options);
-    setLoadingReadings(true);
-    try {
-      const readingsResult = await api.getAllReadings({
-        ...readingsTimeFrame,
-        type: options.valueType || 'temperature',
-      });
-
-      const readingsByDevice = readingsResult.values.reduce<{
-        [id: string]: ReadingsResponse | undefined;
-      }>((acc, cur) => {
-        acc[cur.id] = cur;
-        return acc;
-      }, {});
-
-      setReadingsData(readingsByDevice);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingReadings(false);
-    }
-  };
+  const {
+    readingsByDevice,
+    statisticsByDevice,
+    isPendingReadings,
+    isPendingStatistics,
+  } = useTimeFrameData(options);
 
   const isLoadingMainContent =
     isPendingLatest || (isPendingDevices && devices.length === 0);
 
-  useEffect(() => {
-    fetchReadings();
-    fetchStatistics();
-  }, [options]);
-
-  const minMax = getMinAndMaxGroupedByDeviceLocationType(devices, readingsData);
+  const minMax = getMinAndMaxGroupedByDeviceLocationType(
+    devices,
+    readingsByDevice
+  );
 
   return (
     <>
       <TimeFrameSelector
         options={options}
-        onChange={newOptions => {
-          setLoadingReadings(true);
-          setOptions(newOptions);
-        }}
+        onChange={setOptions}
       />
       {devices.length === 0 && isLoadingMainContent ? (
         <Flex
@@ -137,16 +74,12 @@ export const Home = () => {
               type={device.type}
               options={options}
               latestData={latestData?.byDevice[device.id]}
-              statisticsData={statisticsData[device.id]}
-              readingsData={readingsData[device.id]?.values}
+              statisticsData={statisticsByDevice[device.id]}
+              readingsData={readingsByDevice[device.id]?.values}
               minMax={minMax[device.location.type || device.id]}
               isLoadingMainContent={isLoadingMainContent}
-              isLoadingReadings={
-                isLoadingReadings || isLoadingReadings === undefined
-              }
-              isLoadingStatistics={
-                isLoadingStatistics || isLoadingStatistics === undefined
-              }
+              isLoadingReadings={isPendingReadings}
+              isLoadingStatistics={isPendingStatistics}
               timezone={device.timezone}
             />
           ))}
