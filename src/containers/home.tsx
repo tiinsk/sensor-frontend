@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 import api from '../api/routes';
 import { DeviceCard } from '../components/cards/device-card';
-import {
-  LatestReadingResponse,
-  ReadingsResponse,
-  StatisticsResponse,
-} from '../api/types';
+import { ReadingsResponse, StatisticsResponse } from '../api/types';
 import { useDevices } from '../hooks/use-devices';
+import { useLatestReadings } from '../hooks/use-latest-readings';
 import styled from 'styled-components';
 import {
   TimeFrameOptions,
@@ -42,10 +39,8 @@ export const Home = () => {
   );
 
   const { data: devices = [], isPending: isPendingDevices } = useDevices();
+  const { data: latestData, isPending: isPendingLatest } = useLatestReadings();
 
-  const [isLoadingLatest, setLoadingLatest] = useState<boolean | undefined>(
-    undefined
-  );
   const [isLoadingReadings, setLoadingReadings] = useState<boolean | undefined>(
     undefined
   );
@@ -53,9 +48,6 @@ export const Home = () => {
     boolean | undefined
   >(undefined);
 
-  const [latestData, setLatestData] = useState<{
-    [id: string]: LatestReadingResponse | undefined;
-  }>({});
   const [statisticsData, setStatisticsData] = useState<{
     [id: string]: StatisticsResponse | undefined;
   }>({});
@@ -108,34 +100,8 @@ export const Home = () => {
     }
   };
 
-  const fetchLatest = async () => {
-    setLoadingLatest(true);
-    try {
-      const latestResult = await api.getAllLatest();
-
-      const latestByDevice = latestResult.values.reduce<{
-        [id: string]: LatestReadingResponse | undefined;
-      }>((acc, cur) => {
-        acc[cur.id] = cur;
-        return acc;
-      }, {});
-
-      setLatestData(latestByDevice);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingLatest(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchLatest();
-  }, []);
-
   const isLoadingMainContent =
-    isLoadingLatest ||
-    isLoadingLatest === undefined ||
-    (isPendingDevices && devices.length === 0);
+    isPendingLatest || (isPendingDevices && devices.length === 0);
 
   useEffect(() => {
     fetchReadings();
@@ -170,13 +136,11 @@ export const Home = () => {
               key={device.id}
               type={device.type}
               options={options}
-              latestData={latestData[device.id]}
+              latestData={latestData?.byDevice[device.id]}
               statisticsData={statisticsData[device.id]}
               readingsData={readingsData[device.id]?.values}
               minMax={minMax[device.location.type || device.id]}
-              isLoadingMainContent={
-                isLoadingMainContent || isLoadingMainContent === undefined
-              }
+              isLoadingMainContent={isLoadingMainContent}
               isLoadingReadings={
                 isLoadingReadings || isLoadingReadings === undefined
               }
