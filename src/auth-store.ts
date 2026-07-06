@@ -1,4 +1,5 @@
 import api from './api/routes';
+import { clearQueryCacheOnSignOut } from './queries/query-persist';
 
 const STORAGE_TOKEN = 'auth';
 
@@ -38,6 +39,7 @@ export const authStore = {
 
   signOut: (): void => {
     localStorage.removeItem(STORAGE_TOKEN);
+    clearQueryCacheOnSignOut();
     emit();
   },
 

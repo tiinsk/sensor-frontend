@@ -28,6 +28,15 @@ describe('authStore', () => {
     expect(localStorage.getItem('auth')).toBeNull();
   });
 
+  it('clears query cache on signOut', () => {
+    localStorage.setItem('sensor-devices-query-cache', '{"clientState":{}}');
+
+    authStore.signIn('token-abc');
+    authStore.signOut();
+
+    expect(localStorage.getItem('sensor-devices-query-cache')).toBeNull();
+  });
+
   it('notifies subscribers on signIn and signOut', () => {
     const listener = vi.fn();
     const unsubscribe = authStore.subscribe(listener);

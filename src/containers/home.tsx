@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import api from '../api/routes';
 import { DeviceCard } from '../components/cards/device-card';
 import {
-  DeviceResponse,
   LatestReadingResponse,
   ReadingsResponse,
   StatisticsResponse,
 } from '../api/types';
+import { useDevices } from '../hooks/use-devices';
 import styled from 'styled-components';
 import {
   TimeFrameOptions,
@@ -18,7 +18,6 @@ import {
   getReadingsTimeFrame,
   getStatisticsTimeFrame,
 } from '../components/selectors/time-frames';
-import { getStorageDevices, saveStorageDevices } from '../storage/devices';
 import { getDefaultTimeFrameOptions } from '../storage/time-frame';
 import { getMinAndMaxGroupedByDeviceLocationType } from '../utils/readings';
 
@@ -42,11 +41,11 @@ export const Home = () => {
     getDefaultTimeFrameOptions()
   );
 
-  const [devices, setDevices] = useState<DeviceResponse[]>(getStorageDevices());
+  const { data: devices = [], isPending: isPendingDevices } = useDevices();
 
-  const [isLoadingMainContent, setLoadingMainContent] = useState<
-    boolean | undefined
-  >(undefined);
+  const [isLoadingLatest, setLoadingLatest] = useState<boolean | undefined>(
+    undefined
+  );
   const [isLoadingReadings, setLoadingReadings] = useState<boolean | undefined>(
     undefined
   );
@@ -63,11 +62,6 @@ export const Home = () => {
   const [readingsData, setReadingsData] = useState<{
     [id: string]: ReadingsResponse | undefined;
   }>({});
-
-  const saveDevicesToStorage = (deviceResponse: DeviceResponse[]) => {
-    saveStorageDevices(deviceResponse);
-    setDevices(deviceResponse);
-  };
 
   const fetchStatistics = async () => {
     const statisticsTimeFrame = getStatisticsTimeFrame(options);
@@ -114,13 +108,10 @@ export const Home = () => {
     }
   };
 
-  const fetchData = async () => {
-    setLoadingMainContent(true);
+  const fetchLatest = async () => {
+    setLoadingLatest(true);
     try {
-      const [devicesResult, latestResult] = await Promise.all([
-        api.getAllDevices(),
-        api.getAllLatest(),
-      ]);
+      const latestResult = await api.getAllLatest();
 
       const latestByDevice = latestResult.values.reduce<{
         [id: string]: LatestReadingResponse | undefined;
@@ -130,17 +121,21 @@ export const Home = () => {
       }, {});
 
       setLatestData(latestByDevice);
-      saveDevicesToStorage(devicesResult.values);
     } catch (error) {
       console.error(error);
     } finally {
-      setLoadingMainContent(false);
+      setLoadingLatest(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    fetchLatest();
   }, []);
+
+  const isLoadingMainContent =
+    isLoadingLatest ||
+    isLoadingLatest === undefined ||
+    (isPendingDevices && devices.length === 0);
 
   useEffect(() => {
     fetchReadings();
