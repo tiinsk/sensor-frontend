@@ -3,6 +3,7 @@ import {
   getReadingsTimeFrame,
   getStatisticsTimeFrame,
   getTimeFrame,
+  getTimeFrameStaleTime,
   parseGraphTimestamp,
   toGraphHoverKey,
 } from './time-frames';
@@ -324,5 +325,42 @@ describe('Time frame tests', () => {
     expect(
       parseGraphTimestamp('2026-06-13', 'day', helsinki).toISOString()
     ).toBe('2026-06-12T21:00:00.000Z');
+  });
+});
+
+describe('getTimeFrameStaleTime', () => {
+  beforeEach(() => {
+    Settings.defaultZone = 'UTC';
+  });
+
+  it('returns 0 for the current period', () => {
+    expect(getTimeFrameStaleTime(0, 'day')).toBe(0);
+    expect(getTimeFrameStaleTime(0, 'week')).toBe(0);
+  });
+
+  it('returns 10 minutes shortly after any previous period ends', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-02-01T00:05:00.000Z'));
+
+    expect(getTimeFrameStaleTime(-1, 'day')).toBe(10 * 60 * 1000);
+    expect(getTimeFrameStaleTime(-1, 'month')).toBe(10 * 60 * 1000);
+
+    vi.setSystemTime(new Date('2026-01-05T00:05:00.000Z'));
+    expect(getTimeFrameStaleTime(-1, 'week')).toBe(10 * 60 * 1000);
+  });
+
+  it('returns Infinity once the previous period has been closed for a while', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-02-15T12:00:00.000Z'));
+
+    expect(getTimeFrameStaleTime(-1, 'month')).toBe(Infinity);
+
+    vi.setSystemTime(new Date('2026-01-15T12:00:00.000Z'));
+    expect(getTimeFrameStaleTime(-1, 'day')).toBe(Infinity);
+    expect(getTimeFrameStaleTime(-1, 'week')).toBe(Infinity);
+  });
+
+  it('returns Infinity for older offsets', () => {
+    expect(getTimeFrameStaleTime(-2, 'day')).toBe(Infinity);
   });
 });
