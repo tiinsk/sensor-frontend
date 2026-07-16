@@ -1,24 +1,19 @@
-import { useEffect, useState } from 'react';
-import api from '../api/routes';
-import {
-  DeviceResponse,
-  LatestReadingResponse,
-  StatisticsResponse,
-} from '../api/types';
+import { useState } from 'react';
 import {
   TimeFrameOptions,
   TimeFrameSelector,
 } from '../components/selectors/time-frame-selector';
-import { getStatisticsTimeFrame } from '../components/selectors/time-frames';
 import { MapSvg } from '../assets/map';
 import styled from 'styled-components';
 import { H3 } from '../components/styled/typography';
 import { Flex } from '../components/styled/flex';
 import { MapReading } from '../components/map/map-reading';
 import { GraphLoading } from '../assets/loading/graph-loading';
-import { getStorageDevices, saveStorageDevices } from '../storage/devices';
 import { getDefaultTimeFrameOptions } from '../storage/time-frame';
 import { getDefaultTimeLevel } from '../utils/time-frame';
+import { useDevices } from '../hooks/use-devices';
+import { useLatestReadings } from '../hooks/use-latest-readings';
+import { useStatistics } from '../hooks/use-statistics';
 
 const MapCard = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.borders.secondary};
@@ -87,91 +82,22 @@ export const Map = () => {
     showMinAndMax: true,
   }));
 
-  const [devices, setDevices] = useState<DeviceResponse[]>(getStorageDevices());
+  const { data: devices = [], isPending: isPendingDevices } = useDevices();
+  const { data: latestData, isPending: isPendingLatest } = useLatestReadings();
+  const { data: statisticsByDevice = {}, isPending: isPendingStatistics } =
+    useStatistics(options);
 
-  const [isLoadingMainContent, setLoadingMainContent] = useState<
-    boolean | undefined
-  >(undefined);
-  const [isLoadingReadings, setLoadingReadings] = useState<boolean | undefined>(
-    undefined
-  );
+  const isLoadingDevices = isPendingDevices && devices.length === 0;
+  const isLoadingPins =
+    isPendingStatistics || (options.offsetFromNow === 0 && isPendingLatest);
 
-  const [latestData, setLatestData] = useState<{
-    [id: string]: LatestReadingResponse | undefined;
-  }>({});
-  const [statisticsData, setStatisticsData] = useState<{
-    [id: string]: StatisticsResponse | undefined;
-  }>({});
-
-  const saveDevicesToStorage = (devicesData: DeviceResponse[]) => {
-    saveStorageDevices(devicesData);
-    setDevices(devicesData);
-  };
-
-  const fetchReadings = async () => {
-    const statisticsTimeFrame = getStatisticsTimeFrame(options);
-    setLoadingReadings(true);
-    try {
-      const statisticsResult = await api.getAllStatistics(statisticsTimeFrame);
-
-      const statisticsByDevice = statisticsResult.values.reduce<{
-        [id: string]: StatisticsResponse | undefined;
-      }>((acc, cur) => {
-        acc[cur.id] = cur;
-        return acc;
-      }, {});
-
-      setStatisticsData(statisticsByDevice);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingReadings(false);
-    }
-  };
-
-  const fetchMainContent = async () => {
-    setLoadingMainContent(true);
-    try {
-      const [devicesResult, latestResult] = await Promise.all([
-        api.getAllDevices(),
-        api.getAllLatest(),
-      ]);
-
-      const latestByDevice = latestResult.values.reduce<{
-        [id: string]: LatestReadingResponse | undefined;
-      }>((acc, cur) => {
-        acc[cur.id] = cur;
-        return acc;
-      }, {});
-
-      setLatestData(latestByDevice);
-      saveDevicesToStorage(devicesResult.values);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingMainContent(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMainContent();
-  }, []);
-
-  useEffect(() => {
-    fetchReadings();
-    if (options.offsetFromNow === 0) {
-      fetchMainContent();
-    }
-  }, [options]);
+  const valueType = options.valueType || 'temperature';
 
   return (
     <div>
       <TimeFrameSelector
         options={options}
-        onChange={newOptions => {
-          setLoadingReadings(true);
-          setOptions(newOptions);
-        }}
+        onChange={setOptions}
         selectors={['valueType']}
       />
       <CardWrapper>
@@ -181,40 +107,29 @@ export const Map = () => {
             <MapWrapper>
               <MapSvg
                 style={{
-                  opacity:
-                    isLoadingMainContent && devices.length === 0 ? 0.25 : 1,
+                  opacity: isLoadingDevices ? 0.25 : 1,
                 }}
               />
-              {isLoadingMainContent && devices.length === 0 ? (
+              {isLoadingDevices ? (
                 <LoadingWrapper>
                   <GraphLoading />
                 </LoadingWrapper>
               ) : (
                 devices.map(device => {
+                  const latest = latestData?.byDevice[device.id];
+                  const statistics = statisticsByDevice[device.id]?.statistics;
                   const reading =
                     options.offsetFromNow === 0
                       ? {
-                          avg: latestData[device.id]?.reading?.[
-                            options.valueType || 'temperature'
-                          ],
-                          min: statisticsData[device.id]?.statistics[
-                            options.valueType || 'temperature'
-                          ].min,
-                          max: statisticsData[device.id]?.statistics[
-                            options.valueType || 'temperature'
-                          ].max,
-                          timestamp: latestData[device.id]?.reading?.timestamp,
+                          avg: latest?.reading?.[valueType],
+                          min: statistics?.[valueType].min,
+                          max: statistics?.[valueType].max,
+                          timestamp: latest?.reading?.timestamp,
                         }
                       : {
-                          avg: statisticsData[device.id]?.statistics[
-                            options.valueType || 'temperature'
-                          ].avg,
-                          min: statisticsData[device.id]?.statistics[
-                            options.valueType || 'temperature'
-                          ].min,
-                          max: statisticsData[device.id]?.statistics[
-                            options.valueType || 'temperature'
-                          ].max,
+                          avg: statistics?.[valueType].avg,
+                          min: statistics?.[valueType].min,
+                          max: statistics?.[valueType].max,
                           timestamp: undefined,
                         };
                   return (
@@ -230,9 +145,9 @@ export const Map = () => {
                       <MapReading
                         variant={options.offsetFromNow === 0 ? 'latest' : 'avg'}
                         reading={reading}
-                        unit={options.valueType || 'temperature'}
+                        unit={valueType}
                         title={device.name}
-                        isLoading={isLoadingReadings}
+                        isLoading={isLoadingPins}
                       />
                     </div>
                   );

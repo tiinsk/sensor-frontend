@@ -8,14 +8,7 @@ import {
 } from '../components/selectors/time-frames';
 import { readingsQueries } from '../queries/readings-queries';
 import { statisticsQueries } from '../queries/statistics-queries';
-
-const indexByDeviceId = <T extends { id: string }>(
-  values: T[]
-): Record<string, T | undefined> =>
-  values.reduce<Record<string, T | undefined>>((acc, item) => {
-    acc[item.id] = item;
-    return acc;
-  }, {});
+import { indexById } from '../utils/index-by-id';
 
 export const useTimeFrameData = (options: TimeFrameOptions) => {
   const valueType = options.valueType;
@@ -43,12 +36,12 @@ export const useTimeFrameData = (options: TimeFrameOptions) => {
   });
 
   const readingsByDevice = useMemo(
-    () => indexByDeviceId(readingsQuery.data?.values ?? []),
+    () => indexById(readingsQuery.data?.values ?? []),
     [readingsQuery.data]
   );
 
   const statisticsByDevice = useMemo(
-    () => indexByDeviceId(statisticsQuery.data?.values ?? []),
+    () => indexById(statisticsQuery.data?.values ?? []),
     [statisticsQuery.data]
   );
 
