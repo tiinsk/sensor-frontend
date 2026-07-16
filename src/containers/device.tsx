@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/routes';
-import { DeviceResponse, Reading as ReadingType } from '../api/types';
+import { Reading as ReadingType, Statistics } from '../api/types';
 import { useParams } from 'react-router';
-import { LatestReadingResponse, Statistics } from '../api/types';
 import { Flex } from '../components/styled/flex';
 import { H2 } from '../components/styled/typography';
 import { Reading } from '../components/styled/readings';
@@ -29,6 +28,8 @@ import { getDeviceSensors } from '../utils/device';
 import { getDefaultTimeFrameOptions } from '../storage/time-frame';
 import { Skeleton } from '../assets/loading/skeleton';
 import { ScoreReading } from '../components/styled/readings/score-reading';
+import { useDevice } from '../hooks/use-devices';
+import { useDeviceLatestReading } from '../hooks/use-latest-readings';
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -103,15 +104,16 @@ const StyledGraphContainer = styled.div`
 `;
 
 export const Device = () => {
+  const { id } = useParams();
   const [hoveredDate, setHoveredDate] = useState<string | undefined>(undefined);
   const [options, setOptions] = useState<TimeFrameOptions>(() => ({
     ...getDefaultTimeFrameOptions(),
     showMinAndMax: true,
   }));
-  const [device, setDevice] = useState<DeviceResponse | undefined>(undefined);
-  const [latestData, setLatestData] = useState<
-    LatestReadingResponse | undefined
-  >(undefined);
+
+  const { data: device, isPending: isPendingDevice } = useDevice(id);
+  const { data: latestData, isPending: isPendingLatest } =
+    useDeviceLatestReading(id);
 
   const [statisticsData, setStatisticsData] = useState<{
     day: Statistics | undefined;
@@ -120,57 +122,46 @@ export const Device = () => {
   }>({ day: undefined, week: undefined, month: undefined });
 
   const [isLoadingReadings, setLoadingReadings] = useState<boolean>(false);
-  const [isLoadingMainContent, setLoadingMainContent] =
-    useState<boolean>(false);
+  const [isLoadingStatistics, setLoadingStatistics] = useState<boolean>(false);
   const [readingData, setReadingData] = useState<
     { [type: string]: ReadingType[] | undefined } | undefined
   >(undefined);
 
-  const { id } = useParams();
-  const fetchData = async () => {
+  const fetchStatistics = async () => {
     if (!id) {
       return;
     }
 
-    setLoadingMainContent(true);
+    setLoadingStatistics(true);
     try {
-      const [
-        deviceData,
-        latest,
-        statisticsDay,
-        statisticsWeek,
-        statisticsMonth,
-      ] = await Promise.all([
-        api.getDevice(id),
-        api.getDeviceLatestReadings(id),
-        api.getAllDeviceStatistics({
-          deviceId: id,
-          ...getStatisticsTimeFrame({
-            timePeriod: 'day',
-            offsetFromNow: 0,
-            level: getDefaultTimeLevel('day'),
+      const [statisticsDay, statisticsWeek, statisticsMonth] =
+        await Promise.all([
+          api.getAllDeviceStatistics({
+            deviceId: id,
+            ...getStatisticsTimeFrame({
+              timePeriod: 'day',
+              offsetFromNow: 0,
+              level: getDefaultTimeLevel('day'),
+            }),
           }),
-        }),
-        api.getAllDeviceStatistics({
-          deviceId: id,
-          ...getStatisticsTimeFrame({
-            timePeriod: 'week',
-            offsetFromNow: 0,
-            level: getDefaultTimeLevel('week'),
+          api.getAllDeviceStatistics({
+            deviceId: id,
+            ...getStatisticsTimeFrame({
+              timePeriod: 'week',
+              offsetFromNow: 0,
+              level: getDefaultTimeLevel('week'),
+            }),
           }),
-        }),
-        api.getAllDeviceStatistics({
-          deviceId: id,
-          ...getStatisticsTimeFrame({
-            timePeriod: 'month',
-            offsetFromNow: 0,
-            level: getDefaultTimeLevel('month'),
+          api.getAllDeviceStatistics({
+            deviceId: id,
+            ...getStatisticsTimeFrame({
+              timePeriod: 'month',
+              offsetFromNow: 0,
+              level: getDefaultTimeLevel('month'),
+            }),
           }),
-        }),
-      ]);
+        ]);
 
-      setLatestData(latest);
-      setDevice(deviceData);
       setStatisticsData({
         day: statisticsDay.statistics,
         week: statisticsWeek.statistics,
@@ -179,7 +170,7 @@ export const Device = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoadingMainContent(false);
+      setLoadingStatistics(false);
     }
   };
 
@@ -222,12 +213,18 @@ export const Device = () => {
   };
 
   useEffect(() => {
+    fetchStatistics();
+  }, [id]);
+
+  useEffect(() => {
     setReadingData(undefined);
-    fetchData();
     fetchReadings();
   }, [id, options]);
 
-  const deviceSensors = device?.type ? getDeviceSensors(device?.type) : [];
+  const isLoadingMainContent =
+    isPendingDevice || isPendingLatest || isLoadingStatistics;
+
+  const deviceSensors = device?.type ? getDeviceSensors(device.type) : [];
 
   return (
     <div>
