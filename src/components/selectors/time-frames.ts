@@ -7,9 +7,10 @@ import { DateTime, DateTimeUnit } from 'luxon';
 
 const toUtcIso = (dateTime: DateTime): string => dateTime.toUTC().toISO()!;
 
-// Day queries use UTC timestamps. Week/month/year use the viewer's local calendar.
-export const getQueryTimezone = (timePeriod: TimePeriod): string =>
-  timePeriod === 'day' ? 'UTC' : DateTime.local().zoneName;
+// Calendar periods (day/week/month/year) use the viewer's local zone so "yesterday"
+// matches the graph axis. 30-minute API buckets remain UTC instants in the range.
+export const getQueryTimezone = (_timePeriod: TimePeriod): string =>
+  DateTime.local().zoneName;
 
 const now = (timezone: string): DateTime =>
   DateTime.now().setZone(timezone);

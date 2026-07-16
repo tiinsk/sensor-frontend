@@ -128,6 +128,35 @@ describe('Time frame tests', () => {
     });
   });
 
+  it('Should cover local midnight for previous day in non-UTC timezone', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-16T10:00:00.000Z'));
+    Settings.defaultZone = 'Europe/Helsinki';
+
+    const timeFrameOptions: TimeFrameOptions = {
+      timePeriod: 'day',
+      offsetFromNow: -1,
+      level: getDefaultTimeLevel('day'),
+      showMinAndMax: true,
+    };
+
+    // Local Jul 15 00:00 Helsinki = Jul 14 21:00 UTC; ±30m graph padding.
+    expect(getTimeFrame(timeFrameOptions)).toEqual({
+      startTime: '2026-07-14T21:00:00.000Z',
+      endTime: '2026-07-15T20:59:59.999Z',
+      graphStartTime: '2026-07-14T20:30:00.000Z',
+      graphEndTime: '2026-07-15T21:29:59.999Z',
+      graphStartLimit: '2026-07-14T20:45:00.000Z',
+      graphEndLimit: '2026-07-15T20:44:59.999Z',
+    });
+
+    expect(getReadingsTimeFrame(timeFrameOptions)).toEqual({
+      level: '30 minutes',
+      startTime: '2026-07-14T20:30:00.000Z',
+      endTime: '2026-07-15T21:29:59.999Z',
+    });
+  });
+
   it('Should return current time frame (timePeriod: day)', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-12-21T13:30Z'));

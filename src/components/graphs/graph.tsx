@@ -14,6 +14,7 @@ import {
   getEndTime,
   getGraphEndLimit,
   getGraphStartLimit,
+  getQueryTimezone,
   getStartTime,
   parseGraphTimestamp,
   toGraphHoverKey,
@@ -205,18 +206,33 @@ export const Graph = ({
   const gx = useRef<SVGGElement>(null);
   const { width, height } = useGraphSizeContext();
 
-  const endTime = getEndTime(options.offsetFromNow, options.timePeriod, timezone)!;
-  const startTime = getStartTime(options.offsetFromNow, options.timePeriod, timezone)!;
+  // 30-minute day graphs must match the readings query calendar (viewer local).
+  // Coarser levels keep device timezone for date-bucket display.
+  const periodTimezone =
+    options.level === '30 minutes'
+      ? getQueryTimezone(options.timePeriod)
+      : timezone;
+
+  const endTime = getEndTime(
+    options.offsetFromNow,
+    options.timePeriod,
+    periodTimezone
+  )!;
+  const startTime = getStartTime(
+    options.offsetFromNow,
+    options.timePeriod,
+    periodTimezone
+  )!;
 
   const endLimit = getGraphEndLimit(
     options.offsetFromNow,
     options.timePeriod,
-    timezone
+    periodTimezone
   )!;
   const startLimit = getGraphStartLimit(
     options.offsetFromNow,
     options.timePeriod,
-    timezone
+    periodTimezone
   )!;
 
   const max = minMax?.max || Math.max(...data?.map(r => r.max || 0));
@@ -262,12 +278,12 @@ export const Graph = ({
   }));
 
   const line = d3.line<Reading>(
-    d => x(parseGraphTimestamp(d.timestamp, options.level, timezone)),
+    d => x(parseGraphTimestamp(d.timestamp, options.level, periodTimezone)),
     d => y(d.avg || 0)
   );
 
   const area = d3.area<Reading>(
-    d => x(parseGraphTimestamp(d.timestamp, options.level, timezone)),
+    d => x(parseGraphTimestamp(d.timestamp, options.level, periodTimezone)),
     () => y(yGraphMin) + margins.bottom,
     d => y(d.avg || 0)
   );
@@ -283,7 +299,9 @@ export const Graph = ({
         d3
           .axisBottom<Date>(x)
           .tickArguments([getAxisTicks(options.timePeriod)])
-          .tickFormat((d, i) => formatAxes(d, options.timePeriod, timezone))
+          .tickFormat((d, i) =>
+            formatAxes(d, options.timePeriod, periodTimezone)
+          )
           .tickSize(0)
       );
     }
@@ -296,7 +314,13 @@ export const Graph = ({
   const tooltipContent = hoveredDatapoint && {
     ...hoveredDatapoint,
     position: {
-      x: x(parseGraphTimestamp(hoveredDatapoint.timestamp, options.level, timezone)),
+      x: x(
+        parseGraphTimestamp(
+          hoveredDatapoint.timestamp,
+          options.level,
+          periodTimezone
+        )
+      ),
       y: y(hoveredDatapoint.avg || 0),
     },
   };
@@ -339,7 +363,11 @@ export const Graph = ({
         />
         <g fill="currentColor">
           {data.map((d, i) => {
-            const date = parseGraphTimestamp(d.timestamp, options.level, timezone);
+            const date = parseGraphTimestamp(
+              d.timestamp,
+              options.level,
+              periodTimezone
+            );
             if (date < new Date(startTime) || date > new Date(endTime))
               return null;
 
@@ -348,7 +376,7 @@ export const Graph = ({
               <PointG
                 key={i}
                 $valueType={valueType}
-                transform={`translate(${x(parseGraphTimestamp(d.timestamp, options.level, timezone))}, ${y(
+                transform={`translate(${x(parseGraphTimestamp(d.timestamp, options.level, periodTimezone))}, ${y(
                   d.avg || 0
                 )})`}
                 $isHovered={d.timestamp === hoveredDate}
@@ -374,7 +402,7 @@ export const Graph = ({
           })}
         </g>
         {hoverBlocks.map((d, i) => {
-          const hoverKey = toGraphHoverKey(d, options.level, timezone);
+          const hoverKey = toGraphHoverKey(d, options.level, periodTimezone);
 
           return (
           <HoverableRect
@@ -426,7 +454,7 @@ export const Graph = ({
         tooltipContent={tooltipContent}
         timePeriod={options.timePeriod}
         valueType={valueType}
-        timezone={timezone}
+        timezone={periodTimezone}
       />
     </>
   );
