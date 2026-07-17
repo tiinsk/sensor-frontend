@@ -28,4 +28,6 @@ export const useDeviceLatestReading = (deviceId: string | undefined) =>
 
       return list?.values.find(device => device.id === deviceId);
     },
+    initialDataUpdatedAt: () =>
+      queryClient.getQueryState(latestQueries.all().queryKey)?.dataUpdatedAt,
   });

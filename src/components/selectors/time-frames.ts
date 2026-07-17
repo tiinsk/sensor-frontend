@@ -4,6 +4,7 @@ import {
   TimePeriod,
 } from './time-frame-selector';
 import { DateTime, DateTimeUnit } from 'luxon';
+import { READING_INTERVAL_MS } from '../../utils/latest-stale-time';
 
 const toUtcIso = (dateTime: DateTime): string => dateTime.toUTC().toISO()!;
 
@@ -356,8 +357,6 @@ export const getStatisticsTimeFrame = (
   };
 };
 
-const RECENT_PERIOD_STALE_TIME_MS = 10 * 60 * 1000; // = 10 min
-
 // Current period stays fresh. offset <= -2 is historical. offset -1 is the last
 // closed period: late readings can still arrive briefly after any period ends
 // (day/week/month/year boundary).
@@ -377,14 +376,14 @@ export const getTimeFrameStaleTime = (
   const timezone = getQueryTimezone(timePeriod);
   const periodEnd = getEndTime(-1, timePeriod, timezone);
   if (!periodEnd) {
-    return RECENT_PERIOD_STALE_TIME_MS;
+    return READING_INTERVAL_MS;
   }
 
   const msSincePeriodEnd =
     at.toMillis() - fromUtcIso(periodEnd, timezone).toMillis();
 
-  if (msSincePeriodEnd >= 0 && msSincePeriodEnd < RECENT_PERIOD_STALE_TIME_MS) {
-    return RECENT_PERIOD_STALE_TIME_MS;
+  if (msSincePeriodEnd >= 0 && msSincePeriodEnd < READING_INTERVAL_MS) {
+    return READING_INTERVAL_MS;
   }
 
   return Infinity;

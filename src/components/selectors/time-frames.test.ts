@@ -9,6 +9,7 @@ import {
 } from './time-frames';
 import { TimeFrameOptions } from './time-frame-selector';
 import { getDefaultTimeLevel } from '../../utils/time-frame';
+import { READING_INTERVAL_MS } from '../../utils/latest-stale-time';
 import { DateTime, Settings } from 'luxon';
 
 afterEach(() => {
@@ -371,11 +372,11 @@ describe('getTimeFrameStaleTime', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-02-01T00:05:00.000Z'));
 
-    expect(getTimeFrameStaleTime(-1, 'day')).toBe(10 * 60 * 1000);
-    expect(getTimeFrameStaleTime(-1, 'month')).toBe(10 * 60 * 1000);
+    expect(getTimeFrameStaleTime(-1, 'day')).toBe(READING_INTERVAL_MS);
+    expect(getTimeFrameStaleTime(-1, 'month')).toBe(READING_INTERVAL_MS);
 
     vi.setSystemTime(new Date('2026-01-05T00:05:00.000Z'));
-    expect(getTimeFrameStaleTime(-1, 'week')).toBe(10 * 60 * 1000);
+    expect(getTimeFrameStaleTime(-1, 'week')).toBe(READING_INTERVAL_MS);
   });
 
   it('returns Infinity once the previous period has been closed for a while', () => {
