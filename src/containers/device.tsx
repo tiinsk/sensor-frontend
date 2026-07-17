@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../api/routes';
-import { Reading as ReadingType, Statistics } from '../api/types';
+import { Reading as ReadingType } from '../api/types';
 import { useParams } from 'react-router';
 import { Flex } from '../components/styled/flex';
 import { H2 } from '../components/styled/typography';
@@ -18,11 +17,7 @@ import styled from 'styled-components';
 import { Graph } from '../components/graphs/graph';
 import { GraphSizeWrapper } from '../components/graphs/graph-size-wrapper';
 import { GraphLoading } from '../assets/loading/graph-loading';
-import {
-  getReadingsTimeFrame,
-  getStatisticsTimeFrame,
-} from '../components/selectors/time-frames';
-import { getDefaultTimeLevel } from '../utils/time-frame';
+import { getReadingsTimeFrame } from '../components/selectors/time-frames';
 import { TimeAgoTag } from '../components/tags/time-ago-tag';
 import { getDeviceSensors } from '../utils/device';
 import { getDefaultTimeFrameOptions } from '../storage/time-frame';
@@ -30,6 +25,8 @@ import { Skeleton } from '../assets/loading/skeleton';
 import { ScoreReading } from '../components/styled/readings/score-reading';
 import { useDevice } from '../hooks/use-devices';
 import { useDeviceLatestReading } from '../hooks/use-latest-readings';
+import { useDeviceAverageStatistics } from '../hooks/use-statistics';
+import api from '../api/routes';
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -114,65 +111,17 @@ export const Device = () => {
   const { data: device, isPending: isPendingDevice } = useDevice(id);
   const { data: latestData, isPending: isPendingLatest } =
     useDeviceLatestReading(id);
-
-  const [statisticsData, setStatisticsData] = useState<{
-    day: Statistics | undefined;
-    week: Statistics | undefined;
-    month: Statistics | undefined;
-  }>({ day: undefined, week: undefined, month: undefined });
+  const {
+    day: statisticsDay,
+    week: statisticsWeek,
+    month: statisticsMonth,
+    isPending: isPendingStatistics,
+  } = useDeviceAverageStatistics(id);
 
   const [isLoadingReadings, setLoadingReadings] = useState<boolean>(false);
-  const [isLoadingStatistics, setLoadingStatistics] = useState<boolean>(false);
   const [readingData, setReadingData] = useState<
     { [type: string]: ReadingType[] | undefined } | undefined
   >(undefined);
-
-  const fetchStatistics = async () => {
-    if (!id) {
-      return;
-    }
-
-    setLoadingStatistics(true);
-    try {
-      const [statisticsDay, statisticsWeek, statisticsMonth] =
-        await Promise.all([
-          api.getAllDeviceStatistics({
-            deviceId: id,
-            ...getStatisticsTimeFrame({
-              timePeriod: 'day',
-              offsetFromNow: 0,
-              level: getDefaultTimeLevel('day'),
-            }),
-          }),
-          api.getAllDeviceStatistics({
-            deviceId: id,
-            ...getStatisticsTimeFrame({
-              timePeriod: 'week',
-              offsetFromNow: 0,
-              level: getDefaultTimeLevel('week'),
-            }),
-          }),
-          api.getAllDeviceStatistics({
-            deviceId: id,
-            ...getStatisticsTimeFrame({
-              timePeriod: 'month',
-              offsetFromNow: 0,
-              level: getDefaultTimeLevel('month'),
-            }),
-          }),
-        ]);
-
-      setStatisticsData({
-        day: statisticsDay.statistics,
-        week: statisticsWeek.statistics,
-        month: statisticsMonth.statistics,
-      });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingStatistics(false);
-    }
-  };
 
   const fetchReadings = async () => {
     if (!id) {
@@ -213,16 +162,11 @@ export const Device = () => {
   };
 
   useEffect(() => {
-    fetchStatistics();
-  }, [id]);
-
-  useEffect(() => {
     setReadingData(undefined);
     fetchReadings();
   }, [id, options]);
 
-  const isLoadingMainContent =
-    isPendingDevice || isPendingLatest || isLoadingStatistics;
+  const isLoadingLatest = isPendingDevice || isPendingLatest;
 
   const deviceSensors = device?.type ? getDeviceSensors(device.type) : [];
 
@@ -237,11 +181,11 @@ export const Device = () => {
         <Flex justifyContent="flex-end">
           <TimeAgoTag
             date={latestData?.reading?.timestamp}
-            isLoading={isLoadingMainContent}
+            isLoading={isLoadingLatest}
           />
         </Flex>
         <LatestReadingsWrapper $sensorCount={deviceSensors.length}>
-          {isLoadingMainContent ? (
+          {isLoadingLatest ? (
             <Flex
               py="s8"
               gap="s32"
@@ -321,7 +265,7 @@ export const Device = () => {
         </LatestReadingsWrapper>
       </LatestReadings>
       <AverageWrapper>
-        {isLoadingMainContent && (
+        {isPendingDevice && isPendingStatistics && (
           <>
             <StyledDeviceCard>
               <Skeleton variant="Body" width="s96" />
@@ -340,73 +284,73 @@ export const Device = () => {
         {deviceSensors.includes('airQuality') && (
           <AverageCard
             unit="airQuality"
-            day={statisticsData.day?.airQuality || {}}
-            week={statisticsData.week?.airQuality || {}}
-            month={statisticsData.month?.airQuality || {}}
-            isLoading={isLoadingMainContent}
+            day={statisticsDay?.airQuality || {}}
+            week={statisticsWeek?.airQuality || {}}
+            month={statisticsMonth?.airQuality || {}}
+            isLoading={isPendingStatistics}
           />
         )}
         {deviceSensors.includes('humidity') && (
           <AverageCard
             unit="humidity"
-            day={statisticsData.day?.humidity || {}}
-            week={statisticsData.week?.humidity || {}}
-            month={statisticsData.month?.humidity || {}}
-            isLoading={isLoadingMainContent}
+            day={statisticsDay?.humidity || {}}
+            week={statisticsWeek?.humidity || {}}
+            month={statisticsMonth?.humidity || {}}
+            isLoading={isPendingStatistics}
           />
         )}
         {deviceSensors.includes('pressure') && (
           <AverageCard
             unit="pressure"
-            day={statisticsData.day?.pressure || {}}
-            week={statisticsData.week?.pressure || {}}
-            month={statisticsData.month?.pressure || {}}
-            isLoading={isLoadingMainContent}
+            day={statisticsDay?.pressure || {}}
+            week={statisticsWeek?.pressure || {}}
+            month={statisticsMonth?.pressure || {}}
+            isLoading={isPendingStatistics}
           />
         )}
         {deviceSensors.includes('co2') && (
           <AverageCard
             unit="co2"
-            day={statisticsData.day?.co2 || {}}
-            week={statisticsData.week?.co2 || {}}
-            month={statisticsData.month?.co2 || {}}
-            isLoading={isLoadingMainContent}
+            day={statisticsDay?.co2 || {}}
+            week={statisticsWeek?.co2 || {}}
+            month={statisticsMonth?.co2 || {}}
+            isLoading={isPendingStatistics}
           />
         )}
         {deviceSensors.includes('temperature') && (
           <AverageCard
             unit="temperature"
-            day={statisticsData.day?.temperature || {}}
-            week={statisticsData.week?.temperature || {}}
-            month={statisticsData.month?.temperature || {}}
-            isLoading={isLoadingMainContent}
+            day={statisticsDay?.temperature || {}}
+            week={statisticsWeek?.temperature || {}}
+            month={statisticsMonth?.temperature || {}}
+            isLoading={isPendingStatistics}
           />
         )}
         {deviceSensors.includes('nox') && (
           <AverageCard
             unit="nox"
-            day={statisticsData.day?.nox || {}}
-            week={statisticsData.week?.nox || {}}
-            month={statisticsData.month?.nox || {}}
-            isLoading={isLoadingMainContent}
+            day={statisticsDay?.nox || {}}
+            week={statisticsWeek?.nox || {}}
+            month={statisticsMonth?.nox || {}}
+            isLoading={isPendingStatistics}
           />
         )}
         {deviceSensors.includes('voc') && (
           <AverageCard
             unit="voc"
-            day={statisticsData.day?.voc || {}}
-            week={statisticsData.week?.voc || {}}
-            month={statisticsData.month?.voc || {}}
-            isLoading={isLoadingMainContent}
+            day={statisticsDay?.voc || {}}
+            week={statisticsWeek?.voc || {}}
+            month={statisticsMonth?.voc || {}}
+            isLoading={isPendingStatistics}
           />
         )}
         {deviceSensors.includes('pm25') && (
           <AverageCard
             unit="pm25"
-            day={statisticsData.day?.pm25 || {}}
-            week={statisticsData.week?.pm25 || {}}
-            month={statisticsData.month?.pm25 || {}}
-            isLoading={isLoadingMainContent}
+            day={statisticsDay?.pm25 || {}}
+            week={statisticsWeek?.pm25 || {}}
+            month={statisticsMonth?.pm25 || {}}
+            isLoading={isPendingStatistics}
           />
         )}
       </AverageWrapper>
