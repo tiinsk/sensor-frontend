@@ -173,8 +173,8 @@ export const Device = () => {
   return (
     <div>
       <TitleWrapper>
-        <H2 mb="s4" isLoading={!latestData?.name} loadingWidth="s192">
-          {latestData?.name}
+        <H2 mb="s4" isLoading={isPendingDevice} loadingWidth="s192">
+          {device?.name}
         </H2>
       </TitleWrapper>
       <LatestReadings>
