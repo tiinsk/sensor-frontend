@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Reading as ReadingType } from '../api/types';
+import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import { Flex } from '../components/styled/flex';
 import { H2 } from '../components/styled/typography';
@@ -17,7 +16,6 @@ import styled from 'styled-components';
 import { Graph } from '../components/graphs/graph';
 import { GraphSizeWrapper } from '../components/graphs/graph-size-wrapper';
 import { GraphLoading } from '../assets/loading/graph-loading';
-import { getReadingsTimeFrame } from '../components/selectors/time-frames';
 import { TimeAgoTag } from '../components/tags/time-ago-tag';
 import { getDeviceSensors } from '../utils/device';
 import { getDefaultTimeFrameOptions } from '../storage/time-frame';
@@ -26,7 +24,7 @@ import { ScoreReading } from '../components/styled/readings/score-reading';
 import { useDevice } from '../hooks/use-devices';
 import { useDeviceLatestReading } from '../hooks/use-latest-readings';
 import { useDeviceAverageStatistics } from '../hooks/use-statistics';
-import api from '../api/routes';
+import { useDeviceTimeFrameReadings } from '../hooks/use-time-frame-data';
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -117,54 +115,8 @@ export const Device = () => {
     month: statisticsMonth,
     isPending: isPendingStatistics,
   } = useDeviceAverageStatistics(id);
-
-  const [isLoadingReadings, setLoadingReadings] = useState<boolean>(false);
-  const [readingData, setReadingData] = useState<
-    { [type: string]: ReadingType[] | undefined } | undefined
-  >(undefined);
-
-  const fetchReadings = async () => {
-    if (!id) {
-      return;
-    }
-
-    setLoadingReadings(true);
-    try {
-      const readingsTimeFrame = getReadingsTimeFrame(options);
-
-      const readings = await api.getDeviceReadings({
-        deviceId: id,
-        ...readingsTimeFrame,
-        types: [
-          'temperature',
-          'humidity',
-          'pressure',
-          'co2',
-          'nox',
-          'pm25',
-          'voc',
-          'airQuality',
-        ],
-      });
-
-      const readingsByType = readings.values.reduce<{
-        [type: string]: ReadingType[] | undefined;
-      }>((acc, cur) => {
-        acc[cur.type] = cur.values;
-        return acc;
-      }, {});
-      setReadingData(readingsByType);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingReadings(false);
-    }
-  };
-
-  useEffect(() => {
-    setReadingData(undefined);
-    fetchReadings();
-  }, [id, options]);
+  const { data: readingData, isPending: isPendingReadings } =
+    useDeviceTimeFrameReadings(id, options);
 
   const isLoadingLatest = isPendingDevice || isPendingLatest;
 
@@ -358,14 +310,11 @@ export const Device = () => {
         <TimeFrameSelector
           options={options}
           selectors={['timePeriod']}
-          onChange={newOptions => {
-            setOptions(newOptions);
-            setReadingData(undefined);
-          }}
+          onChange={setOptions}
         />
       </Box>
       <StyledGraphCard>
-        {isLoadingReadings || readingData === undefined || !device ? (
+        {isPendingReadings || readingData === undefined || !device ? (
           <Flex
             style={{ height: '600px' }}
             justifyContent="center"
