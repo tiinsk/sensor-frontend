@@ -6,15 +6,20 @@ import {
 } from '../components/selectors/time-frames';
 import { statisticsQueries } from '../queries/statistics-queries';
 import { indexById } from '../utils/index-by-id';
+import { READING_INTERVAL_MS } from '../utils/latest-stale-time';
 import { getDefaultTimeLevel } from '../utils/time-frame';
 
 export const useStatistics = (options: TimeFrameOptions) => {
   const hasValueType = options.valueType !== undefined;
+  const isLive = options.offsetFromNow === 0;
 
   return useQuery({
     ...statisticsQueries.all(getStatisticsTimeFrame(options)),
     enabled: hasValueType,
     staleTime: getTimeFrameStaleTime(options.offsetFromNow, options.timePeriod),
+    refetchInterval: isLive ? READING_INTERVAL_MS : false,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: isLive,
     select: response => indexById(response.values),
   });
 };
@@ -22,16 +27,22 @@ export const useStatistics = (options: TimeFrameOptions) => {
 export const useDeviceStatistics = (
   deviceId: string | undefined,
   options: Pick<TimeFrameOptions, 'timePeriod' | 'offsetFromNow' | 'level'>
-) =>
-  useQuery({
+) => {
+  const isLive = options.offsetFromNow === 0;
+
+  return useQuery({
     ...statisticsQueries.device({
       deviceId: deviceId ?? '',
       ...getStatisticsTimeFrame(options),
     }),
     enabled: Boolean(deviceId),
     staleTime: getTimeFrameStaleTime(options.offsetFromNow, options.timePeriod),
+    refetchInterval: isLive ? READING_INTERVAL_MS : false,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: isLive,
     select: response => response.statistics,
   });
+};
 
 export const useDeviceAverageStatistics = (deviceId: string | undefined) => {
   const day = useDeviceStatistics(deviceId, {

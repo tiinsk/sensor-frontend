@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { DeviceCard } from '../components/cards/device-card';
 import { useDevices } from '../hooks/use-devices';
 import { useLatestReadings } from '../hooks/use-latest-readings';
+import { useLiveReadingsSync } from '../hooks/use-catch-up-readings';
 import { useTimeFrameData } from '../hooks/use-time-frame-data';
 import styled from 'styled-components';
 import {
@@ -42,6 +43,11 @@ export const Home = () => {
     isPendingStatistics,
   } = useTimeFrameData(options);
 
+  useLiveReadingsSync({
+    options,
+    readingsReady: !isPendingReadings,
+  });
+
   const isLoadingMainContent =
     isPendingLatest || (isPendingDevices && devices.length === 0);
 
@@ -52,10 +58,7 @@ export const Home = () => {
 
   return (
     <>
-      <TimeFrameSelector
-        options={options}
-        onChange={setOptions}
-      />
+      <TimeFrameSelector options={options} onChange={setOptions} />
       {devices.length === 0 && isLoadingMainContent ? (
         <Flex
           justifyContent="center"

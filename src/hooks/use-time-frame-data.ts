@@ -13,6 +13,7 @@ import { readingsQueries } from '../queries/readings-queries';
 import { statisticsQueries } from '../queries/statistics-queries';
 import { indexById } from '../utils/index-by-id';
 import { indexByType } from '../utils/index-by-type';
+import { READING_INTERVAL_MS } from '../utils/latest-stale-time';
 
 const DEVICE_GRAPH_READING_TYPES: ValueType[] = [
   'temperature',
@@ -53,6 +54,7 @@ export const useTimeFrameData = (options: TimeFrameOptions) => {
     options.offsetFromNow,
     options.timePeriod
   );
+  const isLive = options.offsetFromNow === 0;
 
   const readingsQuery = useQuery({
     ...readingsQueries.all(readingsParams),
@@ -63,6 +65,9 @@ export const useTimeFrameData = (options: TimeFrameOptions) => {
     ...statisticsQueries.all(statisticsParams),
     enabled: hasValueType,
     staleTime,
+    refetchInterval: isLive ? READING_INTERVAL_MS : false,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: isLive,
   });
 
   const readingsByDevice = useMemo(

@@ -1,8 +1,4 @@
-import {
-  TimeFrameOptions,
-  TimeLevel,
-  TimePeriod,
-} from './time-frame-selector';
+import { TimeFrameOptions, TimeLevel, TimePeriod } from './time-frame-selector';
 import { DateTime, DateTimeUnit } from 'luxon';
 import { READING_INTERVAL_MS } from '../../utils/latest-stale-time';
 
@@ -335,6 +331,83 @@ export const getReadingsTimeFrame = (
     level: timeframeOptions.level,
     startDate: toCalendarDate(graphStartTime, timezone),
     endDate: toCalendarDate(graphEndTime, timezone),
+  };
+};
+
+/** Floor a datetime to the open rollup bucket start for this level. */
+export const floorToCatchUpBucketStart = (
+  dateTime: string,
+  level: TimeLevel,
+  timezone: string
+): string => {
+  if (level === '30 minutes') {
+    const utc = DateTime.fromISO(dateTime, { zone: 'utc' });
+    return utc
+      .set({
+        minute: Math.floor(utc.minute / 30) * 30,
+        second: 0,
+        millisecond: 0,
+      })
+      .toUTC()
+      .toISO()!;
+  }
+
+  const zoned = fromUtcIso(dateTime, timezone).startOf('day');
+
+  if (level === 'day') {
+    return zoned.toISODate()!;
+  }
+
+  if (level === 'week') {
+    // Monday-based, same as the API week bucket.
+    return zoned.minus({ days: zoned.weekday - 1 }).toISODate()!;
+  }
+
+  return zoned.startOf('month').toISODate()!;
+};
+
+/**
+ * Narrow readings window from the open bucket that contains last query time
+ * through the live period end. Floors so in-progress rollups are refreshed;
+ * the frontier is wall-clock query time, not per-device data timestamps.
+ */
+export const getCatchUpReadingsTimeFrame = (
+  queriedThroughIso: string,
+  options: TimeFrameOptions
+): ReadingsTimeFrame | null => {
+  const timezone = getQueryTimezone(options.timePeriod);
+  const endTime = getEndTime(
+    options.offsetFromNow,
+    options.timePeriod,
+    timezone
+  )!;
+  const start = floorToCatchUpBucketStart(
+    queriedThroughIso,
+    options.level,
+    timezone
+  );
+
+  if (options.level === '30 minutes') {
+    if (new Date(start).getTime() >= new Date(endTime).getTime()) {
+      return null;
+    }
+
+    return {
+      level: '30 minutes',
+      startTime: start,
+      endTime,
+    };
+  }
+
+  const endDate = toCalendarDate(endTime, timezone);
+  if (start > endDate) {
+    return null;
+  }
+
+  return {
+    level: options.level,
+    startDate: start,
+    endDate,
   };
 };
 

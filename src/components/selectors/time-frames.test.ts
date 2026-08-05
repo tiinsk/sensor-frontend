@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  getCatchUpReadingsTimeFrame,
   getReadingsTimeFrame,
   getStatisticsTimeFrame,
   getTimeFrame,
@@ -392,5 +393,87 @@ describe('getTimeFrameStaleTime', () => {
 
   it('returns Infinity for older offsets', () => {
     expect(getTimeFrameStaleTime(-2, 'day')).toBe(Infinity);
+  });
+});
+
+describe('getCatchUpReadingsTimeFrame', () => {
+  beforeEach(() => {
+    Settings.defaultZone = 'UTC';
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-18T14:00:00.000Z'));
+  });
+
+  const liveDayOptions: TimeFrameOptions = {
+    offsetFromNow: 0,
+    timePeriod: 'day',
+    level: '30 minutes',
+    valueType: 'temperature',
+  };
+
+  const liveWeekOptions: TimeFrameOptions = {
+    offsetFromNow: 0,
+    timePeriod: 'week',
+    level: 'day',
+    valueType: 'temperature',
+  };
+
+  const liveYearOptions: TimeFrameOptions = {
+    offsetFromNow: 0,
+    timePeriod: 'year',
+    level: 'month',
+    valueType: 'temperature',
+  };
+
+  it('returns null for 30-minute level when floored start is at or after period end', () => {
+    // Live day end is rounded to the next 30-minute boundary → 14:30 UTC
+    expect(
+      getCatchUpReadingsTimeFrame('2026-07-18T14:30:00.000Z', liveDayOptions)
+    ).toBeNull();
+    expect(
+      getCatchUpReadingsTimeFrame('2026-07-18T15:00:00.000Z', liveDayOptions)
+    ).toBeNull();
+  });
+
+  it('floors mid-bucket query time so the open 30-minute rollup is included', () => {
+    // Queried at 13:45 → open bucket starts at 13:30
+    expect(
+      getCatchUpReadingsTimeFrame('2026-07-18T13:45:00.000Z', liveDayOptions)
+    ).toEqual({
+      level: '30 minutes',
+      startTime: '2026-07-18T13:30:00.000Z',
+      endTime: '2026-07-18T14:30:00.000Z',
+    });
+  });
+
+  it('floors calendar catch-up to the open day', () => {
+    expect(
+      getCatchUpReadingsTimeFrame(
+        '2026-07-18T14:00:00.000Z',
+        liveWeekOptions
+      )
+    ).toEqual({
+      level: 'day',
+      startDate: '2026-07-18',
+      endDate: '2026-07-18',
+    });
+  });
+
+  it('floors month-level catch-up to the open month start', () => {
+    expect(
+      getCatchUpReadingsTimeFrame(
+        '2026-07-18T14:00:00.000Z',
+        liveYearOptions
+      )
+    ).toEqual({
+      level: 'month',
+      startDate: '2026-07-01',
+      endDate: '2026-07-31',
+    });
+  });
+
+  it('returns null for calendar level when floored start is after period end', () => {
+    expect(
+      getCatchUpReadingsTimeFrame('2026-07-19T00:00:00.000Z', liveWeekOptions)
+    ).toBeNull();
   });
 });
