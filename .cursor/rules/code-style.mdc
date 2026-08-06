@@ -1,0 +1,75 @@
+---
+description: Code style conventions for TypeScript and JavaScript source
+globs: src/**/*.{ts,tsx,js,jsx}
+alwaysApply: false
+---
+
+# Code style
+
+## Match Prettier
+
+Format new and edited code to match the project Prettier config (`prettier.config.js`). ESLint enforces this via `prettier/prettier`.
+
+Key options:
+
+- `singleQuote: true`
+- `semi: true`
+- `tabWidth: 2`
+- `trailingComma: 'es5'`
+- `arrowParens: 'avoid'` (e.g. `x => x`, not `(x) => x`)
+- `bracketSpacing: true`
+
+Do not invent alternate wrapping, quote, or comma style. When unsure after a multi-line edit, run Prettier on the touched files (`npx prettier --write <files>`).
+
+## Prefer arrow functions
+
+Use arrow function syntax for components, hooks, helpers, and callbacks. Avoid `function` declarations unless required.
+
+```tsx
+// ✅ Preferred
+export const Home = () => { ... };
+
+const useDevices = () => { ... };
+
+const formatReading = (value: number) => value.toFixed(1);
+
+items.map(item => item.id);
+
+// ❌ Avoid (unless necessary)
+export function Home() { ... }
+
+function formatReading(value: number) { ... }
+```
+
+**Exceptions** (use `function` when needed): generator functions; hoisting before definition in the same module (rare).
+
+## Avoid nested ternaries
+
+Prefer `if`/`else`, early returns, or a small helper over chaining `? :`.
+
+```tsx
+// ✅ Preferred
+const label = (() => {
+  if (isLoading) return 'Loading…';
+  if (error) return 'Error';
+  return data.name;
+})();
+
+// Or early return in a function body
+const getLabel = () => {
+  if (isLoading) return 'Loading…';
+  if (error) return 'Error';
+  return data.name;
+};
+
+// ❌ Avoid
+const label = isLoading ? 'Loading…' : error ? 'Error' : data.name;
+```
+
+A single ternary is fine when it stays readable on one line.
+
+## Prefer array helpers over loops
+
+Prefer array helpers like `map`, `filter`, `reduce`, `some`, and `every` over `for`/`for...of` loops when they keep the code clear. Use loops only when they are meaningfully simpler or when early exit/control flow is the main point.
+
+Do not use `reduce` just to sequence async side effects when the accumulator is only a `Promise` and the result is not meaningful. In those cases, prefer a plain `for...of` loop with `await`, because it makes the ordering and side effects easier to read.
