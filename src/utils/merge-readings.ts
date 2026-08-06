@@ -1,4 +1,10 @@
-import { Reading, ReadingsResponse, ArrayResponse } from '../api/types';
+import {
+  ArrayResponse,
+  DeviceReadingResponse,
+  Reading,
+  ReadingsResponse,
+} from '../api/types';
+import { ValueType } from '../components/selectors/time-frame-selector';
 
 /**
  * Merge ordered readings. Incoming is a suffix starting at/after some existing
@@ -65,3 +71,35 @@ export const mergeCatchUpIntoCache = (
 
     return replaceDeviceReadings(cache, id, mergeReadings(existing, incoming));
   }, existingCache);
+
+const replaceTypeReadings = (
+  existing: DeviceReadingResponse,
+  type: ValueType,
+  mergedValues: Reading[]
+): DeviceReadingResponse => ({
+  ...existing,
+  values: existing.values.map(entry =>
+    entry.type === type ? { type, values: mergedValues } : entry
+  ),
+});
+
+/** Merge catch-up sensor series into a single-device readings cache. */
+export const mergeDeviceCatchUpIntoCache = (
+  existingCache: DeviceReadingResponse | undefined,
+  incomingByType: DeviceReadingResponse['values']
+): DeviceReadingResponse | undefined => {
+  if (!existingCache) {
+    return existingCache;
+  }
+
+  return incomingByType.reduce((cache, { type, values: incoming }) => {
+    if (incoming.length === 0) {
+      return cache;
+    }
+
+    const existing =
+      cache.values.find(entry => entry.type === type)?.values ?? [];
+
+    return replaceTypeReadings(cache, type, mergeReadings(existing, incoming));
+  }, existingCache);
+};

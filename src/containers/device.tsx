@@ -25,6 +25,7 @@ import { useDevice } from '../hooks/use-devices';
 import { useDeviceLatestReading } from '../hooks/use-latest-readings';
 import { useDeviceAverageStatistics } from '../hooks/use-statistics';
 import { useDeviceTimeFrameReadings } from '../hooks/use-time-frame-data';
+import { useDeviceLiveReadingsSync } from '../hooks/use-catch-up-readings';
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -117,6 +118,12 @@ export const Device = () => {
   } = useDeviceAverageStatistics(id);
   const { data: readingData, isPending: isPendingReadings } =
     useDeviceTimeFrameReadings(id, options);
+
+  useDeviceLiveReadingsSync({
+    options,
+    deviceId: id,
+    readingsReady: !isPendingReadings,
+  });
 
   const isLoadingLatest = isPendingDevice || isPendingLatest;
 

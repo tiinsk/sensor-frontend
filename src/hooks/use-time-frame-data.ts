@@ -2,29 +2,20 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   TimeFrameOptions,
-  ValueType,
 } from '../components/selectors/time-frame-selector';
 import {
   getReadingsTimeFrame,
   getStatisticsTimeFrame,
   getTimeFrameStaleTime,
 } from '../components/selectors/time-frames';
-import { readingsQueries } from '../queries/readings-queries';
+import {
+  DEVICE_GRAPH_READING_TYPES,
+  readingsQueries,
+} from '../queries/readings-queries';
 import { statisticsQueries } from '../queries/statistics-queries';
 import { indexById } from '../utils/index-by-id';
 import { indexByType } from '../utils/index-by-type';
 import { READING_INTERVAL_MS } from '../utils/latest-stale-time';
-
-const DEVICE_GRAPH_READING_TYPES: ValueType[] = [
-  'temperature',
-  'humidity',
-  'pressure',
-  'co2',
-  'nox',
-  'pm25',
-  'voc',
-  'airQuality',
-];
 
 export const useDeviceTimeFrameReadings = (
   deviceId: string | undefined,
