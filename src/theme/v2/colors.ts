@@ -26,6 +26,7 @@ export const lightColors = {
     },
     accent: {
       default: primitives.neutral.alpha.light['70'],
+      hover: primitives.neutral.filled['0'],
       disabled: primitives.neutral.alpha.light['60'],
     },
     foreground: {
@@ -111,6 +112,7 @@ export const darkColors: ColorTheme = {
     },
     accent: {
       default: primitives.accent['100'],
+      hover: primitives.accent['80'],
       disabled: primitives.accent['20'],
     },
     foreground: {

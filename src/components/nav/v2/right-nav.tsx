@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { Caption2 } from '../../styled/typography';
 import { Flex } from '../../styled/flex';
-import { Button } from '../../styled/buttons';
+import { Button } from '../../styled/buttons/v2';
 import { Toggle } from '../../styled/inputs/toggle';
 import { useThemeContext } from '../../../contexts/theme-context';
 import { useRightDrawerContext } from '../../styled/menus/right-drawer-context';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../../contexts/auth-context';
-import { LinkButton } from '../../styled/buttons/link';
+import { LinkButton } from '../../styled/buttons/v2/link';
 import { Blueprint } from '../../../assets/icons/blueprint';
 
 const StyledNav = styled.div`

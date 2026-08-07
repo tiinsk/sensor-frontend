@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { PageTitle } from '../../styled/typography';
 import { Link } from 'react-router';
 import { Flex } from '../../styled/flex';
-import { LinkButton } from '../../styled/buttons/link';
+import { LinkButton } from '../../styled/buttons/v2/link';
 import { RightNav } from './right-nav';
-import { RightDrawer } from '../../styled/menus/right-drawer';
+import { RightDrawer } from '../../styled/menus/v2/right-drawer';
 import { Blueprint } from '../../../assets/icons/blueprint';
 
 const StyledNav = styled.nav`
@@ -45,7 +45,7 @@ export const TopNav = () => {
     <>
       <StyledNav>
         <Link to="/v2">
-          <PageTitle>Home monitor</PageTitle>
+          <PageTitle>Home monitor V2</PageTitle>
         </Link>
         <Flex>
           <MobileHiddenLinkButton
