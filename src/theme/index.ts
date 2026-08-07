@@ -1,4 +1,5 @@
 import { lightColors, darkColors } from './colors';
+import { darkTheme as darkThemeV2, lightTheme as lightThemeV2 } from './v2';
 
 const breakpoints = {
   lg: '1200px',
@@ -6,11 +7,25 @@ const breakpoints = {
   sm: '600px',
 };
 
+export const radius = {
+  '0': '0',
+  '4': '0.4rem',
+  '8': '0.8rem',
+  '12': '1.2rem',
+  '16': '1.6rem',
+  '24': '2.4rem',
+  full: '9999px',
+} as const;
+
+export type Radius = keyof typeof radius;
+
 const variables = {
   pageWidth: '1800px',
   fonts: {
     fontBody: 'Roboto, sans-serif',
     fontHeader: 'Roboto, sans-serif',
+    sans: 'Quicksand, sans-serif',
+    mono: '"Space Mono", monospace',
   },
   fontWeights: {
     light: '300',
@@ -19,6 +34,7 @@ const variables = {
     bold: '700',
   },
   breakpoints,
+  radius,
   mediaQueries: {
     sm: `@media (max-width: ${breakpoints.sm})`,
     md: `@media (max-width: ${breakpoints.md})`,
@@ -52,11 +68,13 @@ export type Space = keyof (typeof variables)['spacings'];
 export const lightTheme = {
   ...variables,
   colors: lightColors,
+  v2: lightThemeV2,
 } as const;
 
 export const darkTheme = {
   ...variables,
   colors: darkColors,
+  v2: darkThemeV2,
 } as const;
 
-export type CustomTheme = typeof lightTheme;
+export type CustomTheme = typeof lightTheme & { v2: typeof lightThemeV2 };
