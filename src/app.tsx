@@ -37,6 +37,14 @@ const StyledLoggedInLayout = styled.div`
   }
 `;
 
+export const StyledApp = styled.div`
+  color: ${({ theme }) => theme.v2.colors.text.primary};
+
+  a {
+    color: ${({ theme }) => theme.v2.colors.text.primary};
+  }
+`;
+
 const LoggedInLayout = () => (
   <>
     <GlobalStyle />
@@ -71,33 +79,35 @@ const LoggedInLayoutV2 = () => (
 const App = () => (
   <ThemeContextProvider>
     <ThemeProvider>
-      <Routes>
-        <Route
-          path="/login"
-          element={
-            <>
-              <GlobalStyle />
-              <Login />
-            </>
-          }
-        />
-        <Route
-          path="/*"
-          element={
-            <ProtectedRoute>
-              <LoggedInLayout />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/v2/*"
-          element={
-            <ProtectedRoute>
-              <LoggedInLayoutV2 />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+      <StyledApp>
+        <Routes>
+          <Route
+            path="/login"
+            element={
+              <>
+                <GlobalStyle />
+                <Login />
+              </>
+            }
+          />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <LoggedInLayout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/v2/*"
+            element={
+              <ProtectedRoute>
+                <LoggedInLayoutV2 />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </StyledApp>
     </ThemeProvider>
   </ThemeContextProvider>
 );

@@ -3,7 +3,6 @@ import { createGlobalStyle } from 'styled-components';
 export const GlobalStyle = createGlobalStyle`
   html {
     font-size: 62.5%;
-    color: ${({ theme }) => theme.v2.colors.text.primary};
     width: 100vw;
     overflow-x: hidden;
   }
@@ -29,7 +28,6 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
   a {
-    color: ${({ theme }) => theme.v2.colors.text.primary};
     text-decoration: none;
   }
 

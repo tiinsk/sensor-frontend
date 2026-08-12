@@ -36,6 +36,7 @@ export const LinkButton = ({
       {...props}
     >
       <ButtonContent
+        sizeVariant={sizeVariant}
         iconLeft={iconLeft}
         iconRight={iconRight}
         text={text}

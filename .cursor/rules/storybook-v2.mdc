@@ -1,0 +1,42 @@
+---
+description: V2 components must include Storybook stories
+globs: src/**/v2/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# V2 components → Storybook
+
+When creating or updating a **v2** UI component (anything under a `v2/` folder intended for reuse), also add or update a colocated Storybook story.
+
+## Requirements
+
+- Place stories next to the component: `ComponentName.stories.tsx`
+- Use CSF3 with `title` under the `v2/` group, e.g. `v2/Button`, `v2/LinkButton`
+- Include `tags: ['autodocs']`
+- Cover the main variants, sizes, and disabled state that the design defines
+- Rely on the global theme decorator in `.storybook/preview.tsx` (light/dark toolbar) — do not wrap stories in a second `ThemeProvider` unless the component needs something extra
+- If the component uses React Router (`Link`, `useNavigate`, etc.), wrap that story file in `MemoryRouter`
+
+## Example
+
+```tsx
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Button } from './index';
+
+const meta = {
+  title: 'v2/Button',
+  component: Button,
+  tags: ['autodocs'],
+  args: { text: 'Button text', variant: 'primary' },
+} satisfies Meta<typeof Button>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Primary: Story = {};
+```
+
+## Out of scope
+
+- Do not add stories for one-off container pages unless asked
+- Legacy (non-v2) components do not need stories by default

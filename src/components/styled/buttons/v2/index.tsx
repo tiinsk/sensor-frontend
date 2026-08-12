@@ -76,6 +76,8 @@ export const ButtonStyle = ({
   align-items: center;
   white-space: nowrap;
   gap: ${theme.spacings.s16};
+  width: fit-content;
+  height: fit-content;
 
   transition: padding 0.1s ease-in;
 
