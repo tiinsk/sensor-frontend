@@ -114,3 +114,14 @@ export const MonoLabelStyle = css`
   ${LabelStyle};
   font-family: ${({ theme }) => theme.fonts.mono};
 `;
+
+export const PageTitleStyle = css`
+  color: inherit;
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
+  font-size: 1.5rem;
+  line-height: 1.9rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.1rem;
+`;

@@ -13,7 +13,7 @@ interface FlexStyles {
   gap?: Space;
 }
 
-interface FlexProps extends FlexStyles {
+export interface FlexProps extends FlexStyles {
   children?: React.ReactNode;
 }
 

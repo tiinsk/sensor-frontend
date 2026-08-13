@@ -65,6 +65,8 @@ const variables = {
 
 export type Space = keyof (typeof variables)['spacings'];
 
+export type Font = 'mono' | 'sans';
+
 export const lightTheme = {
   ...variables,
   colors: lightColors,

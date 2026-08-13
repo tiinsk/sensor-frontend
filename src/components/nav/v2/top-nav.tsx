@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { PageTitle } from '../../styled/typography';
+import { PageTitle } from '../../styled/v2/typography';
 import { Link } from 'react-router';
 import { Flex } from '../../styled/flex';
 import { LinkButton } from '../../styled/buttons/v2/link';
 import { RightNav } from './right-nav';
 import { RightDrawer } from '../../styled/menus/v2/right-drawer';
 import { Blueprint } from '../../../assets/icons/blueprint';
+import { App } from '../../../assets/icons/app';
 
 const StyledNav = styled.nav`
   display: flex;
@@ -14,6 +15,12 @@ const StyledNav = styled.nav`
   align-items: center;
   padding: ${({ theme }) => theme.spacings.s24} 0;
   padding-bottom: ${({ theme }) => theme.spacings.s12};
+`;
+
+const StyledLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacings.s8};
 `;
 
 const MobileHiddenLinkButton = styled(LinkButton)`
@@ -44,9 +51,10 @@ export const TopNav = () => {
   return (
     <>
       <StyledNav>
-        <Link to="/v2">
+        <StyledLink to="/v2">
+          <App color="accent" />
           <PageTitle>Home monitor V2</PageTitle>
-        </Link>
+        </StyledLink>
         <Flex>
           <MobileHiddenLinkButton
             iconLeft={<Blueprint />}

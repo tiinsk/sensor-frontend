@@ -56,6 +56,7 @@ export const lightColors = {
     warn: primitives.warn['100'],
     pressure: primitives.pressure['100'],
     humidity: primitives.humidity['100'],
+    accent: primitives.accent['100'],
   },
   text: {
     primary: primitives.neutral.filled['100'],
@@ -142,6 +143,7 @@ export const darkColors: ColorTheme = {
     warn: primitives.warn['80'],
     pressure: primitives.pressure['80'],
     humidity: primitives.humidity['80'],
+    accent: primitives.accent['100'],
   },
   text: {
     primary: primitives.neutral.filled['0'],

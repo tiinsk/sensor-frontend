@@ -9,8 +9,10 @@ type SkeletonVariant =
   | 'H4'
   | 'Body'
   | 'PageTitle'
+  | 'Caption1'
   | 'Caption2'
   | 'Caption3'
+  | 'Label'
   | 'custom';
 
 interface SkeletonProps {
@@ -53,9 +55,13 @@ const getHeight = (variant: SkeletonVariant) => {
       return '2rem';
     case 'Body':
       return '2.4rem';
+    case 'Caption1':
+      return '1.7rem';
     case 'Caption2':
       return '1.4rem';
     case 'Caption3':
+      return '1.2rem';
+    case 'Label':
       return '1.2rem';
     default:
       return '2.4rem';
