@@ -20,11 +20,10 @@ import {
   toGraphHoverKey,
 } from '../selectors/time-frames';
 import { MinMax } from '../../utils/readings';
+import { getGraphColorScale } from '../../utils/graph-color';
 import { getUnitTitle } from '../../utils/unit';
 import { Caption2Style } from '../../theme/typography';
 
-export const MIN_TEMP = -30;
-export const MAX_TEMP = 90;
 const SMALL_GRAPH_LIMIT = 500;
 const FLAT_GRAPH_PADDING = 0.1;
 
@@ -52,27 +51,6 @@ const getAxisTicks = (timePeriod: TimePeriod) => {
       return d3.timeDay.every(1);
     case 'year':
       return d3.timeMonth.every(1);
-  }
-};
-
-const getGraphColorScale = (valueType: ValueType) => {
-  switch (valueType) {
-    case 'temperature':
-      return [MIN_TEMP, MAX_TEMP];
-    case 'humidity':
-      return [0, 1];
-    case 'pressure':
-      return [0, 1];
-    case 'co2':
-      return [600, 2100];
-    case 'nox':
-      return [0, 1];
-    case 'pm25':
-      return [5, 55];
-    case 'voc':
-      return [0, 1];
-    case 'airQuality':
-      return [0, 100];
   }
 };
 
@@ -405,15 +383,15 @@ export const Graph = ({
           const hoverKey = toGraphHoverKey(d, options.level, periodTimezone);
 
           return (
-          <HoverableRect
-            key={i}
-            y={y(yGraphMax) - margins.top}
-            x={x(d) - tickWidth / 2}
-            height={height}
-            width={tickWidth > 0 ? tickWidth : 0}
-            $isHovered={hoveredDate === hoverKey}
-            onMouseEnter={e => onHover(hoverKey)}
-          />
+            <HoverableRect
+              key={i}
+              y={y(yGraphMax) - margins.top}
+              x={x(d) - tickWidth / 2}
+              height={height}
+              width={tickWidth > 0 ? tickWidth : 0}
+              $isHovered={hoveredDate === hoverKey}
+              onMouseEnter={e => onHover(hoverKey)}
+            />
           );
         })}
         <linearGradient

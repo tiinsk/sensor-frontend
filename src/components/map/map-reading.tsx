@@ -5,7 +5,7 @@ import { H4 } from '../styled/typography';
 import { Reading } from '../styled/readings';
 import { Flex } from '../styled/flex';
 import * as d3 from 'd3';
-import { MAX_TEMP, MIN_TEMP } from '../graphs/graph';
+import { MAX_TEMP, MIN_TEMP } from '../../utils/graph-color';
 import { DateTime } from 'luxon';
 import { getTimeAgoString } from '../../utils/datetime';
 import { Tag } from '../styled/tag';

@@ -194,6 +194,10 @@ export const lightColors = {
       },
     },
     lines: {
+      default: [
+        primitiveColors.neutral.filled['40'],
+        primitiveColors.neutral.filled['40'],
+      ],
       temperature: [
         '#8B18DA',
         '#E93D5C',
@@ -349,6 +353,10 @@ export const darkColors: ColorTheme = {
       },
     },
     lines: {
+      default: [
+        primitiveColors.neutral.filled['30'],
+        primitiveColors.neutral.filled['30'],
+      ],
       temperature: [
         '#8B18DA',
         '#E93D5C',
@@ -360,12 +368,12 @@ export const darkColors: ColorTheme = {
       ],
       humidity: [primitiveColors.water['100'], primitiveColors.water['100']],
       pressure: [primitiveColors.air['100'], primitiveColors.air['100']],
-      co2: ['#18A800', '#FFED05', '#E56700', '#D2044D'],
+      co2: ['#D2044D', '#E56700', '#FFED05', '#18A800'],
       nox: [
         primitiveColors.neutral.filled['30'],
         primitiveColors.neutral.filled['30'],
       ],
-      pm25: ['#18A800', '#FFED05', '#E56700', '#D2044D'],
+      pm25: ['#D2044D', '#E56700', '#FFED05', '#18A800'],
       voc: [
         primitiveColors.neutral.filled['30'],
         primitiveColors.neutral.filled['30'],
