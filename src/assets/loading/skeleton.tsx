@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
 import { Space } from '../../theme';
 
 type SkeletonVariant =
@@ -22,7 +22,7 @@ interface SkeletonProps {
   customHeight?: Space;
 }
 
-const StyledSkeleton = styled.div`
+export const SkeletonPulseStyle = css`
   @keyframes skeleton-animation {
     0% {
       opacity: 1;
@@ -36,6 +36,10 @@ const StyledSkeleton = styled.div`
   }
 
   animation: 2s ease-in-out 0.5s infinite normal none running skeleton-animation;
+`;
+
+const StyledSkeleton = styled.div`
+  ${SkeletonPulseStyle};
 
   background-color: ${({ theme }) => theme.colors.background.tertiary};
   border-radius: ${({ theme }) => theme.spacings.s4};

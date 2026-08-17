@@ -14,6 +14,8 @@ const meta = {
   },
   argTypes: {
     value: { control: { type: 'number' } },
+    min: { control: { type: 'number' } },
+    max: { control: { type: 'number' } },
     unit: {
       control: 'select',
       options: units,
@@ -33,8 +35,11 @@ const Stack = styled.div`
 
 export const Default: Story = {};
 
-export const WithUnit: Story = {
-  args: { unit: 'temperature', value: 75 },
+export const WithMinAndMax: Story = {
+  args: {
+    min: 27.8,
+    max: 55.2,
+  },
 };
 
 export const Units: Story = {

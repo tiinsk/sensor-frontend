@@ -11,6 +11,7 @@ import {
   useReadingColor,
 } from '../../../utils/graph-color';
 import { getUnit, getUnitTitle, type Unit } from '../../../utils/unit';
+import { Reading } from '../readings/v2';
 
 const SIZE = 91;
 const INNER = 65;
@@ -22,14 +23,30 @@ const TICK_RADIUS = 1;
 export type ScaleProps = {
   value: number;
   unit?: Unit;
+  min?: number;
+  max?: number;
 };
 
 const Root = styled.div`
   display: flex;
+  align-items: center;
+  gap: 1.8rem;
+  width: fit-content;
+`;
+
+const GaugeColumn = styled.div`
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: ${({ theme }) => theme.spacings.s4};
-  width: fit-content;
+`;
+
+const MinMax = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-right: ${({ theme }) => theme.spacings.s4};
 `;
 
 const Title = styled.p`
@@ -79,12 +96,13 @@ const UnitText = styled.span`
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
-export const Scale = ({ value, unit }: ScaleProps) => {
+export const Scale = ({ value, unit, min, max }: ScaleProps) => {
   const theme = useTheme();
   const labelId = useId();
-  const [min, max] = getGraphColorScale(unit);
-  const scaleValue = clamp(value, min, max);
-  const progress = max === min ? 0 : (scaleValue - min) / (max - min);
+  const [scaleMin, scaleMax] = getGraphColorScale(unit);
+  const scaleValue = clamp(value, scaleMin, scaleMax);
+  const progress =
+    scaleMax === scaleMin ? 0 : (scaleValue - scaleMin) / (scaleMax - scaleMin);
   const filledCount = Math.round(progress * TICK_COUNT);
   const activeColor = useReadingColor(value, unit);
   const inactiveColor = theme.v2.colors.surface.deep['20'];
@@ -93,6 +111,7 @@ export const Scale = ({ value, unit }: ScaleProps) => {
   const tickCenterR = SIZE / 2 - TICK_LENGTH / 2;
   const unitLabel = unit ? getUnit(unit) : undefined;
   const title = unit ? getUnitTitle(unit) : undefined;
+  const showMinMax = min !== undefined || max !== undefined;
 
   const displayValue = Number.isInteger(value)
     ? String(value)
@@ -107,35 +126,47 @@ export const Scale = ({ value, unit }: ScaleProps) => {
       <span id={labelId} hidden>
         {accessibleLabel}
       </span>
-      {title && <Title>{title}</Title>}
-      <Gauge>
-        <Ring viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden>
-          {Array.from({ length: TICK_COUNT }, (_, index) => {
-            const angleDeg = 90 + (index / TICK_COUNT) * 360;
-            const angle = (angleDeg * Math.PI) / 180;
-            const x = cx + Math.cos(angle) * tickCenterR;
-            const y = cy + Math.sin(angle) * tickCenterR;
-            const isActive = index < filledCount;
+      <GaugeColumn>
+        {title && <Title>{title}</Title>}
+        <Gauge>
+          <Ring viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden>
+            {Array.from({ length: TICK_COUNT }, (_, index) => {
+              const angleDeg = 90 + (index / TICK_COUNT) * 360;
+              const angle = (angleDeg * Math.PI) / 180;
+              const x = cx + Math.cos(angle) * tickCenterR;
+              const y = cy + Math.sin(angle) * tickCenterR;
+              const isActive = index < filledCount;
 
-            return (
-              <rect
-                key={index}
-                x={x - TICK_WIDTH / 2}
-                y={y - TICK_LENGTH / 2}
-                width={TICK_WIDTH}
-                height={TICK_LENGTH}
-                rx={TICK_RADIUS}
-                fill={isActive ? activeColor : inactiveColor}
-                transform={`rotate(${angleDeg - 90} ${x} ${y})`}
-              />
-            );
-          })}
-        </Ring>
-        <Center>
-          <ValueText>{displayValue}</ValueText>
-          {unitLabel && <UnitText>{unitLabel}</UnitText>}
-        </Center>
-      </Gauge>
+              return (
+                <rect
+                  key={index}
+                  x={x - TICK_WIDTH / 2}
+                  y={y - TICK_LENGTH / 2}
+                  width={TICK_WIDTH}
+                  height={TICK_LENGTH}
+                  rx={TICK_RADIUS}
+                  fill={isActive ? activeColor : inactiveColor}
+                  transform={`rotate(${angleDeg - 90} ${x} ${y})`}
+                />
+              );
+            })}
+          </Ring>
+          <Center>
+            <ValueText>{displayValue}</ValueText>
+            {unitLabel && <UnitText>{unitLabel}</UnitText>}
+          </Center>
+        </Gauge>
+      </GaugeColumn>
+      {showMinMax && (
+        <MinMax>
+          {max !== undefined && (
+            <Reading variant="max" value={max} unit={unit} size="small" />
+          )}
+          {min !== undefined && (
+            <Reading variant="min" value={min} unit={unit} size="small" />
+          )}
+        </MinMax>
+      )}
     </Root>
   );
 };
