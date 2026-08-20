@@ -23,8 +23,8 @@ const TICK_RADIUS = 1;
 export type ScaleProps = {
   value: number;
   unit?: Unit;
-  min?: number;
-  max?: number;
+  min?: number | null;
+  max?: number | null;
 };
 
 const Root = styled.div`
@@ -111,7 +111,7 @@ export const Scale = ({ value, unit, min, max }: ScaleProps) => {
   const tickCenterR = SIZE / 2 - TICK_LENGTH / 2;
   const unitLabel = unit ? getUnit(unit) : undefined;
   const title = unit ? getUnitTitle(unit) : undefined;
-  const showMinMax = min !== undefined || max !== undefined;
+  const showMinMax = min != null || max != null;
 
   const displayValue = Number.isInteger(value)
     ? String(value)
@@ -159,10 +159,10 @@ export const Scale = ({ value, unit, min, max }: ScaleProps) => {
       </GaugeColumn>
       {showMinMax && (
         <MinMax>
-          {max !== undefined && (
+          {max != null && (
             <Reading variant="max" value={max} unit={unit} size="small" />
           )}
-          {min !== undefined && (
+          {min != null && (
             <Reading variant="min" value={min} unit={unit} size="small" />
           )}
         </MinMax>

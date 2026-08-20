@@ -3,6 +3,7 @@ import { latestQueries } from '../queries/latest-queries';
 import { indexById } from '../utils/index-by-id';
 import { queryClient } from '../queries/query-client';
 import { ArrayResponse, LatestReadingResponse } from '../api/types';
+import { groupByLocationType } from '../utils/group-by-location-type';
 
 export const useLatestReadings = () =>
   useQuery({
@@ -10,6 +11,7 @@ export const useLatestReadings = () =>
     select: response => ({
       values: response.values,
       byDevice: indexById(response.values),
+      byLocationType: groupByLocationType(response.values),
     }),
   });
 

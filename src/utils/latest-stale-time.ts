@@ -1,6 +1,11 @@
 import { LatestReadingResponse } from '../api/types';
 
 export const READING_INTERVAL_MS = 10 * 60 * 1000;
+export const READING_FRESHNESS_MS = 2 * READING_INTERVAL_MS;
+
+export const isFreshReading = (timestamp: string, latestTimestamp: string) =>
+  new Date(latestTimestamp).getTime() - new Date(timestamp).getTime() <=
+  READING_FRESHNESS_MS;
 
 export const staleTimeUntilNextReading = (
   readingTimestamp: string | undefined,

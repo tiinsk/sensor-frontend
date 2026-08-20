@@ -1,0 +1,27 @@
+---
+description: Do not modify theme tokens without asking; prefer closest existing values
+alwaysApply: true
+---
+
+# Theme tokens — ask before changing
+
+Do **not** add, rename, or change theme tokens on your own. That includes spacings, colors, radii, fonts, breakpoints, and anything under `src/theme/` (including `src/theme/v2/`).
+
+## When a design value is missing
+
+1. **Close match exists** — use the closest existing token instead of inventing a new one.
+   - Example: design asks for `6px` gap and theme has `s4` (`0.4rem`) and `s8` (`0.8rem`) → pick the nearer one (`s4` or `s8`) and continue.
+2. **Nothing close enough** — stop and ask what to do. Do not add a new token or hardcode a one-off value unless the user approves.
+
+## Allowed without asking
+
+- Using existing tokens via `theme.spacings.*`, `theme.colors.*`, `theme.v2.*`, etc.
+- Referencing tokens that already exist in the theme files.
+
+## Not allowed without asking
+
+- Adding keys like `s6`, new color names, new radii, etc.
+- Editing token values in theme files.
+- Hardcoding raw rem/px/hex that “should” become a new theme token.
+
+If the user explicitly asks to update the theme, then make the change.

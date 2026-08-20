@@ -6,13 +6,20 @@ export interface ArrayResponse<DataType> {
   values: DataType[];
 }
 
-export type DeviceLocation = 'inside' | 'outside';
 export type Sensor = 'humidity' | 'temperature' | 'pressure';
+
+export type LocationType = 'inside' | 'outside' | null;
+
+export interface Location {
+  x: number;
+  y: number;
+  type: LocationType;
+}
 
 export interface LatestReadingResponse {
   id: string;
   name: string;
-  location_type: DeviceLocation;
+  location: Location;
   sensor_info: Sensor[];
   reading?: {
     temperature: number | null;
@@ -49,14 +56,6 @@ export interface Statistics {
 export interface StatisticsResponse {
   id: string;
   statistics: Statistics;
-}
-
-export type LocationType = 'inside' | 'outside' | null;
-
-export interface Location {
-  x: number;
-  y: number;
-  type: LocationType;
 }
 
 export type DeviceType = 'ruuvi' | 'sensorbug' | 'ruuvi-air';

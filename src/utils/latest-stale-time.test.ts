@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  isFreshReading,
   oldestLatestReadingTimestamp,
   READING_INTERVAL_MS,
   staleTimeUntilNextReading,
@@ -32,6 +33,20 @@ describe('staleTimeUntilNextReading', () => {
     expect(
       staleTimeUntilNextReading('2026-07-17T12:00:00.000Z', fetchedAt)
     ).toBe(0);
+  });
+});
+
+describe('isFreshReading', () => {
+  it('includes readings within two intervals of the latest timestamp', () => {
+    expect(
+      isFreshReading('2026-07-17T12:00:00.000Z', '2026-07-17T12:20:00.000Z')
+    ).toBe(true);
+  });
+
+  it('excludes readings older than two intervals', () => {
+    expect(
+      isFreshReading('2026-07-17T11:59:00.000Z', '2026-07-17T12:20:00.000Z')
+    ).toBe(false);
   });
 });
 
